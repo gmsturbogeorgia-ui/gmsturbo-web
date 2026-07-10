@@ -1,0 +1,7 @@
+<svg viewBox="0 0 1600 1024" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1600" height="1024" fill="#111111"/>
+  <rect x="500" y="332" width="600" height="360" fill="none" stroke="#ff6a00" stroke-width="4"/>
+  <circle cx="800" cy="512" r="140" fill="none" stroke="#ff4a2b" stroke-width="4"/>
+  <text x="800" y="840" text-anchor="middle" font-family="monospace" font-size="26" letter-spacing="6" fill="#8a8a8a">VSR BALANCING BENCH</text>
+  <text x="800" y="878" text-anchor="middle" font-family="monospace" font-size="16" letter-spacing="3" fill="#4a4a4a">PLACEHOLDER IMAGE</text>
+</svg>

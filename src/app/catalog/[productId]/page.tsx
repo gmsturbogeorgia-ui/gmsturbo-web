@@ -1,0 +1,120 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { getProductById, PRODUCTS, type Product } from "@/lib/products";
+import { ProductDetailClient } from "./ProductDetailClient";
+
+type Params = { productId: string };
+
+export function generateStaticParams(): Params[] {
+  return PRODUCTS.map((p) => ({ productId: p.id }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<Params>;
+}): Promise<Metadata> {
+  const { productId } = await params;
+  const p = getProductById(productId);
+  if (!p) return { title: "Product not found" };
+
+  return {
+    title: p.name,
+    description: p.tagline,
+    alternates: { canonical: `/catalog/${p.id}` },
+    openGraph: {
+      title: p.name,
+      description: p.tagline,
+      url: `/catalog/${p.id}`,
+      images: [p.img],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: p.name,
+      description: p.tagline,
+      images: [p.img],
+    },
+  };
+}
+
+function jsonLdFor(p: Product) {
+  const availability =
+    p.stock === "IN STOCK"
+      ? "https://schema.org/InStock"
+      : p.stock === "LOW STOCK"
+        ? "https://schema.org/LimitedAvailability"
+        : "https://schema.org/MadeToOrder";
+
+  const product = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: p.name,
+    sku: p.code,
+    mpn: p.code,
+    category: p.category,
+    description: p.description,
+    image: p.gallery,
+    brand: { "@type": "Brand", name: "GMS Turbo Georgia" },
+    manufacturer: { "@type": "Organization", name: "GMS Turbo Georgia" },
+    additionalProperty: [
+      { "@type": "PropertyValue", name: "Max Boost", value: p.boost, unitText: "PSI" },
+      { "@type": "PropertyValue", name: "Crank HP Potential", value: p.hp, unitText: "HP" },
+      ...p.specs.map((s) => ({
+        "@type": "PropertyValue",
+        name: s.label,
+        value: s.value,
+      })),
+    ],
+    isAccessoryOrSparePartFor: p.fitments.map((f) => ({
+      "@type": "Vehicle",
+      brand: { "@type": "Brand", name: f.make },
+      model: f.model,
+      vehicleModelDate: f.years,
+      vehicleEngine: { "@type": "EngineSpecification", name: f.engine },
+    })),
+    offers: {
+      "@type": "Offer",
+      price: p.price,
+      priceCurrency: "GEL",
+      availability,
+      itemCondition: "https://schema.org/NewCondition",
+      seller: { "@type": "Organization", name: "GMS Turbo Georgia" },
+    },
+  };
+
+  const breadcrumb = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "/" },
+      { "@type": "ListItem", position: 2, name: "Catalog", item: "/catalog" },
+      { "@type": "ListItem", position: 3, name: p.name, item: `/catalog/${p.id}` },
+    ],
+  };
+
+  return [product, breadcrumb];
+}
+
+export default async function ProductDetailPage({
+  params,
+}: {
+  params: Promise<Params>;
+}) {
+  const { productId } = await params;
+  const product = getProductById(productId);
+  if (!product) notFound();
+
+  return (
+    <>
+      {jsonLdFor(product).map((ld, i) => (
+        <script
+          key={i}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }}
+        />
+      ))}
+      <ProductDetailClient product={product} />
+    </>
+  );
+}

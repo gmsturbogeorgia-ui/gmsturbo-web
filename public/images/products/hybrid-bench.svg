@@ -1,0 +1,25 @@
+<svg viewBox="0 0 800 1000" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="metal" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2a2a2a"/>
+      <stop offset="100%" stop-color="#111111"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="1000" fill="#0d0d0d"/>
+  <rect x="280" y="700" width="240" height="170" fill="#1a1a1a" stroke="#3a3a3a" stroke-width="3"/>
+  <rect x="230" y="860" width="340" height="40" fill="#111111" stroke="#3a3a3a" stroke-width="2"/>
+  <line x1="400" y1="620" x2="400" y2="700" stroke="#3a3a3a" stroke-width="8"/>
+  <circle cx="400" cy="540" r="150" fill="url(#metal)" stroke="#ff6a00" stroke-width="4"/>
+  <circle cx="400" cy="540" r="88" fill="#141414" stroke="#ff6a00" stroke-width="3"/>
+  <circle cx="400" cy="540" r="28" fill="#ff6a00"/>
+  <circle cx="630" cy="400" r="72" fill="#141414" stroke="#8a8a8a" stroke-width="3"/>
+  <line x1="630" y1="400" x2="662" y2="366" stroke="#ff6a00" stroke-width="3"/>
+  <circle cx="630" cy="400" r="6" fill="#ff6a00"/>
+  <text x="630" y="490" text-anchor="middle" font-family="monospace" font-size="11" letter-spacing="2" fill="#8a8a8a">BOOST GAUGE</text>
+  <path d="M520,470 Q590,430 610,405" fill="none" stroke="#5a5a5a" stroke-width="6"/>
+  <rect x="0" y="900" width="800" height="100" fill="#000000" opacity="0.55"/>
+  <line x1="0" y1="900" x2="800" y2="900" stroke="#2a2a2a" stroke-width="1"/>
+  <text x="60" y="945" font-family="monospace" font-size="13" letter-spacing="3" fill="#8a8a8a">HYBRID CORE</text>
+  <text x="740" y="945" text-anchor="end" font-family="monospace" font-size="13" letter-spacing="3" fill="#ff6a00">BENCH VSR-04</text>
+  <text x="400" y="985" text-anchor="middle" font-family="monospace" font-size="18" letter-spacing="5" fill="#e5e5e5">VSR BENCH TEST</text>
+</svg>
