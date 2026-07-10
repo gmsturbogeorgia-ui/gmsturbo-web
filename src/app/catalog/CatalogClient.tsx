@@ -314,7 +314,7 @@ export function CatalogClient() {
                     {t("catalog.resetFilter")}
                   </button>
                   <Link
-                    href="/#contact"
+                    href="/contact"
                     className="border border-turbo bg-turbo px-6 py-3 font-heading text-[11px] tracking-[0.2em] text-white transition-all hover:bg-ember"
                   >
                     {t("catalog.requestCustomSpec")}
@@ -395,7 +395,7 @@ export function CatalogClient() {
             </p>
           </div>
           <Link
-            href="/#contact"
+            href="/contact"
             className="inline-flex w-fit items-center justify-center bg-turbo px-7 py-4 font-heading text-sm tracking-[0.2em] text-white hover:bg-ember"
           >
             {t("catalog.requestQuote")}

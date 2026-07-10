@@ -5,8 +5,21 @@ import { PRODUCTS } from "@/lib/products";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { useLanguage } from "@/lib/i18n/context";
 
-const showroomImg = "/images/showroom.svg";
+const showroomImg = "/images/showroom-reception-neon.jpeg";
 const HIGHLIGHTS = PRODUCTS.slice(0, 6);
+
+// Real photos of the Tbilisi flagship — the panoramic neon wall leads, then a
+// grid of the floor, stock and display case. These images appear nowhere else
+// on the site, which is what makes this page distinct from the home hero.
+const GALLERY_BANNER = "/images/gms-turbo-neon-sign.jpeg";
+const GALLERY = [
+  { src: "/images/showroom-stock-shelves.jpeg", cap: "STOCK WALL" },
+  { src: "/images/showroom-stock-aisle.jpeg", cap: "THE AISLE" },
+  { src: "/images/showroom-counter-wall.jpeg", cap: "THE COUNTER" },
+  { src: "/images/products/turbo-parts-display.jpeg", cap: "DISPLAY CASE" },
+  { src: "/images/warehouse-stock.jpeg", cap: "WAREHOUSE" },
+  { src: "/images/showroom-display-minimal.jpeg", cap: "THE PLINTH" },
+];
 
 export function ShowroomClient() {
   const { t } = useLanguage();
@@ -63,11 +76,60 @@ export function ShowroomClient() {
             <p>{t("showroom.p1")}</p>
             <p>{t("showroom.p2")}</p>
             <Link
-              href="/#contact"
+              href="/contact"
               className="inline-flex items-center gap-3 border border-border px-6 py-4 font-heading text-xs tracking-[0.2em] hover:border-turbo hover:text-turbo"
             >
               {t("showroom.bookViewing")}
             </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-b border-border">
+        <div className="mx-auto max-w-[1400px] px-6 py-20">
+          <div className="mb-12">
+            <p className="mb-3 font-mono text-[11px] tracking-[0.25em] text-muted-foreground">
+              {t("showroom.galleryKicker")}
+            </p>
+            <h2 className="font-display text-5xl tracking-wide md:text-6xl">
+              {t("showroom.galleryTitle")}
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 gap-px bg-border sm:grid-cols-2 lg:grid-cols-3">
+            <figure className="group relative aspect-[16/9] overflow-hidden bg-graphite sm:col-span-2 lg:col-span-3">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={GALLERY_BANNER}
+                alt="GMS Turbo neon sign at the Tbilisi flagship"
+                loading="lazy"
+                width={1600}
+                height={900}
+                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              <figcaption className="absolute bottom-4 left-4 bg-background/85 px-3 py-1.5 font-mono text-[10px] tracking-widest text-muted-foreground backdrop-blur">
+                GMS TURBO · TSERETELI AVE 114
+              </figcaption>
+            </figure>
+            {GALLERY.map((g) => (
+              <figure
+                key={g.src}
+                className="group relative aspect-[4/3] overflow-hidden bg-graphite"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={g.src}
+                  alt={g.cap}
+                  loading="lazy"
+                  width={1200}
+                  height={900}
+                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <figcaption className="absolute bottom-4 left-4 bg-background/85 px-3 py-1.5 font-mono text-[10px] tracking-widest text-muted-foreground backdrop-blur">
+                  {g.cap}
+                </figcaption>
+              </figure>
+            ))}
           </div>
         </div>
       </section>

@@ -4,17 +4,18 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { useLanguage } from "@/lib/i18n/context";
+import { useBooking } from "@/components/Booking";
 
 const NAV = [
   { key: "nav.inventory", href: "/catalog" },
-  { key: "nav.services", href: "/services" },
   { key: "nav.showroom", href: "/showroom" },
-  { key: "nav.garage", href: "/#services" },
+  { key: "nav.contact", href: "/contact" },
 ] as const;
 
 export function SiteHeader() {
   const pathname = usePathname();
   const { lang, setLang, t } = useLanguage();
+  const { open: openBooking } = useBooking();
   const [open, setOpen] = useState(false);
 
   return (
@@ -33,8 +34,7 @@ export function SiteHeader() {
         </Link>
         <nav className="hidden items-center gap-8 md:flex">
           {NAV.map((item) => {
-            const isActive =
-              item.href !== "/#services" && pathname.startsWith(item.href);
+            const isActive = pathname.startsWith(item.href);
             return (
               <Link
                 key={item.key}
@@ -49,6 +49,12 @@ export function SiteHeader() {
           })}
         </nav>
         <div className="flex items-center gap-3">
+          <button
+            onClick={openBooking}
+            className="hidden bg-turbo px-4 py-2 font-heading text-[11px] tracking-[0.2em] text-white transition-colors hover:bg-ember md:inline-flex"
+          >
+            {t("nav.bookCall")}
+          </button>
           <div className="flex items-center border border-border">
             {(["KA", "EN"] as const).map((code) => (
               <button
@@ -88,6 +94,15 @@ export function SiteHeader() {
                 {t(item.key)}
               </Link>
             ))}
+            <button
+              onClick={() => {
+                setOpen(false);
+                openBooking();
+              }}
+              className="mt-4 bg-turbo px-5 py-3 text-center font-heading text-xs tracking-[0.2em] text-white"
+            >
+              {t("nav.bookCall")}
+            </button>
           </div>
         </nav>
       )}
@@ -126,17 +141,12 @@ export function SiteFooter() {
                 </Link>
               </li>
               <li>
-                <Link href="/services" className="hover:text-turbo">
-                  {t("footer.services")}
-                </Link>
-              </li>
-              <li>
                 <Link href="/showroom" className="hover:text-turbo">
                   {t("footer.showroom")}
                 </Link>
               </li>
               <li>
-                <Link href="/#contact" className="hover:text-turbo">
+                <Link href="/contact" className="hover:text-turbo">
                   {t("footer.contact")}
                 </Link>
               </li>

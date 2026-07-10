@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
+import { BookCallButton } from "@/components/Booking";
 import { PRODUCTS } from "@/lib/products";
 import { useLanguage } from "@/lib/i18n/context";
 import { stockLabel } from "@/lib/i18n/dictionary";
 
-const heroTurbo = "/images/hero-turbo.svg";
-const workshop = "/images/workshop.svg";
-const precision = "/images/precision.svg";
+const heroImg = "/images/showroom-interior-wide.jpeg";
+const workshop = "/images/showroom-counter-wall.jpeg";
 const featured = PRODUCTS.slice(0, 3);
 
 export function HomeClient() {
@@ -17,81 +17,73 @@ export function HomeClient() {
       <SiteHeader />
       <Hero />
       <Inventory />
-      <Precision />
       <Journey />
-      <UpgradeCTA />
+      <BookingCTA />
       <SiteFooter />
     </div>
   );
 }
 
-/* ---------------- HERO ---------------- */
+/* ---------------- HERO (showroom-style full-bleed) ---------------- */
 function Hero() {
   const { t } = useLanguage();
   return (
     <section className="relative border-b border-border">
-      <div className="mx-auto grid max-w-[1400px] grid-cols-1 gap-8 px-6 py-16 lg:grid-cols-[1.05fr_1fr] lg:gap-12 lg:py-24">
-        <div className="flex flex-col justify-between">
-          <div>
-            <div className="mb-8 flex items-center gap-3">
-              <span className="h-px w-10 bg-turbo" />
-              <span className="font-mono text-[11px] tracking-[0.25em] text-muted-foreground">
-                {t("home.heroKicker")}
-              </span>
-            </div>
-            <h1 className="font-display text-[clamp(3.5rem,9vw,8rem)] leading-[0.88] tracking-tight">
-              {t("home.heroLine1")}
-              <br />
-              {t("home.heroLine2")}
-              <br />
-              <span className="text-turbo">{t("home.heroLine3a")}</span>{" "}
-              {t("home.heroLine3b")}
-            </h1>
+      <div className="relative h-[78vh] min-h-[520px] w-full overflow-hidden">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={heroImg}
+          alt="GMS Turbo Georgia flagship showroom in Tbilisi"
+          width={1600}
+          height={900}
+          className="h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-background/20" />
+        <div className="absolute inset-0 mx-auto flex max-w-[1400px] flex-col justify-end px-6 pb-12">
+          <div className="mb-6 flex items-center gap-3">
+            <span className="h-px w-10 bg-turbo" />
+            <span className="font-mono text-[11px] tracking-[0.25em] text-muted-foreground">
+              {t("home.heroKicker")}
+            </span>
           </div>
-
-          <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-[auto_1fr] sm:items-end">
-            <div className="flex flex-col gap-3">
-              <a
-                href="#inventory"
-                className="inline-flex items-center justify-center bg-turbo px-7 py-4 font-heading text-sm tracking-[0.2em] text-white transition-colors hover:bg-ember"
-              >
-                {t("home.heroCta1")}
-              </a>
-              <a
-                href="#services"
-                className="inline-flex items-center justify-center border border-border px-7 py-4 font-heading text-sm tracking-[0.2em] text-foreground transition-colors hover:border-turbo hover:text-turbo"
-              >
-                {t("home.heroCta2")}
-              </a>
-            </div>
-            <p className="max-w-xs justify-self-start text-sm leading-relaxed text-muted-foreground sm:justify-self-end sm:text-right">
+          <h1 className="font-display text-[clamp(3rem,9vw,8rem)] leading-[0.86] tracking-tight">
+            {t("home.heroLine1")} {t("home.heroLine2")}
+            <br />
+            <span className="text-turbo">{t("home.heroLine3a")}</span>{" "}
+            {t("home.heroLine3b")}
+          </h1>
+          <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
+            <Link
+              href="/catalog"
+              className="inline-flex items-center justify-center bg-turbo px-7 py-4 font-heading text-sm tracking-[0.2em] text-white transition-colors hover:bg-ember"
+            >
+              {t("home.heroCtaCatalog")}
+            </Link>
+            <BookCallButton variant="outline" />
+            <p className="max-w-xs text-sm leading-relaxed text-muted-foreground sm:ml-4">
               {t("home.heroBlurb")}
             </p>
           </div>
         </div>
-
-        <div className="relative">
-          <div className="absolute -top-4 left-0 z-10 flex items-center gap-2 font-mono text-[10px] tracking-widest text-muted-foreground">
-            <span className="text-turbo">●</span> {t("home.heroLiveTag")}
-          </div>
-          <div className="relative h-full min-h-[420px] overflow-hidden bg-carbon">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={heroTurbo}
-              alt="Premium turbocharger"
-              width={1280}
-              height={1280}
-              className="h-full w-full object-cover"
-            />
-            <div className="absolute bottom-0 left-0 right-0 flex justify-between border-t border-border bg-background/90 px-5 py-3 font-mono text-[10px] tracking-widest text-muted-foreground backdrop-blur">
-              <span>MODEL / GMS-T450</span>
-              <span>BOOST / 32 PSI</span>
-              <span>HP+ / 680</span>
-            </div>
-          </div>
-        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-px bg-border md:grid-cols-4">
+        <Fact k={t("home.factEst")} v={t("home.factEstVal")} />
+        <Fact k={t("home.factRebuilt")} v={t("home.factRebuiltVal")} />
+        <Fact k={t("home.factTurnaround")} v={t("home.factTurnaroundVal")} />
+        <Fact k={t("home.factWarranty")} v={t("home.factWarrantyVal")} />
       </div>
     </section>
+  );
+}
+
+function Fact({ k, v }: { k: string; v: string }) {
+  return (
+    <div className="bg-background p-5">
+      <p className="font-mono text-[10px] tracking-widest text-muted-foreground">
+        {k}
+      </p>
+      <p className="mt-2 font-display text-lg tracking-wide">{v}</p>
+    </div>
   );
 }
 
@@ -157,89 +149,18 @@ function Inventory() {
             </Link>
           ))}
         </div>
+        <Link
+          href="/catalog"
+          className="mt-8 inline-flex font-heading text-xs tracking-[0.2em] text-turbo hover:text-ember md:hidden"
+        >
+          {t("home.inventoryViewAll")}
+        </Link>
       </div>
     </section>
   );
 }
 
-/* ---------------- PRECISION ---------------- */
-function Precision() {
-  const { t } = useLanguage();
-  return (
-    <section className="border-b border-border bg-graphite">
-      <div className="mx-auto grid max-w-[1400px] grid-cols-1 gap-10 px-6 py-20 lg:grid-cols-[1fr_1.2fr] lg:py-28">
-        <div className="flex flex-col justify-between gap-10">
-          <div>
-            <p className="mb-3 font-mono text-[11px] tracking-[0.25em] text-muted-foreground">
-              {t("home.precisionKicker")}
-            </p>
-            <h2 className="font-display text-5xl leading-[0.9] md:text-7xl">
-              {t("home.precisionTitle1")}
-              <br />
-              <span className="text-turbo">{t("home.precisionTitle2")}</span>
-            </h2>
-            <p className="mt-6 max-w-md text-sm leading-relaxed text-muted-foreground">
-              {t("home.precisionBlurb")}
-            </p>
-          </div>
-
-          <blockquote className="border-l-2 border-turbo pl-5">
-            <p className="text-sm italic leading-relaxed text-foreground/90">
-              {t("home.precisionQuote")}
-            </p>
-            <footer className="mt-3 font-mono text-[10px] tracking-widest text-muted-foreground">
-              {t("home.precisionQuoteAuthor")}
-            </footer>
-          </blockquote>
-        </div>
-
-        <div className="grid grid-cols-2 gap-px bg-border">
-          <Stat number="0.001" unit="MM" label={t("home.statBalance")} />
-          <Stat number="24H" unit="" label={t("home.statTurnaround")} />
-          <Stat number="1,400+" unit="" label={t("home.statRebuilt")} />
-          <Stat number="100%" unit="" label={t("home.statTested")} />
-          <div className="col-span-2 relative aspect-[16/8] overflow-hidden bg-background">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={precision}
-              alt="Precision rebuilding process"
-              loading="lazy"
-              width={1200}
-              height={800}
-              className="h-full w-full object-cover"
-            />
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Stat({
-  number,
-  unit,
-  label,
-}: {
-  number: string;
-  unit?: string;
-  label: string;
-}) {
-  return (
-    <div className="bg-graphite p-6">
-      <p className="font-display text-4xl text-foreground md:text-5xl">
-        {number}
-        {unit && (
-          <span className="ml-1 text-base text-muted-foreground">{unit}</span>
-        )}
-      </p>
-      <p className="mt-3 font-mono text-[10px] tracking-widest text-muted-foreground">
-        {label.toUpperCase()}
-      </p>
-    </div>
-  );
-}
-
-/* ---------------- TECHNICAL JOURNEY ---------------- */
+/* ---------------- TECHNICAL JOURNEY (working steps) ---------------- */
 const steps = [
   {
     n: "01",
@@ -289,7 +210,7 @@ const steps = [
 function Journey() {
   const { t, lang } = useLanguage();
   return (
-    <section id="services" className="relative border-b border-border">
+    <section id="process" className="relative border-b border-border">
       <div className="mx-auto max-w-[1400px] px-6 py-20">
         <div className="mb-14">
           <p className="mb-3 font-mono text-[11px] tracking-[0.25em] text-muted-foreground">
@@ -351,12 +272,12 @@ function Journey() {
             <p className="mt-6 text-sm leading-relaxed text-muted-foreground">
               {t("home.workshopBlurb")}
             </p>
-            <a
-              href="#contact"
+            <Link
+              href="/contact"
               className="mt-6 inline-flex w-fit items-center gap-3 font-heading text-xs tracking-[0.2em] text-turbo hover:text-ember"
             >
               {t("home.scheduleVisit")}
-            </a>
+            </Link>
           </div>
         </div>
       </div>
@@ -364,25 +285,34 @@ function Journey() {
   );
 }
 
-/* ---------------- UPGRADE CTA ---------------- */
-function UpgradeCTA() {
+/* ---------------- BOOKING CTA ---------------- */
+function BookingCTA() {
   const { t } = useLanguage();
   return (
-    <section id="contact" className="border-b border-border">
+    <section id="contact" className="border-b border-border bg-graphite">
       <div className="mx-auto max-w-[1400px] px-6 py-20">
         <div className="grid grid-cols-1 items-end gap-10 md:grid-cols-[1.4fr_1fr_1fr]">
           <div>
             <p className="mb-3 font-mono text-[11px] tracking-[0.25em] text-muted-foreground">
-              / 04
+              {t("home.bookKicker")}
             </p>
             <h2 className="font-display text-5xl leading-[0.95] md:text-7xl">
-              {t("home.ctaTitle1")}
+              {t("home.bookTitle1")}
               <br />
-              <span className="text-turbo">{t("home.ctaTitle2")}</span>
+              <span className="text-turbo">{t("home.bookTitle2")}</span>
             </h2>
             <p className="mt-5 max-w-md text-sm text-muted-foreground">
-              {t("home.ctaBlurb")}
+              {t("home.bookBlurb")}
             </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <BookCallButton />
+              <Link
+                href="/contact"
+                className="inline-flex items-center justify-center border border-border px-7 py-4 font-heading text-sm tracking-[0.2em] text-foreground transition-colors hover:border-turbo hover:text-turbo"
+              >
+                {t("nav.contact")}
+              </Link>
+            </div>
           </div>
           <div className="border-l border-border pl-6">
             <p className="mb-2 font-mono text-[10px] tracking-widest text-muted-foreground">

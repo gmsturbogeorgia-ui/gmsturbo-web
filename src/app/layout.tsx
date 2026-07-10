@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Bebas_Neue, Oswald, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/lib/i18n/context";
+import { BookingProvider } from "@/components/Booking";
 
 const bebas = Bebas_Neue({
   weight: "400",
@@ -96,7 +97,9 @@ export default function RootLayout({
       className={`${bebas.variable} ${oswald.variable} ${inter.variable} ${jetbrainsMono.variable}`}
     >
       <body className="bg-background text-foreground">
-        <LanguageProvider>{children}</LanguageProvider>
+        <LanguageProvider>
+          <BookingProvider>{children}</BookingProvider>
+        </LanguageProvider>
         <script
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger

@@ -20,23 +20,43 @@ export const VEHICLES = [
 export type Category = (typeof CATEGORIES)[number];
 export type Vehicle = (typeof VEHICLES)[number];
 
-// Maps each catalog category to the shared gallery-image slug used under
-// /public/images/products/{slug}-cutaway|bench|detail.svg
-const CATEGORY_IMAGE_SLUG: Record<Exclude<Category, "ALL">, string> = {
-  HYBRID: "hybrid",
-  BILLET: "billet",
-  COMPETITION: "competition",
-  "OEM REPLACEMENT": "oem",
+// Real GMS Turbo studio photography, shared per catalog category. The first
+// entry is the product's lead image; the rest populate the detail gallery.
+// Files live under /public/images/products/.
+const CATEGORY_IMAGES: Record<Exclude<Category, "ALL">, string[]> = {
+  HYBRID: [
+    "/images/products/gms-turbo-silver.jpeg",
+    "/images/products/turbo-cartridge-core.jpeg",
+    "/images/products/turbo-cartridge-kit.jpeg",
+    "/images/products/turbo-kit-boxed.jpeg",
+  ],
+  BILLET: [
+    "/images/products/gms-turbo-studio.jpeg",
+    "/images/products/turbo-cartridge-core.jpeg",
+    "/images/products/turbo-parts-display.jpeg",
+    "/images/products/turbo-kit-boxed.jpeg",
+  ],
+  COMPETITION: [
+    "/images/products/gms-turbo-studio.jpeg",
+    "/images/products/turbo-cartridge-core.jpeg",
+    "/images/products/turbo-parts-display.jpeg",
+    "/images/products/turbo-cartridge-kit.jpeg",
+  ],
+  "OEM REPLACEMENT": [
+    "/images/products/oem-vgt-diesel.jpeg",
+    "/images/products/turbo-cartridge-core.jpeg",
+    "/images/products/turbo-kit-boxed.jpeg",
+    "/images/products/turbo-box-packaging.jpeg",
+  ],
 };
 
-function galleryFor(id: string, category: Exclude<Category, "ALL">): string[] {
-  const slug = CATEGORY_IMAGE_SLUG[category];
-  return [
-    `/images/products/${id}-main.svg`,
-    `/images/products/${slug}-cutaway.svg`,
-    `/images/products/${slug}-bench.svg`,
-    `/images/products/${slug}-detail.svg`,
-  ];
+// The lead photo for a category (also used as each product's card image).
+export function mainImageFor(category: Exclude<Category, "ALL">): string {
+  return CATEGORY_IMAGES[category][0];
+}
+
+function galleryFor(category: Exclude<Category, "ALL">): string[] {
+  return CATEGORY_IMAGES[category];
 }
 
 export type Product = {
@@ -89,8 +109,8 @@ export const PRODUCTS: Product[] = [
     boost: 28,
     hp: 480,
     price: 1850,
-    img: "/images/products/t450-main.svg",
-    gallery: galleryFor("t450", "HYBRID"),
+    img: mainImageFor("HYBRID"),
+    gallery: galleryFor("HYBRID"),
     stock: "IN STOCK",
     tagline: "Street-legal hybrid built on a reinforced OEM core.",
     taglineKa: "ქუჩისთვის ლეგალური ჰიბრიდი, აგებული გამაგრებულ OEM ბირთვზე.",
@@ -132,8 +152,8 @@ export const PRODUCTS: Product[] = [
     boost: 34,
     hp: 680,
     price: 3200,
-    img: "/images/products/r6x-main.svg",
-    gallery: galleryFor("r6x", "BILLET"),
+    img: mainImageFor("BILLET"),
+    gallery: galleryFor("BILLET"),
     stock: "LOW STOCK",
     tagline:
       "Full billet construction. Built for the dyno, tuned for the street.",
@@ -177,8 +197,8 @@ export const PRODUCTS: Product[] = [
     boost: 42,
     hp: 920,
     price: 4495,
-    img: "/images/products/kit89-main.svg",
-    gallery: galleryFor("kit89", "COMPETITION"),
+    img: mainImageFor("COMPETITION"),
+    gallery: galleryFor("COMPETITION"),
     stock: "MADE TO ORDER",
     tagline: "Time-attack spec. No compromises.",
     taglineKa: "თაიმ-ატაკის სპეციფიკაცია. კომპრომისების გარეშე.",
@@ -220,8 +240,8 @@ export const PRODUCTS: Product[] = [
     boost: 18,
     hp: 280,
     price: 980,
-    img: "/images/products/oem320-main.svg",
-    gallery: galleryFor("oem320", "OEM REPLACEMENT"),
+    img: mainImageFor("OEM REPLACEMENT"),
+    gallery: galleryFor("OEM REPLACEMENT"),
     stock: "IN STOCK",
     tagline: "OE-spec replacement, built right the first time.",
     taglineKa: "OE-სპეც ჩანაცვლება, სწორად აწყობილი პირველივე ჯერზე.",
@@ -269,8 +289,8 @@ export const PRODUCTS: Product[] = [
     boost: 36,
     hp: 720,
     price: 3650,
-    img: "/images/products/tdx-main.svg",
-    gallery: galleryFor("tdx", "BILLET"),
+    img: mainImageFor("BILLET"),
+    gallery: galleryFor("BILLET"),
     stock: "IN STOCK",
     tagline: "JDM legend, billet-grade rebuild.",
     taglineKa: "JDM ლეგენდა, ბილეტის დონის აღდგენა.",
@@ -312,8 +332,8 @@ export const PRODUCTS: Product[] = [
     boost: 26,
     hp: 410,
     price: 1620,
-    img: "/images/products/hyb220-main.svg",
-    gallery: galleryFor("hyb220", "HYBRID"),
+    img: mainImageFor("HYBRID"),
+    gallery: galleryFor("HYBRID"),
     stock: "IN STOCK",
     tagline: "Plug-and-play Stage 2 upgrade for EA888.",
     taglineKa: "ჩართე და გამოიყენე — Stage 2 განახლება EA888-სთვის.",
@@ -355,8 +375,8 @@ export const PRODUCTS: Product[] = [
     boost: 38,
     hp: 820,
     price: 5200,
-    img: "/images/products/race9-main.svg",
-    gallery: galleryFor("race9", "COMPETITION"),
+    img: mainImageFor("COMPETITION"),
+    gallery: galleryFor("COMPETITION"),
     stock: "MADE TO ORDER",
     tagline: "Twin-scroll architecture. Built for circuit work.",
     taglineKa: "ორმაგი სპირალის არქიტექტურა. აგებული ტრასისთვის.",
@@ -398,8 +418,8 @@ export const PRODUCTS: Product[] = [
     boost: 16,
     hp: 240,
     price: 760,
-    img: "/images/products/oem180-main.svg",
-    gallery: galleryFor("oem180", "OEM REPLACEMENT"),
+    img: mainImageFor("OEM REPLACEMENT"),
+    gallery: galleryFor("OEM REPLACEMENT"),
     stock: "IN STOCK",
     tagline: "Reliable OE-spec replacement for daily duty.",
     taglineKa: "საიმედო OE-სპეც ჩანაცვლება ყოველდღიური სამსახურისთვის.",
@@ -447,8 +467,8 @@ export const PRODUCTS: Product[] = [
     boost: 32,
     hp: 600,
     price: 2890,
-    img: "/images/products/bx500-main.svg",
-    gallery: galleryFor("bx500", "BILLET"),
+    img: mainImageFor("BILLET"),
+    gallery: galleryFor("BILLET"),
     stock: "IN STOCK",
     tagline: "Daily-driver billet upgrade with serious headroom.",
     taglineKa: "ყოველდღიური სამართავად ბილეტის განახლება სერიოზული პოტენციალით.",
