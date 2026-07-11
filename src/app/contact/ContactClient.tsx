@@ -15,12 +15,9 @@ export function ContactClient() {
       {/* Header */}
       <section className="border-b border-border">
         <div className="mx-auto max-w-[1400px] px-6 py-16 lg:py-24">
-          <div className="mb-8 flex items-center gap-3">
-            <span className="h-px w-10 bg-turbo" />
-            <span className="font-mono text-[11px] tracking-[0.25em] text-muted-foreground">
-              {t("contact.tag")}
-            </span>
-          </div>
+          <p className="mb-8 font-mono text-[11px] tracking-[0.25em] text-muted-foreground">
+            {t("contact.tag")}
+          </p>
           <h1 className="font-display text-[clamp(3rem,9vw,8rem)] leading-[0.86] tracking-tight">
             {t("contact.title1")}
             <br />

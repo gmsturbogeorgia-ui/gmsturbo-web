@@ -40,12 +40,9 @@ function Hero() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-background/20" />
         <div className="absolute inset-0 mx-auto flex max-w-[1400px] flex-col justify-end px-6 pb-12">
-          <div className="mb-6 flex items-center gap-3">
-            <span className="h-px w-10 bg-turbo" />
-            <span className="font-mono text-[11px] tracking-[0.25em] text-muted-foreground">
-              {t("home.heroKicker")}
-            </span>
-          </div>
+          <p className="mb-6 font-mono text-[11px] tracking-[0.25em] text-muted-foreground">
+            {t("home.heroKicker")}
+          </p>
           <h1 className="font-display text-[clamp(3rem,9vw,8rem)] leading-[0.86] tracking-tight">
             {t("home.heroLine1")} {t("home.heroLine2")}
             <br />

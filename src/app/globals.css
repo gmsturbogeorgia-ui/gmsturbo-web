@@ -33,10 +33,15 @@
   --color-carbon: var(--carbon);
   --color-steel: var(--steel);
 
-  --font-display: var(--font-bebas), var(--font-oswald), sans-serif;
-  --font-heading: var(--font-oswald), var(--font-bebas), sans-serif;
-  --font-sans: var(--font-inter), system-ui, sans-serif;
-  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+  /* Georgian (Mkhedruli) glyphs aren't in any of the Latin faces above, so
+     --font-georgian is listed as a fallback in every stack: the browser
+     renders Latin/digits in the primary face and Georgian text in Noto Sans
+     Georgian automatically, per-character, with no JS/lang switching. */
+  --font-display: var(--font-anton), var(--font-georgian), sans-serif;
+  --font-heading: var(--font-oswald), var(--font-georgian), sans-serif;
+  --font-sans: var(--font-inter), var(--font-georgian), system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), var(--font-georgian), ui-monospace,
+    monospace;
 }
 
 :root {
@@ -100,13 +105,4 @@
 
 @utility hairline {
   border-top: 1px solid var(--color-border);
-}
-
-@utility grid-noise {
-  background-image: radial-gradient(
-    circle at 1px 1px,
-    rgba(255, 255, 255, 0.04) 1px,
-    transparent 0
-  );
-  background-size: 32px 32px;
 }

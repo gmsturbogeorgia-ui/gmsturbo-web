@@ -36,6 +36,13 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     if (stored === "EN" || stored === "KA") setLangState(stored);
   }, []);
 
+  // Keep <html lang="..."> in sync with the toggle. Needed for a11y/SEO, and
+  // it also gives CSS a :lang(ka) hook to target Georgian (Kartuli) text —
+  // e.g. bumping heading weight so it matches the Latin display font's punch.
+  useEffect(() => {
+    document.documentElement.lang = lang === "KA" ? "ka" : "en";
+  }, [lang]);
+
   const setLang = (l: Lang) => {
     setLangState(l);
     try {

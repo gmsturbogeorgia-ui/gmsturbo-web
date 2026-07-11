@@ -1,13 +1,37 @@
 import type { Metadata, Viewport } from "next";
-import { Bebas_Neue, Oswald, Inter, JetBrains_Mono } from "next/font/google";
+import {
+  Anton,
+  Noto_Sans_Georgian,
+  Oswald,
+  Inter,
+  JetBrains_Mono,
+} from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/lib/i18n/context";
 import { BookingProvider } from "@/components/Booking";
 
-const bebas = Bebas_Neue({
+// Anton — a bold, ultra-condensed Google Font built for big poster-style
+// headlines. Replaces the generic Bebas Neue as the site's headline face;
+// same tall, high-impact role, but a distinct, more deliberate shape for an
+// "industrial precision" turbo-engineering brand. Anton only ships one
+// static weight (400), which is by design for this kind of display face.
+const anton = Anton({
   weight: "400",
   subsets: ["latin"],
-  variable: "--font-bebas",
+  variable: "--font-anton",
+  display: "swap",
+});
+
+// Noto Sans Georgian — Anton, Oswald, Inter and JetBrains Mono only cover
+// Latin glyphs, so Georgian (Mkhedruli) text was silently falling back to
+// whatever generic sans the OS ships. Listed as the fallback in every font
+// stack below, so any Georgian character renders in this font automatically
+// (per Unicode-range coverage) while Latin/digits/codes keep using the
+// primary faces.
+const notoGeorgian = Noto_Sans_Georgian({
+  weight: ["400", "500", "600", "700", "800"],
+  subsets: ["georgian"],
+  variable: "--font-georgian",
   display: "swap",
 });
 
@@ -94,7 +118,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${bebas.variable} ${oswald.variable} ${inter.variable} ${jetbrainsMono.variable}`}
+      className={`${anton.variable} ${notoGeorgian.variable} ${oswald.variable} ${inter.variable} ${jetbrainsMono.variable}`}
     >
       <body className="bg-background text-foreground">
         <LanguageProvider>

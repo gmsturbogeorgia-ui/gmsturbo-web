@@ -278,18 +278,8 @@ export function CatalogClient() {
       <section className="border-b border-border">
         <div className="mx-auto max-w-[1400px] px-6 py-12">
           {filtered.length === 0 ? (
-            <div className="relative border border-dashed border-border/60 bg-gradient-to-b from-graphite/10 to-transparent py-16 md:py-24">
-              <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:24px_24px] opacity-5" />
-
-              <div className="relative z-10 mx-auto max-w-2xl px-6 text-center">
-                <div className="relative mx-auto mb-8 flex h-20 w-20 items-center justify-center border border-border bg-background/50 backdrop-blur-sm">
-                  <div className="absolute -left-1 -right-1 h-px bg-turbo/40" />
-                  <div className="absolute -top-1 -bottom-1 w-px bg-turbo/40" />
-                  <span className="font-mono text-xs font-bold tracking-widest text-turbo">
-                    0.00%
-                  </span>
-                </div>
-
+            <div className="border border-dashed border-border/60 py-16 md:py-24">
+              <div className="mx-auto max-w-2xl px-6 text-center">
                 <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-turbo">
                   {t("catalog.noResultsKicker")}
                 </p>
