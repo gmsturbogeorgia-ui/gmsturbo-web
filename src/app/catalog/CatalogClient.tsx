@@ -6,7 +6,6 @@ import { useMemo, useState } from "react";
 import {
   CATEGORIES,
   VEHICLES,
-  PRODUCTS,
   type Category,
   type Vehicle,
   type Product,
@@ -56,7 +55,7 @@ function parseSort(v: string | null): Sort {
     : "FEATURED";
 }
 
-export function CatalogClient() {
+export function CatalogClient({ products }: { products: Product[] }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { t, lang } = useLanguage();
@@ -69,7 +68,7 @@ export function CatalogClient() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   const filtered = useMemo(() => {
-    const base = PRODUCTS.filter(
+    const base = products.filter(
       (p) =>
         (category === "ALL" || p.category === category) &&
         (vehicle === "ALL" ||
@@ -82,7 +81,7 @@ export function CatalogClient() {
       list = [...list].sort((a, b) => b.price - a.price);
     if (sort === "BOOST") list = [...list].sort((a, b) => b.boost - a.boost);
     return list;
-  }, [q, category, vehicle, sort]);
+  }, [products, q, category, vehicle, sort]);
 
   const update = (
     patch: Partial<{

@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getProductById, PRODUCTS, type Product } from "@/lib/products";
+import type { Product } from "@/lib/products";
+import { getProductById } from "@/lib/getProducts";
 import { ProductDetailClient } from "./ProductDetailClient";
 
-type Params = { productId: string };
+// Read each product from the Payload/Postgres DB on each request.
+export const dynamic = "force-dynamic";
 
-export function generateStaticParams(): Params[] {
-  return PRODUCTS.map((p) => ({ productId: p.id }));
-}
+type Params = { productId: string };
 
 export async function generateMetadata({
   params,
@@ -15,7 +15,7 @@ export async function generateMetadata({
   params: Promise<Params>;
 }): Promise<Metadata> {
   const { productId } = await params;
-  const p = getProductById(productId);
+  const p = await getProductById(productId);
   if (!p) return { title: "Product not found" };
 
   return {
@@ -102,7 +102,7 @@ export default async function ProductDetailPage({
   params: Promise<Params>;
 }) {
   const { productId } = await params;
-  const product = getProductById(productId);
+  const product = await getProductById(productId);
   if (!product) notFound();
 
   return (

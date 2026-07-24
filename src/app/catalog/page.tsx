@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { PRODUCTS } from "@/lib/products";
+import { getProducts } from "@/lib/getProducts";
 import { CatalogClient } from "./CatalogClient";
+
+// Read the catalog from the Payload/Postgres DB on each request.
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Turbocharger Catalog",
@@ -22,32 +25,34 @@ export const metadata: Metadata = {
   },
 };
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "CollectionPage",
-  name: "Turbocharger Catalog",
-  url: "/catalog",
-  about: "Premium turbochargers — hybrid, billet, OEM, competition.",
-  numberOfItems: PRODUCTS.length,
-  breadcrumb: {
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "/" },
-      { "@type": "ListItem", position: 2, name: "Catalog", item: "/catalog" },
-    ],
-  },
-  hasPart: {
-    "@type": "ItemList",
-    itemListElement: PRODUCTS.map((p, i) => ({
-      "@type": "ListItem",
-      position: i + 1,
-      url: `/catalog/${p.id}`,
-      name: p.name,
-    })),
-  },
-};
+export default async function CatalogPage() {
+  const products = await getProducts();
 
-export default function CatalogPage() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Turbocharger Catalog",
+    url: "/catalog",
+    about: "Premium turbochargers — hybrid, billet, OEM, competition.",
+    numberOfItems: products.length,
+    breadcrumb: {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: "/" },
+        { "@type": "ListItem", position: 2, name: "Catalog", item: "/catalog" },
+      ],
+    },
+    hasPart: {
+      "@type": "ItemList",
+      itemListElement: products.map((p, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        url: `/catalog/${p.id}`,
+        name: p.name,
+      })),
+    },
+  };
+
   return (
     <>
       <script
@@ -55,7 +60,7 @@ export default function CatalogPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <Suspense fallback={null}>
-        <CatalogClient />
+        <CatalogClient products={products} />
       </Suspense>
     </>
   );
