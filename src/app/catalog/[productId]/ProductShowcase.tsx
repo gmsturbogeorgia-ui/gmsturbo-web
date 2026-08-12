@@ -1,132 +1,248 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { Product } from "@/lib/products";
 import { useLanguage } from "@/lib/i18n/context";
-import { stockLabel } from "@/lib/i18n/dictionary";
+import { categoryLabel, stockLabel } from "@/lib/i18n/dictionary";
+import { ButtonAnchor, Tag } from "@/components/Primitives";
+import { cn } from "@/lib/utils";
 
 export function ProductShowcase({ product }: { product: Product }) {
   const { t, lang } = useLanguage();
   const [active, setActive] = useState(0);
-  const stockColor =
-    product.stock === "IN STOCK"
-      ? "text-foreground"
-      : product.stock === "LOW STOCK"
-        ? "text-ember"
-        : "text-muted-foreground";
+
+  // `gallery` is optional in the CMS — a product added through the admin
+  // without gallery rows arrives here as []. The old code read
+  // gallery[active] straight out, which rendered <img> with NO src at all,
+  // i.e. a blank hero image on every such product page. `img` is required,
+  // so it's the guaranteed fallback.
+  const images = product.gallery.length > 0 ? product.gallery : [product.img];
+  // Guard the index too, in case the list shrinks under a stale selection.
+  const current = images[Math.min(active, images.length - 1)];
+
+  const warrantyMonths =
+    product.specs.find((s) => s.label === "Warranty")?.value.split(" ")[0] ??
+    "12";
 
   return (
-    <section className="border-b border-border">
-      <div className="mx-auto grid max-w-[1400px] grid-cols-1 gap-px bg-border lg:grid-cols-[1.15fr_1fr]">
-        <div className="bg-background">
-          <div className="relative aspect-[4/5] overflow-hidden bg-graphite lg:aspect-auto lg:h-full lg:min-h-[640px]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={product.gallery[active]}
-              alt={product.name}
-              width={1200}
-              height={1500}
-              className="h-full w-full object-cover"
-            />
-            <span className="absolute left-5 top-5 bg-turbo px-3 py-1.5 font-mono text-[10px] tracking-widest text-white">
-              {product.code}
-            </span>
-            <span
-              className={`absolute right-5 top-5 border border-border bg-background/80 px-3 py-1.5 font-mono text-[10px] tracking-widest backdrop-blur ${stockColor}`}
-            >
-              {stockLabel(product.stock, lang)}
-            </span>
-            <div className="absolute bottom-0 left-0 right-0 grid grid-cols-4 gap-px border-t border-border bg-border">
-              {product.gallery.map((src, i) => (
-                <button
-                  key={i}
-                  onClick={() => setActive(i)}
-                  className={`aspect-square overflow-hidden bg-background ${
-                    active === i ? "ring-2 ring-inset ring-turbo" : ""
-                  }`}
-                  aria-label={`View image ${i + 1}`}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={src}
-                    alt=""
-                    loading="lazy"
-                    className="h-full w-full object-cover opacity-80 transition-opacity hover:opacity-100"
-                  />
-                </button>
-              ))}
-            </div>
-          </div>
+    <section className="shell grid gap-10 pb-16 pt-6 lg:grid-cols-[1.05fr_1fr] lg:gap-16 lg:pt-10">
+      {/* Gallery — image, then a thumbnail rail underneath. The old version
+          floated the thumbnails on top of the photo, covering the product. */}
+      <div>
+        <div className="overflow-hidden rounded-3xl bg-graphite">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={current}
+            alt={product.name}
+            width={1200}
+            height={1200}
+            fetchPriority="high"
+            className="aspect-square w-full object-cover"
+          />
         </div>
 
-        <div className="flex flex-col justify-between bg-background p-8 lg:p-12">
-          <div>
-            <p className="mb-4 font-mono text-[11px] tracking-[0.25em] text-muted-foreground">
-              / {product.category}
-            </p>
-            <h1 className="font-display text-5xl leading-[0.95] tracking-tight md:text-6xl">
-              {product.name}
-            </h1>
-            <p className="mt-5 text-base leading-relaxed text-foreground/90">
-              {lang === "KA" ? product.taglineKa : product.tagline}
-            </p>
-            <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-              {lang === "KA" ? product.descriptionKa : product.description}
-            </p>
+        {images.length > 1 && (
+          <ThumbnailRail
+            images={images}
+            active={active}
+            onSelect={setActive}
+          />
+        )}
+      </div>
 
-            <div className="mt-8 grid grid-cols-3 gap-px bg-border">
-              <HeadlineStat
-                label={t("product.maxBoost")}
-                value={`${product.boost}`}
-                unit="PSI"
-              />
-              <HeadlineStat
-                label={t("product.hpPotential")}
-                value={`${product.hp}`}
-                unit="HP"
-              />
-              <HeadlineStat
-                label={t("product.warranty")}
-                value={
-                  product.specs
-                    .find((s) => s.label === "Warranty")
-                    ?.value.split(" ")[0] ?? "12"
-                }
-                unit="MO"
-              />
-            </div>
-          </div>
+      {/* Buy column */}
+      <div className="lg:pt-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <Tag tone="neutral">{categoryLabel(product.category, lang)}</Tag>
+          <Tag tone={product.stock === "IN STOCK" ? "neutral" : "turbo"}>
+            {stockLabel(product.stock, lang)}
+          </Tag>
+          <span className="text-sm text-ink-mute">{product.code}</span>
+        </div>
 
-          <div className="mt-10 border-t border-border pt-6">
-            <div className="flex items-end justify-between gap-6">
-              <div>
-                <p className="font-mono text-[10px] tracking-widest text-muted-foreground">
-                  {t("product.priceFrom")}
-                </p>
-                <p className="mt-1 font-display text-5xl text-turbo">
-                  {product.price.toLocaleString()}
-                  <span className="ml-2 text-xl text-foreground">GEL</span>
-                </p>
-              </div>
-            </div>
-            <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto]">
-              <a
-                href="#quote"
-                className="inline-flex items-center justify-center bg-turbo px-7 py-4 font-heading text-sm tracking-[0.2em] text-white hover:bg-ember"
-              >
-                {t("product.requestQuote")}
-              </a>
-              <a
-                href="tel:+995322990000"
-                className="inline-flex items-center justify-center border border-border px-7 py-4 font-heading text-sm tracking-[0.2em] hover:border-turbo hover:text-turbo"
-              >
-                {t("product.callWorkshop")}
-              </a>
-            </div>
-          </div>
+        <h1 className="mt-5 text-[clamp(2rem,4.5vw,3.25rem)] font-bold">
+          {product.name}
+        </h1>
+
+        <p className="mt-5 text-[1.0625rem] leading-relaxed text-ink">
+          {lang === "KA" ? product.taglineKa : product.tagline}
+        </p>
+        <p className="mt-4 text-[0.9375rem] leading-relaxed text-ink-soft">
+          {lang === "KA" ? product.descriptionKa : product.description}
+        </p>
+
+        {/* Headline figures. Three numbers on the page, spaced — not three
+            cells of a bordered table. */}
+        <dl className="mt-9 flex flex-wrap gap-x-12 gap-y-6">
+          <HeadlineStat
+            label={t("product.maxBoost")}
+            value={String(product.boost)}
+            unit="PSI"
+          />
+          <HeadlineStat
+            label={t("product.hpPotential")}
+            value={String(product.hp)}
+            unit="HP"
+          />
+          <HeadlineStat
+            label={t("product.warranty")}
+            value={warrantyMonths}
+            unit={lang === "KA" ? "თვე" : "mo"}
+          />
+        </dl>
+
+        <div className="mt-10">
+          <p className="text-sm text-ink-mute">{t("product.priceFrom")}</p>
+          <p className="tnum mt-1 font-display text-[2.75rem] font-bold leading-none text-ink">
+            {product.price.toLocaleString()}
+            <span className="ml-2 text-xl font-semibold text-ink-mute">
+              GEL
+            </span>
+          </p>
+        </div>
+
+        <div className="mt-8 flex flex-wrap gap-3">
+          <ButtonAnchor href="#quote">
+            {t("product.requestQuote")}
+          </ButtonAnchor>
+          <ButtonAnchor href="tel:+995322990000" variant="secondary">
+            {t("product.callWorkshop")}
+          </ButtonAnchor>
         </div>
       </div>
     </section>
+  );
+}
+
+/**
+ * Horizontally scrollable thumbnail rail.
+ *
+ * Four 80px thumbs plus gaps overflow a 360px phone, so this scrolls rather
+ * than squashing or wrapping. The native scrollbar is hidden — but only
+ * because three other affordances replace it: scroll-snap, edge fades that
+ * appear exactly when there is more content in that direction, and arrow-key
+ * navigation. Hiding a scrollbar with nothing in its place would just make
+ * the extra images invisible.
+ */
+function ThumbnailRail({
+  images,
+  active,
+  onSelect,
+}: {
+  images: readonly string[];
+  active: number;
+  onSelect: (index: number) => void;
+}) {
+  const railRef = useRef<HTMLDivElement>(null);
+  const [edges, setEdges] = useState({ left: false, right: false });
+
+  const syncEdges = useCallback(() => {
+    const el = railRef.current;
+    if (!el) return;
+    setEdges({
+      left: el.scrollLeft > 4,
+      right: el.scrollLeft + el.clientWidth < el.scrollWidth - 4,
+    });
+  }, []);
+
+  useEffect(() => {
+    const el = railRef.current;
+    if (!el) return;
+    syncEdges();
+    el.addEventListener("scroll", syncEdges, { passive: true });
+    // The rail can become scrollable purely from a viewport resize, with no
+    // scroll event to tell us about it.
+    const ro = new ResizeObserver(syncEdges);
+    ro.observe(el);
+    return () => {
+      el.removeEventListener("scroll", syncEdges);
+      ro.disconnect();
+    };
+  }, [syncEdges]);
+
+  // Keep the selected thumb in view. Deliberately scrollTo on the rail
+  // rather than scrollIntoView — the latter also scrolls the page
+  // vertically, which yanks the product image off screen.
+  useEffect(() => {
+    const el = railRef.current;
+    const child = el?.children[active] as HTMLElement | undefined;
+    if (!el || !child) return;
+    el.scrollTo({
+      left: child.offsetLeft - (el.clientWidth - child.clientWidth) / 2,
+      behavior: "smooth",
+    });
+  }, [active]);
+
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    let next: number | null = null;
+    if (e.key === "ArrowRight") next = (active + 1) % images.length;
+    else if (e.key === "ArrowLeft")
+      next = (active - 1 + images.length) % images.length;
+    else if (e.key === "Home") next = 0;
+    else if (e.key === "End") next = images.length - 1;
+    if (next !== null) {
+      e.preventDefault();
+      onSelect(next);
+      (railRef.current?.children[next] as HTMLElement | undefined)?.focus();
+    }
+  };
+
+  return (
+    <div className="relative mt-3">
+      <div
+        ref={railRef}
+        role="group"
+        aria-label="Product images"
+        onKeyDown={onKeyDown}
+        className="no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth"
+      >
+        {images.map((src, i) => (
+          <button
+            key={src + i}
+            onClick={() => onSelect(i)}
+            aria-label={`View image ${i + 1} of ${images.length}`}
+            aria-current={active === i}
+            className={cn(
+              "relative h-16 w-16 shrink-0 snap-start overflow-hidden rounded-xl bg-graphite",
+              "transition-opacity duration-300 sm:h-20 sm:w-20",
+              active === i ? "opacity-100" : "opacity-45 hover:opacity-80",
+            )}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={src}
+              alt=""
+              loading="lazy"
+              className="h-full w-full object-cover"
+            />
+            {active === i && (
+              <span
+                aria-hidden
+                className="absolute inset-x-2 bottom-1.5 h-0.5 rounded-full bg-turbo"
+              />
+            )}
+          </button>
+        ))}
+      </div>
+
+      {/* Edge fades — the "there is more this way" cue that replaces the
+          hidden scrollbar. Each shows only when that side can actually
+          scroll, so they never lie. */}
+      <div
+        aria-hidden
+        className={cn(
+          "pointer-events-none absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-base to-transparent transition-opacity duration-300",
+          edges.left ? "opacity-100" : "opacity-0",
+        )}
+      />
+      <div
+        aria-hidden
+        className={cn(
+          "pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-base to-transparent transition-opacity duration-300",
+          edges.right ? "opacity-100" : "opacity-0",
+        )}
+      />
+    </div>
   );
 }
 
@@ -140,14 +256,14 @@ function HeadlineStat({
   unit: string;
 }) {
   return (
-    <div className="bg-background p-4">
-      <p className="font-mono text-[9px] tracking-widest text-muted-foreground">
-        {label}
-      </p>
-      <p className="mt-2 font-display text-3xl leading-none">
+    <div>
+      <dt className="text-sm text-ink-mute">{label}</dt>
+      <dd className="tnum mt-1.5 font-display text-3xl font-semibold leading-none text-ink">
         {value}
-        <span className="ml-1 text-sm text-muted-foreground">{unit}</span>
-      </p>
+        <span className="ml-1.5 text-base font-medium text-ink-mute">
+          {unit}
+        </span>
+      </dd>
     </div>
   );
 }

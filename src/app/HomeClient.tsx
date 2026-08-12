@@ -1,280 +1,309 @@
 "use client";
 
-import Link from "next/link";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { BookCallButton } from "@/components/Booking";
+import { ProductCard, ProductGrid } from "@/components/ProductCard";
+import {
+  ButtonLink,
+  FlameEdge,
+  SectionHead,
+  Stat,
+  TextLink,
+  TireTrack,
+} from "@/components/Primitives";
 import { PRODUCTS } from "@/lib/products";
 import { useLanguage } from "@/lib/i18n/context";
-import { stockLabel } from "@/lib/i18n/dictionary";
 
-const heroImg = "/images/showroom-interior-wide.jpeg";
-const workshop = "/images/showroom-counter-wall.jpeg";
-const featured = PRODUCTS.slice(0, 3);
+// The hero holds the showroom-interior shot, so the workshop block takes a
+// different one — no photo should appear twice on the same page.
+const workshopImg = "/images/warehouse-stock.jpeg";
+const featured = PRODUCTS.slice(0, 4);
 
 export function HomeClient() {
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <SiteHeader />
-      <Hero />
-      <Inventory />
-      <Journey />
-      <BookingCTA />
+    <>
+      <SiteHeader overlay />
+      <main>
+        <Hero />
+        <TrustStrip />
+        <Inventory />
+        <Process />
+        <Workshop />
+        {/* Standalone skid as the lead-in to the booking block. Louder than
+            the one inside Process, since here it is the moment. */}
+        <TireTrack className="my-4 h-14 opacity-[0.22] md:my-8 md:h-20" />
+        <BookingCTA />
+      </main>
       <SiteFooter />
-    </div>
+    </>
   );
 }
 
-/* ---------------- HERO (showroom-style full-bleed) ---------------- */
+/* ---------------------------------------------------------------- HERO ----
+   Cinematic full-bleed photograph with the copy sitting on it — that's the
+   part worth borrowing.
+
+   The composition is deliberately ours, not the reference's: copy is
+   anchored to the BOTTOM-left and the scrim runs bottom-up rather than
+   left-across, so the image is at its most open where the showroom's neon
+   and walnut actually are, and the hero dissolves into the stats band below
+   instead of stopping at a hard edge.
+
+   No slider: one photograph, held. A single strong image with room to
+   breathe says more than four rotating past.
+   -------------------------------------------------------------------------- */
+const heroImg = "/images/showroom-interior-wide.jpeg";
+
 function Hero() {
   const { t } = useLanguage();
-  return (
-    <section className="relative border-b border-border">
-      <div className="relative h-[78vh] min-h-[520px] w-full overflow-hidden">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={heroImg}
-          alt="GMS Turbo Georgia flagship showroom in Tbilisi"
-          width={1600}
-          height={900}
-          className="h-full w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-background/20" />
-        <div className="absolute inset-0 mx-auto flex max-w-[1400px] flex-col justify-end px-6 pb-12">
-          <p className="mb-6 font-mono text-[11px] tracking-[0.25em] text-muted-foreground">
-            {t("home.heroKicker")}
-          </p>
-          <h1 className="font-display text-[clamp(3rem,9vw,8rem)] leading-[0.86] tracking-tight">
-            {t("home.heroLine1")} {t("home.heroLine2")}
-            <br />
-            <span className="text-turbo">{t("home.heroLine3a")}</span>{" "}
-            {t("home.heroLine3b")}
-          </h1>
-          <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
-            <Link
-              href="/catalog"
-              className="inline-flex items-center justify-center bg-turbo px-7 py-4 font-heading text-sm tracking-[0.2em] text-white transition-colors hover:bg-ember"
-            >
-              {t("home.heroCtaCatalog")}
-            </Link>
-            <BookCallButton variant="outline" />
-            <p className="max-w-xs text-sm leading-relaxed text-muted-foreground sm:ml-4">
-              {t("home.heroBlurb")}
-            </p>
-          </div>
-        </div>
-      </div>
-      <div className="grid grid-cols-2 gap-px bg-border md:grid-cols-4">
-        <Fact k={t("home.factEst")} v={t("home.factEstVal")} />
-        <Fact k={t("home.factRebuilt")} v={t("home.factRebuiltVal")} />
-        <Fact k={t("home.factTurnaround")} v={t("home.factTurnaroundVal")} />
-        <Fact k={t("home.factWarranty")} v={t("home.factWarrantyVal")} />
-      </div>
-    </section>
-  );
-}
 
-function Fact({ k, v }: { k: string; v: string }) {
   return (
-    <div className="bg-background p-5">
-      <p className="font-mono text-[10px] tracking-widest text-muted-foreground">
-        {k}
-      </p>
-      <p className="mt-2 font-display text-lg tracking-wide">{v}</p>
-    </div>
-  );
-}
+    <section
+      // -mt-18 pulls the section up under the sticky 4.5rem header so the
+      // photograph runs behind it; the content adds the height back as
+      // padding so nothing sits underneath the nav.
+      className="relative -mt-18 flex h-[92svh] min-h-[620px] w-full items-center overflow-hidden"
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={heroImg}
+        alt="The GMS Turbo Georgia showroom floor in Tbilisi"
+        width={1600}
+        height={1000}
+        fetchPriority="high"
+        className="hero-zoom absolute inset-0 h-full w-full object-cover"
+      />
 
-/* ---------------- INVENTORY ---------------- */
-function Inventory() {
-  const { t, lang } = useLanguage();
-  return (
-    <section id="inventory" className="border-b border-border">
-      <div className="mx-auto max-w-[1400px] px-6 py-20">
-        <div className="mb-12 flex items-end justify-between">
-          <div>
-            <p className="mb-3 font-mono text-[11px] tracking-[0.25em] text-muted-foreground">
-              / 01
-            </p>
-            <h2 className="font-display text-5xl tracking-wide md:text-6xl">
-              {t("home.inventoryTitle")}
-            </h2>
-          </div>
-          <Link
-            href="/catalog"
-            className="hidden font-heading text-xs tracking-[0.2em] text-turbo hover:text-ember md:inline-flex"
-          >
-            {t("home.inventoryViewAll")}
-          </Link>
-        </div>
+      {/* Scrim, bottom-weighted. `via-base/45` at the midpoint keeps the copy
+          legible over the bright neon sign without flattening the ceiling. */}
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-gradient-to-t from-base via-base/45 to-base/35"
+      />
+      {/* A little extra hold under the copy column only. */}
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-gradient-to-r from-base/70 via-transparent to-transparent"
+      />
 
-        <div className="grid grid-cols-1 gap-px bg-border md:grid-cols-3">
-          {featured.map((p, i) => (
-            <Link
-              key={p.id}
-              href={`/catalog/${p.id}`}
-              className="group relative block bg-background transition-colors hover:bg-carbon"
-            >
-              <div className="relative aspect-[4/5] overflow-hidden bg-graphite">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={p.img}
-                  alt={p.name}
-                  loading="lazy"
-                  width={800}
-                  height={1000}
-                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <span className="absolute left-4 top-4 bg-turbo px-2.5 py-1 font-mono text-[10px] tracking-widest text-white">
-                  0{i + 1}
-                </span>
-              </div>
-              <div className="flex items-center justify-between border-t border-border px-5 py-5">
-                <div>
-                  <p className="mb-1 font-mono text-[10px] tracking-widest text-muted-foreground">
-                    {stockLabel(p.stock, lang)}
-                  </p>
-                  <h3 className="font-display text-xl tracking-wide">
-                    {p.name}
-                  </h3>
-                </div>
-                <div className="text-right">
-                  <p className="font-display text-2xl text-turbo">
-                    {p.price.toLocaleString()} GEL
-                  </p>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-        <Link
-          href="/catalog"
-          className="mt-8 inline-flex font-heading text-xs tracking-[0.2em] text-turbo hover:text-ember md:hidden"
+      {/* pt-18 is inside the centred box on purpose: it offsets the overlaid
+          header's 4.5rem, so the copy lands optically centred in the visible
+          area rather than in the raw section box. */}
+      <div className="shell relative w-full pt-18">
+        <p className="rise inline-flex items-center gap-2.5 rounded-full bg-ink/10 py-1.5 pl-2.5 pr-4 text-xs font-semibold text-ink backdrop-blur-md">
+          <span className="relative flex h-2 w-2 shrink-0">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-turbo opacity-60" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-turbo" />
+          </span>
+          {t("home.heroKicker")}
+        </p>
+
+        {/* Display type wants tighter tracking and leading than the base h1
+            rule, which is tuned for 40px section headings, not 76px. */}
+        <h1
+          className="rise mt-6 max-w-3xl text-[clamp(2.5rem,6.5vw,4.75rem)] font-bold leading-[1.03] tracking-[-0.035em]"
+          style={{ animationDelay: "60ms" }}
         >
-          {t("home.inventoryViewAll")}
-        </Link>
+          {t("home.heroLine1")} {t("home.heroLine2")}{" "}
+          <span className="text-turbo [text-shadow:0_0_48px_rgba(255,74,43,0.45)]">
+            {t("home.heroLine3a")} {t("home.heroLine3b")}
+          </span>
+        </h1>
+
+        <p
+          className="rise mt-6 max-w-lg text-[1.0625rem] leading-relaxed text-ink-soft"
+          style={{ animationDelay: "120ms" }}
+        >
+          {t("home.heroBlurb")}
+        </p>
+
+        <div
+          className="rise mt-9 flex flex-wrap items-center gap-3"
+          style={{ animationDelay: "180ms" }}
+        >
+          <ButtonLink href="/catalog">{t("home.heroCtaCatalog")}</ButtonLink>
+          <BookCallButton variant="secondary" />
+        </div>
       </div>
     </section>
   );
 }
 
-/* ---------------- TECHNICAL JOURNEY (working steps) ---------------- */
+/* ------------------------------------------------------------ TRUST BAR ---
+   Four figures on a graphite band. The old version was a four-cell grid
+   held together by 1px gaps showing the border colour through — a lot of
+   scaffolding for four short facts.
+   -------------------------------------------------------------------------- */
+function TrustStrip() {
+  const { t } = useLanguage();
+  return (
+    // Flames on both edges, so the band reads as a burning slab rather than
+    // a rectangle: rising into the hero above, falling toward the catalog
+    // below. Each edge is a separate element outside the graphite fill —
+    // that's what lets the flame silhouettes sit on the page background.
+    <section>
+      <FlameEdge />
+      <div className="bg-graphite">
+        <div className="shell grid grid-cols-2 gap-8 py-10 md:grid-cols-4 md:py-12">
+          <Stat value={t("home.factEstVal")} label={t("home.factEst")} />
+          <Stat
+            value={t("home.factRebuiltVal")}
+            label={t("home.factRebuilt")}
+          />
+          <Stat
+            value={t("home.factTurnaroundVal")}
+            label={t("home.factTurnaround")}
+          />
+          <Stat
+            value={t("home.factWarrantyVal")}
+            label={t("home.factWarranty")}
+          />
+        </div>
+      </div>
+      <FlameEdge flip />
+    </section>
+  );
+}
+
+/* ----------------------------------------------------------- INVENTORY ---- */
+function Inventory() {
+  const { t } = useLanguage();
+  return (
+    <section id="inventory" className="shell py-20 md:py-28">
+      <SectionHead
+        eyebrow={t("nav.inventory")}
+        title={t("home.inventoryTitle")}
+        lead={t("home.inventoryLead")}
+        action={
+          <TextLink href="/catalog">{t("home.inventoryViewAll")}</TextLink>
+        }
+      />
+      <ProductGrid className="mt-12">
+        {featured.map((p) => (
+          <ProductCard key={p.id} product={p} />
+        ))}
+      </ProductGrid>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------- PROCESS ---- */
 const steps = [
   {
     n: "01",
-    title: "DIAGNOSTICS",
+    title: "Diagnostics",
     titleKa: "დიაგნოსტიკა",
-    desc: "Computerized fault scan, boost & pressure analysis.",
+    desc: "Computerised fault scan, boost and pressure analysis.",
     descKa: "კომპიუტერული ხარვეზების სკანირება, დატენვისა და წნევის ანალიზი.",
   },
   {
     n: "02",
-    title: "INSPECTION",
+    title: "Inspection",
     titleKa: "ინსპექცია",
-    desc: "Disassembly. Wear mapping. Compressor & turbine eval.",
-    descKa: "დაშლა. ცვეთის რუკირება. კომპრესორისა და ტურბინის შეფასება.",
+    desc: "Disassembly, wear mapping, compressor and turbine evaluation.",
+    descKa: "დაშლა, ცვეთის რუკირება, კომპრესორისა და ტურბინის შეფასება.",
   },
   {
     n: "03",
-    title: "REPAIR",
+    title: "Repair",
     titleKa: "შეკეთება",
-    desc: "Machining, shaft balancing, seal & bearing replacement.",
+    desc: "Machining, shaft balancing, seal and bearing replacement.",
     descKa:
       "დამუშავება, ლილვის დაბალანსება, საცობებისა და საკისრების ჩანაცვლება.",
   },
   {
     n: "04",
-    title: "REBUILD",
+    title: "Rebuild",
     titleKa: "აღდგენა",
     desc: "OEM-spec reassembly with new core internals.",
     descKa: "OEM-სპეც აწყობა ახალი შიდა ნაწილებით.",
   },
   {
     n: "05",
-    title: "TESTING",
+    title: "Testing",
     titleKa: "ტესტირება",
     desc: "VSR bench balancing and live pressure verification.",
     descKa: "VSR სტენდზე დაბალანსება და წნევის რეალურ დროში შემოწმება.",
   },
   {
     n: "06",
-    title: "DELIVERY",
+    title: "Delivery",
     titleKa: "მიწოდება",
-    desc: "Documented, sealed, and shipped Caucasus-wide.",
+    desc: "Documented, sealed and shipped Caucasus-wide.",
     descKa: "დოკუმენტირებული, დალუქული და გაგზავნილი მთელ კავკასიაში.",
   },
 ];
 
-function Journey() {
+function Process() {
   const { t, lang } = useLanguage();
   return (
-    <section id="process" className="relative border-b border-border">
-      <div className="mx-auto max-w-[1400px] px-6 py-20">
-        <div className="mb-14">
-          <p className="mb-3 font-mono text-[11px] tracking-[0.25em] text-muted-foreground">
-            {t("home.journeyKicker")}
-          </p>
-          <h2 className="font-display text-5xl tracking-wide md:text-6xl">
-            {t("home.journeyTitle")}
-          </h2>
-        </div>
+    <section id="process" className="relative overflow-hidden bg-graphite">
+      {/* Skid running along the base of the band. Sits low so it lands in the
+          section's bottom padding rather than behind the step copy, and at
+          14% — quieter than the standalone divider, because here it's
+          texture under content, not a moment of its own. */}
+      <TireTrack className="absolute inset-x-0 bottom-0 h-16 opacity-[0.14] md:h-24" />
 
-        <div className="relative">
-          <div className="absolute left-0 right-0 top-[28px] hidden h-px bg-border md:block" />
-          <div className="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-6">
-            {steps.map((s, i) => (
-              <div key={s.n} className="relative">
-                <div className="mb-5 flex h-14 items-start">
-                  <span
-                    className={`relative z-10 flex h-14 w-14 items-center justify-center font-display text-xl ${
-                      i === 0
-                        ? "bg-turbo text-white"
-                        : "border border-border bg-background text-muted-foreground"
-                    }`}
-                  >
-                    {s.n}
-                  </span>
-                </div>
-                <h3 className="mb-2 font-heading text-sm tracking-[0.15em]">
-                  {lang === "KA" ? s.titleKa : s.title}
-                </h3>
-                <p className="text-xs leading-relaxed text-muted-foreground">
-                  {lang === "KA" ? s.descKa : s.desc}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
+      <div className="shell relative py-20 md:py-28">
+        <SectionHead
+          eyebrow={t("home.journeyKicker")}
+          title={t("home.journeyTitle")}
+          lead={t("home.journeyLead")}
+        />
 
-        <div className="mt-20 grid grid-cols-1 gap-px bg-border lg:grid-cols-[1.6fr_1fr]">
-          <div className="relative aspect-[16/10] overflow-hidden bg-graphite lg:aspect-auto">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={workshop}
-              alt="GMS Turbo workshop"
-              loading="lazy"
-              width={1600}
-              height={900}
-              className="h-full w-full object-cover"
-            />
-          </div>
-          <div className="flex flex-col justify-between bg-graphite p-8 lg:p-10">
-            <div>
-              <p className="mb-3 font-mono text-[11px] tracking-[0.25em] text-muted-foreground">
-                {t("home.workshopTag")}
-              </p>
-              <h3 className="font-display text-3xl leading-tight md:text-4xl">
-                {t("home.workshopTitle")}
+        <ol className="mt-14 grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+          {steps.map((s) => (
+            <li key={s.n} className="group">
+              {/* The oversized numeral does the counting — no badge square,
+                  no connector rail, no coloured chip. */}
+              <span
+                aria-hidden
+                className="tnum block font-display text-5xl font-bold leading-none text-turbo/25 transition-colors duration-500 group-hover:text-turbo/70"
+              >
+                {s.n}
+              </span>
+              <h3 className="mt-4 font-display text-xl font-semibold">
+                {lang === "KA" ? s.titleKa : s.title}
               </h3>
-            </div>
-            <p className="mt-6 text-sm leading-relaxed text-muted-foreground">
-              {t("home.workshopBlurb")}
-            </p>
-            <Link
-              href="/contact"
-              className="mt-6 inline-flex w-fit items-center gap-3 font-heading text-xs tracking-[0.2em] text-turbo hover:text-ember"
-            >
-              {t("home.scheduleVisit")}
-            </Link>
+              <p className="mt-2 max-w-xs text-[0.9375rem] text-ink-soft">
+                {lang === "KA" ? s.descKa : s.desc}
+              </p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------- WORKSHOP ---- */
+function Workshop() {
+  const { t } = useLanguage();
+  return (
+    <section className="shell py-20 md:py-28">
+      <div className="grid items-center gap-10 lg:grid-cols-[1.35fr_1fr] lg:gap-14">
+        <div className="overflow-hidden rounded-3xl">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={workshopImg}
+            alt="The GMS Turbo showroom floor in Tbilisi"
+            loading="lazy"
+            width={1600}
+            height={900}
+            className="aspect-[16/10] w-full object-cover"
+          />
+        </div>
+
+        <div>
+          <p className="eyebrow">{t("home.workshopTag")}</p>
+          <h2 className="mt-4 text-[clamp(1.75rem,3.4vw,2.75rem)]">
+            {t("home.workshopTitle")}
+          </h2>
+          <p className="mt-6 max-w-md text-[1.0625rem] leading-relaxed text-ink-soft">
+            {t("home.workshopBlurb")}
+          </p>
+          <div className="mt-8">
+            <TextLink href="/contact">{t("home.scheduleVisit")}</TextLink>
           </div>
         </div>
       </div>
@@ -282,51 +311,57 @@ function Journey() {
   );
 }
 
-/* ---------------- BOOKING CTA ---------------- */
+/* ------------------------------------------------------------- BOOK CTA ---- */
 function BookingCTA() {
   const { t } = useLanguage();
   return (
-    <section id="contact" className="border-b border-border bg-graphite">
-      <div className="mx-auto max-w-[1400px] px-6 py-20">
-        <div className="grid grid-cols-1 items-end gap-10 md:grid-cols-[1.4fr_1fr_1fr]">
+    <section id="contact" className="shell">
+      <div className="rounded-[2rem] bg-turbo-wash px-6 py-16 md:px-14 md:py-20">
+        <div className="grid gap-12 lg:grid-cols-[1.3fr_1fr] lg:gap-16">
           <div>
-            <p className="mb-3 font-mono text-[11px] tracking-[0.25em] text-muted-foreground">
-              {t("home.bookKicker")}
-            </p>
-            <h2 className="font-display text-5xl leading-[0.95] md:text-7xl">
-              {t("home.bookTitle1")}
-              <br />
+            <p className="eyebrow text-turbo">{t("home.bookKicker")}</p>
+            <h2 className="mt-4 text-[clamp(2rem,4.5vw,3.5rem)]">
+              {t("home.bookTitle1")}{" "}
               <span className="text-turbo">{t("home.bookTitle2")}</span>
             </h2>
-            <p className="mt-5 max-w-md text-sm text-muted-foreground">
+            <p className="mt-6 max-w-md text-[1.0625rem] leading-relaxed text-ink-soft">
               {t("home.bookBlurb")}
             </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-9 flex flex-wrap gap-3">
               <BookCallButton />
-              <Link
-                href="/contact"
-                className="inline-flex items-center justify-center border border-border px-7 py-4 font-heading text-sm tracking-[0.2em] text-foreground transition-colors hover:border-turbo hover:text-turbo"
-              >
+              <ButtonLink href="/contact" variant="secondary">
                 {t("nav.contact")}
-              </Link>
+              </ButtonLink>
             </div>
           </div>
-          <div className="border-l border-border pl-6">
-            <p className="mb-2 font-mono text-[10px] tracking-widest text-muted-foreground">
-              {t("home.callDirect")}
-            </p>
-            <p className="font-display text-3xl tracking-wide">
-              +995 32 2 99 00 00
-            </p>
-          </div>
-          <div className="border-l border-border pl-6">
-            <p className="mb-2 font-mono text-[10px] tracking-widest text-muted-foreground">
-              {t("home.workshop")}
-            </p>
-            <p className="font-display text-3xl tracking-wide">
-              {t("home.location")}
-            </p>
-          </div>
+
+          <dl className="flex flex-col justify-center gap-8">
+            <div>
+              <dt className="text-sm text-ink-mute">{t("home.callDirect")}</dt>
+              <dd className="mt-1.5">
+                <a
+                  href="tel:+995322990000"
+                  className="tnum font-display text-2xl font-semibold text-ink transition-colors hover:text-turbo"
+                >
+                  +995 32 2 99 00 00
+                </a>
+              </dd>
+            </div>
+            <div>
+              <dt className="text-sm text-ink-mute">{t("home.workshop")}</dt>
+              <dd className="mt-1.5 font-display text-2xl font-semibold text-ink">
+                {t("home.location")}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-sm text-ink-mute">
+                {t("contact.hoursLabel")}
+              </dt>
+              <dd className="mt-1.5 font-display text-2xl font-semibold text-ink">
+                {t("contact.hoursVal")}
+              </dd>
+            </div>
+          </dl>
         </div>
       </div>
     </section>

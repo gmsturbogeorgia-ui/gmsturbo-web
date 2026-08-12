@@ -5,9 +5,12 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import { useLanguage } from "@/lib/i18n/context";
+import { Button, Field, INPUT } from "@/components/Primitives";
+import { cn } from "@/lib/utils";
 
 /* ------------------------------------------------------------------ *
  * Site-wide "Book a Call" modal.
@@ -49,36 +52,30 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
 
 /** Primary call-to-action button that opens the booking modal. */
 export function BookCallButton({
-  variant = "solid",
-  className = "",
+  variant = "primary",
+  size = "lg",
+  className,
 }: {
-  variant?: "solid" | "outline";
+  variant?: "primary" | "secondary" | "quiet";
+  size?: "md" | "lg";
   className?: string;
 }) {
   const { open } = useBooking();
   const { t } = useLanguage();
-  const base =
-    "inline-flex items-center justify-center font-heading text-sm tracking-[0.2em] transition-colors";
-  const styles =
-    variant === "solid"
-      ? "bg-turbo px-7 py-4 text-white hover:bg-ember"
-      : "border border-border px-7 py-4 text-foreground hover:border-turbo hover:text-turbo";
   return (
-    <button
-      type="button"
-      onClick={open}
-      className={`${base} ${styles} ${className}`}
-    >
+    <Button variant={variant} size={size} onClick={open} className={className}>
       {t("booking.cta")}
-    </button>
+    </Button>
   );
 }
 
 function BookingModal({ onClose }: { onClose: () => void }) {
   const { t } = useLanguage();
   const [sent, setSent] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
 
-  // Close on Escape and lock background scroll while the modal is open.
+  // Close on Escape, lock background scroll, and move focus into the dialog
+  // so keyboard users aren't left behind on the page underneath.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -86,6 +83,7 @@ function BookingModal({ onClose }: { onClose: () => void }) {
     document.addEventListener("keydown", onKey);
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    panelRef.current?.focus();
     return () => {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = prevOverflow;
@@ -94,22 +92,23 @@ function BookingModal({ onClose }: { onClose: () => void }) {
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-end justify-center bg-black/70 p-0 backdrop-blur-sm sm:items-center sm:p-6"
+      className="fixed inset-0 z-[100] flex items-end justify-center bg-base/80 backdrop-blur-sm sm:items-center sm:p-6"
+      style={{ animation: "rise .3s var(--ease-smooth) both" }}
       role="dialog"
       aria-modal="true"
       aria-label={t("booking.title")}
       onClick={onClose}
     >
       <div
-        className="relative max-h-[92vh] w-full max-w-2xl overflow-y-auto border border-border bg-background"
+        ref={panelRef}
+        tabIndex={-1}
+        className="relative max-h-[92vh] w-full max-w-xl overflow-y-auto rounded-t-3xl bg-base shadow-lift focus:outline-none sm:rounded-3xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-start justify-between border-b border-border px-6 py-5 sm:px-8">
+        <div className="sticky top-0 z-10 flex items-start justify-between gap-4 bg-base/95 px-6 py-5 backdrop-blur sm:px-8">
           <div>
-            <p className="mb-2 font-mono text-[10px] tracking-[0.25em] text-muted-foreground">
-              {t("booking.kicker")}
-            </p>
-            <h2 className="font-display text-3xl tracking-wide sm:text-4xl">
+            <p className="eyebrow">{t("booking.kicker")}</p>
+            <h2 className="mt-1.5 font-display text-2xl font-semibold">
               {t("booking.title")}
             </h2>
           </div>
@@ -117,30 +116,47 @@ function BookingModal({ onClose }: { onClose: () => void }) {
             type="button"
             onClick={onClose}
             aria-label={t("booking.close")}
-            className="ml-4 shrink-0 border border-border p-2 text-muted-foreground transition-colors hover:border-turbo hover:text-turbo"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-carbon text-ink-mute transition-colors hover:bg-steel hover:text-ink"
           >
-            <span className="block h-4 w-4 leading-none">✕</span>
+            <svg
+              viewBox="0 0 16 16"
+              className="h-3.5 w-3.5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              aria-hidden
+            >
+              <path d="M3 3l10 10M13 3L3 13" />
+            </svg>
           </button>
         </div>
 
         {sent ? (
           <div className="px-6 py-16 text-center sm:px-8">
-            <p className="font-mono text-[10px] tracking-[0.25em] text-turbo">
-              {t("booking.successKicker")}
-            </p>
-            <h3 className="mt-4 font-display text-4xl tracking-wide">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-turbo-wash">
+              <svg
+                viewBox="0 0 24 24"
+                className="h-6 w-6 text-turbo"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden
+              >
+                <path d="M4 12.5l5.5 5.5L20 6.5" />
+              </svg>
+            </div>
+            <h3 className="mt-6 font-display text-3xl font-semibold">
               {t("booking.successTitle")}
             </h3>
-            <p className="mx-auto mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground">
+            <p className="mx-auto mt-3 max-w-sm text-[0.9375rem] leading-relaxed text-ink-soft">
               {t("booking.successBody")}
             </p>
-            <button
-              type="button"
-              onClick={onClose}
-              className="mt-8 inline-flex bg-turbo px-7 py-4 font-heading text-sm tracking-[0.2em] text-white transition-colors hover:bg-ember"
-            >
+            <Button onClick={onClose} className="mt-8">
               {t("booking.done")}
-            </button>
+            </Button>
           </div>
         ) : (
           <form
@@ -148,11 +164,13 @@ function BookingModal({ onClose }: { onClose: () => void }) {
               e.preventDefault();
               setSent(true);
             }}
+            className="px-6 py-6 sm:px-8"
           >
-            <p className="px-6 pt-6 text-sm leading-relaxed text-muted-foreground sm:px-8">
+            <p className="text-[0.9375rem] leading-relaxed text-ink-soft">
               {t("booking.blurb")}
             </p>
-            <div className="mt-6 grid grid-cols-1 gap-px border-t border-border bg-border sm:grid-cols-2">
+
+            <div className="mt-7 grid grid-cols-1 gap-5 sm:grid-cols-2">
               <Field label={t("booking.name")} name="name" required />
               <Field
                 label={t("booking.phone")}
@@ -184,10 +202,10 @@ function BookingModal({ onClose }: { onClose: () => void }) {
                 placeholder={t("booking.preferredPlaceholder")}
                 className="sm:col-span-2"
               />
-              <div className="bg-background p-5 sm:col-span-2">
+              <div className="sm:col-span-2">
                 <label
                   htmlFor="message"
-                  className="block font-mono text-[10px] tracking-widest text-muted-foreground"
+                  className="mb-1.5 block text-sm font-semibold text-ink"
                 >
                   {t("booking.message")}
                 </label>
@@ -195,61 +213,21 @@ function BookingModal({ onClose }: { onClose: () => void }) {
                   id="message"
                   name="message"
                   rows={3}
-                  className="mt-2 w-full resize-none border-0 bg-transparent font-sans text-sm text-foreground focus:outline-none"
+                  className={cn(INPUT, "resize-none")}
                   placeholder={t("booking.messagePlaceholder")}
                 />
               </div>
             </div>
-            <div className="border-t border-border p-5 sm:px-8">
-              <button
-                type="submit"
-                className="w-full bg-turbo px-7 py-4 font-heading text-sm tracking-[0.2em] text-white transition-colors hover:bg-ember"
-              >
-                {t("booking.submit")}
-              </button>
-              <p className="mt-3 text-center font-mono text-[10px] tracking-widest text-muted-foreground">
-                {t("booking.privacy")}
-              </p>
-            </div>
+
+            <Button type="submit" className="mt-8 w-full">
+              {t("booking.submit")}
+            </Button>
+            <p className="mt-4 text-center text-xs text-ink-mute">
+              {t("booking.privacy")}
+            </p>
           </form>
         )}
       </div>
-    </div>
-  );
-}
-
-function Field({
-  label,
-  name,
-  type = "text",
-  placeholder,
-  required,
-  className = "",
-}: {
-  label: string;
-  name: string;
-  type?: string;
-  placeholder?: string;
-  required?: boolean;
-  className?: string;
-}) {
-  return (
-    <div className={`bg-background p-5 ${className}`}>
-      <label
-        htmlFor={name}
-        className="block font-mono text-[10px] tracking-widest text-muted-foreground"
-      >
-        {label}
-        {required && <span className="ml-1 text-turbo">*</span>}
-      </label>
-      <input
-        id={name}
-        name={name}
-        type={type}
-        required={required}
-        placeholder={placeholder}
-        className="mt-2 w-full border-0 bg-transparent font-sans text-base text-foreground focus:outline-none"
-      />
     </div>
   );
 }
@@ -258,7 +236,7 @@ function SelectField({
   label,
   name,
   options,
-  className = "",
+  className,
 }: {
   label: string;
   name: string;
@@ -266,10 +244,10 @@ function SelectField({
   className?: string;
 }) {
   return (
-    <div className={`bg-background p-5 ${className}`}>
+    <div className={className}>
       <label
         htmlFor={name}
-        className="block font-mono text-[10px] tracking-widest text-muted-foreground"
+        className="mb-1.5 block text-sm font-semibold text-ink"
       >
         {label}
       </label>
@@ -277,10 +255,17 @@ function SelectField({
         id={name}
         name={name}
         defaultValue={options[0]}
-        className="mt-2 w-full border-0 bg-transparent font-sans text-base text-foreground focus:outline-none"
+        className={cn(INPUT, "appearance-none bg-carbon pr-10")}
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8' fill='none' stroke='%236f6a67' stroke-width='1.8' stroke-linecap='round'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5'/%3E%3C/svg%3E\")",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "right 1rem center",
+          backgroundSize: "0.75rem",
+        }}
       >
         {options.map((o) => (
-          <option key={o} value={o} className="bg-background text-foreground">
+          <option key={o} value={o}>
             {o}
           </option>
         ))}

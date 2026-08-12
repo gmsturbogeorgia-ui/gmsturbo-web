@@ -1,251 +1,252 @@
 "use client";
 
-import Link from "next/link";
 import { PRODUCTS } from "@/lib/products";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
+import { ProductCard, ProductGrid } from "@/components/ProductCard";
+import { SectionHead, Stat, TextLink } from "@/components/Primitives";
 import { useLanguage } from "@/lib/i18n/context";
+import { cn } from "@/lib/utils";
 
-const showroomImg = "/images/showroom-reception-neon.jpeg";
-const HIGHLIGHTS = PRODUCTS.slice(0, 6);
+const heroImg = "/images/showroom-reception-neon.jpeg";
+const HIGHLIGHTS = PRODUCTS.slice(0, 4);
 
-// Real photos of the Tbilisi flagship — the panoramic neon wall leads, then a
-// grid of the floor, stock and display case. These images appear nowhere else
-// on the site, which is what makes this page distinct from the home hero.
+// Real photos of the Tbilisi flagship. These appear nowhere else on the
+// site, which is what makes this page distinct from the home hero.
 const GALLERY_BANNER = "/images/gms-turbo-neon-sign.jpeg";
 const GALLERY = [
-  { src: "/images/showroom-stock-shelves.jpeg", cap: "STOCK WALL" },
-  { src: "/images/showroom-stock-aisle.jpeg", cap: "THE AISLE" },
-  { src: "/images/showroom-counter-wall.jpeg", cap: "THE COUNTER" },
-  { src: "/images/products/turbo-parts-display.jpeg", cap: "DISPLAY CASE" },
-  { src: "/images/warehouse-stock.jpeg", cap: "WAREHOUSE" },
-  { src: "/images/showroom-display-minimal.jpeg", cap: "THE PLINTH" },
+  { src: "/images/showroom-stock-shelves.jpeg", cap: "Stock wall" },
+  { src: "/images/showroom-stock-aisle.jpeg", cap: "The aisle" },
+  { src: "/images/showroom-counter-wall.jpeg", cap: "The counter" },
+  { src: "/images/products/turbo-parts-display.jpeg", cap: "Display case" },
+  { src: "/images/warehouse-stock.jpeg", cap: "Warehouse" },
+  { src: "/images/showroom-display-minimal.jpeg", cap: "The plinth" },
 ];
 
 export function ShowroomClient() {
   const { t } = useLanguage();
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <>
       <SiteHeader />
+      <main>
+        {/* Hero. Rounded, inset panorama rather than a full-bleed image with
+            a gradient scrim faked over the bottom third. */}
+        <section className="shell pt-6">
+          <p className="eyebrow">{t("showroom.tag")}</p>
+          <h1 className="mt-4 max-w-3xl text-[clamp(2.5rem,6.5vw,4.75rem)] font-bold">
+            {t("showroom.title1")}{" "}
+            <span className="text-turbo">{t("showroom.title2")}</span>
+          </h1>
 
-      <section className="relative border-b border-border">
-        <div className="relative h-[70vh] min-h-[480px] w-full overflow-hidden">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={showroomImg}
-            alt="GMS Turbo Georgia flagship showroom in Tbilisi"
-            width={1600}
-            height={1024}
-            className="h-full w-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-background/10" />
-          <div className="absolute inset-0 mx-auto flex max-w-[1400px] flex-col justify-end px-6 pb-12">
-            <p className="mb-6 font-mono text-[11px] tracking-[0.25em] text-muted-foreground">
-              {t("showroom.tag")}
-            </p>
-            <h1 className="font-display text-[clamp(3rem,9vw,8rem)] leading-[0.86] tracking-tight">
-              {t("showroom.title1")}
-              <br />
-              <span className="text-turbo">{t("showroom.title2")}</span>
-            </h1>
+          <div className="mt-10 overflow-hidden rounded-3xl">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={heroImg}
+              alt="The GMS Turbo Georgia flagship showroom in Tbilisi"
+              width={1600}
+              height={1024}
+              fetchPriority="high"
+              className="aspect-[16/10] w-full object-cover md:aspect-[21/9]"
+            />
           </div>
-        </div>
-        <div className="grid grid-cols-2 gap-px bg-border md:grid-cols-4">
-          <Fact k={t("showroom.hoursLabel")} v={t("showroom.hoursVal")} />
-          <Fact k={t("showroom.saturdayLabel")} v={t("showroom.saturdayVal")} />
-          <Fact k={t("showroom.viewingsLabel")} v={t("showroom.viewingsVal")} />
-          <Fact k={t("showroom.testFitLabel")} v={t("showroom.testFitVal")} />
-        </div>
-      </section>
+        </section>
 
-      <section className="border-b border-border">
-        <div className="mx-auto grid max-w-[1400px] grid-cols-1 gap-12 px-6 py-20 lg:grid-cols-[1fr_1.4fr] lg:py-28">
+        <section className="bg-graphite mt-16">
+          <div className="shell grid grid-cols-2 gap-8 py-10 md:grid-cols-4 md:py-12">
+            <Stat
+              value={t("showroom.hoursVal")}
+              label={t("showroom.hoursLabel")}
+            />
+            <Stat
+              value={t("showroom.saturdayVal")}
+              label={t("showroom.saturdayLabel")}
+            />
+            <Stat
+              value={t("showroom.viewingsVal")}
+              label={t("showroom.viewingsLabel")}
+            />
+            <Stat
+              value={t("showroom.testFitVal")}
+              label={t("showroom.testFitLabel")}
+            />
+          </div>
+        </section>
+
+        {/* The space */}
+        <section className="shell grid gap-10 py-20 md:py-28 lg:grid-cols-[1fr_1.3fr] lg:gap-16">
           <div>
-            <p className="mb-3 font-mono text-[11px] tracking-[0.25em] text-muted-foreground">
-              {t("showroom.spaceKicker")}
-            </p>
-            <h2 className="font-display text-5xl leading-[0.92] md:text-6xl">
-              {t("showroom.spaceTitle1")}
-              <br />
+            <p className="eyebrow">{t("showroom.spaceKicker")}</p>
+            <h2 className="mt-3 text-[clamp(1.875rem,4vw,3rem)]">
+              {t("showroom.spaceTitle1")}{" "}
               <span className="text-turbo">{t("showroom.spaceTitle2")}</span>
             </h2>
           </div>
-          <div className="space-y-6 text-sm leading-relaxed text-muted-foreground">
+          <div className="space-y-5 text-[1.0625rem] leading-relaxed text-ink-soft">
             <p>{t("showroom.p1")}</p>
             <p>{t("showroom.p2")}</p>
-            <Link
-              href="/contact"
-              className="inline-flex items-center gap-3 border border-border px-6 py-4 font-heading text-xs tracking-[0.2em] hover:border-turbo hover:text-turbo"
-            >
-              {t("showroom.bookViewing")}
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      <section className="border-b border-border">
-        <div className="mx-auto max-w-[1400px] px-6 py-20">
-          <div className="mb-12">
-            <p className="mb-3 font-mono text-[11px] tracking-[0.25em] text-muted-foreground">
-              {t("showroom.galleryKicker")}
-            </p>
-            <h2 className="font-display text-5xl tracking-wide md:text-6xl">
-              {t("showroom.galleryTitle")}
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 gap-px bg-border sm:grid-cols-2 lg:grid-cols-3">
-            <figure className="group relative aspect-[16/9] overflow-hidden bg-graphite sm:col-span-2 lg:col-span-3">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={GALLERY_BANNER}
-                alt="GMS Turbo neon sign at the Tbilisi flagship"
-                loading="lazy"
-                width={1600}
-                height={900}
-                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              <figcaption className="absolute bottom-4 left-4 bg-background/85 px-3 py-1.5 font-mono text-[10px] tracking-widest text-muted-foreground backdrop-blur">
-                GMS TURBO · TSERETELI AVE 114
-              </figcaption>
-            </figure>
-            {GALLERY.map((g) => (
-              <figure
-                key={g.src}
-                className="group relative aspect-[4/3] overflow-hidden bg-graphite"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={g.src}
-                  alt={g.cap}
-                  loading="lazy"
-                  width={1200}
-                  height={900}
-                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <figcaption className="absolute bottom-4 left-4 bg-background/85 px-3 py-1.5 font-mono text-[10px] tracking-widest text-muted-foreground backdrop-blur">
-                  {g.cap}
-                </figcaption>
-              </figure>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="border-b border-border bg-graphite">
-        <div className="mx-auto max-w-[1400px] px-6 py-20">
-          <div className="mb-12 flex items-end justify-between">
-            <div>
-              <p className="mb-3 font-mono text-[11px] tracking-[0.25em] text-muted-foreground">
-                {t("showroom.displayKicker")}
-              </p>
-              <h2 className="font-display text-5xl tracking-wide md:text-6xl">
-                {t("showroom.collectionTitle")}
-              </h2>
+            <div className="pt-3">
+              <TextLink href="/contact">{t("showroom.bookViewing")}</TextLink>
             </div>
-            <Link
-              href="/catalog"
-              className="hidden font-heading text-xs tracking-[0.2em] text-turbo hover:text-ember md:inline-flex"
-            >
-              {t("showroom.fullCatalog")}
-            </Link>
           </div>
+        </section>
 
-          <div className="grid grid-cols-1 gap-px bg-border md:grid-cols-2 lg:grid-cols-3">
-            {HIGHLIGHTS.map((p, i) => (
-              <Link
-                key={p.id}
-                href={`/catalog/${p.id}`}
-                className="group relative bg-background transition-colors hover:bg-carbon"
-              >
-                <div className="relative aspect-[4/5] overflow-hidden bg-graphite">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={p.img}
-                    alt={p.name}
-                    loading="lazy"
-                    width={800}
-                    height={1000}
-                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                  <span className="absolute left-4 top-4 bg-turbo px-2.5 py-1 font-mono text-[10px] tracking-widest text-white">
-                    {t("showroom.plinth")} {String(i + 1).padStart(2, "0")}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between border-t border-border px-5 py-5">
-                  <div>
-                    <p className="mb-1 font-mono text-[10px] tracking-widest text-muted-foreground">
-                      {p.category}
-                    </p>
-                    <h3 className="font-display text-xl tracking-wide">
-                      {p.name}
-                    </h3>
-                  </div>
-                  <p className="font-display text-2xl text-turbo">
-                    {p.price.toLocaleString()} GEL
-                  </p>
-                </div>
-              </Link>
+        {/* Gallery — a proper mosaic, not six identical cells in a hairline
+            grid. The banner spans, the rest alternate weights. */}
+        <section className="shell pb-20 md:pb-28">
+          <SectionHead
+            eyebrow={t("showroom.galleryKicker")}
+            title={t("showroom.galleryTitle")}
+            lead={t("showroom.galleryLead")}
+          />
+
+          {/* Responsive mosaic.
+
+              Phones get a plain 2-up of squares — a mosaic at 360px just
+              produces tiles too small to read. The composition only switches
+              on at lg, where fixed 12rem rows let the lead tile span 2×2 and
+              the two panoramas bookend it:
+
+                ┌───────── banner (4 wide) ─────────┐
+                │  lead   │ 2 │ 3 │
+                │  (2×2)  │ 4 │ 5 │
+                └───────── closer (4 wide) ─────────┘
+
+              Below lg the aspect ratio sets each tile's height; at lg
+              `aspect-auto` hands that job to the grid rows so row-span
+              actually works. */}
+          <div className="mt-10 grid grid-cols-2 gap-2.5 sm:gap-3 lg:auto-rows-[12rem] lg:grid-cols-4">
+            <GalleryTile
+              src={GALLERY_BANNER}
+              cap="Tsereteli Ave 114"
+              className="col-span-2 aspect-[3/2] sm:aspect-[2/1] lg:col-span-4 lg:row-span-2 lg:aspect-auto"
+              priority
+            />
+            {GALLERY.map((g, i) => (
+              <GalleryTile
+                key={g.src}
+                src={g.src}
+                cap={g.cap}
+                className={cn(
+                  "aspect-square lg:aspect-auto",
+                  i === 0 && "lg:col-span-2 lg:row-span-2",
+                  i === 5 && "col-span-2 aspect-[3/2] lg:col-span-4 lg:aspect-auto",
+                )}
+              />
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="border-b border-border">
-        <div className="mx-auto max-w-[1400px] px-6 py-20">
-          <div className="grid grid-cols-1 gap-10 md:grid-cols-[1.4fr_1fr_1fr]">
+        {/* On display. Deliberately on the base background — the product
+            tiles are graphite panels, so a graphite band would swallow them. */}
+        <section>
+          <div className="shell py-20 md:py-28">
+            <SectionHead
+              eyebrow={t("showroom.displayKicker")}
+              title={t("showroom.collectionTitle")}
+              action={
+                <TextLink href="/catalog">{t("showroom.fullCatalog")}</TextLink>
+              }
+            />
+            <ProductGrid className="mt-10">
+              {HIGHLIGHTS.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </ProductGrid>
+          </div>
+        </section>
+
+        {/* Visit */}
+        <section className="shell py-20 md:py-28">
+          <div className="grid gap-12 lg:grid-cols-[1.3fr_1fr] lg:gap-16">
             <div>
-              <p className="mb-3 font-mono text-[11px] tracking-[0.25em] text-muted-foreground">
-                {t("showroom.visitKicker")}
-              </p>
-              <h2 className="font-display text-5xl leading-[0.95] md:text-6xl">
-                {t("showroom.visit1")}
-                <br />
+              <p className="eyebrow">{t("showroom.visitKicker")}</p>
+              <h2 className="mt-3 text-[clamp(1.875rem,4vw,3rem)]">
+                {t("showroom.visit1")}{" "}
                 <span className="text-turbo">{t("showroom.visit2")}</span>
               </h2>
-              <p className="mt-5 max-w-md text-sm text-muted-foreground">
+              <p className="mt-5 max-w-md text-[1.0625rem] leading-relaxed text-ink-soft">
                 {t("showroom.visitBlurb")}
               </p>
             </div>
-            <div className="border-l border-border pl-6">
-              <p className="mb-2 font-mono text-[10px] tracking-widest text-muted-foreground">
-                {t("showroom.addressLabel")}
-              </p>
-              <p className="font-display text-2xl leading-tight tracking-wide">
-                TSERETELI AVE 114
-                <br />
-                TBILISI 0119
-              </p>
-            </div>
-            <div className="border-l border-border pl-6">
-              <p className="mb-2 font-mono text-[10px] tracking-widest text-muted-foreground">
-                {t("showroom.callLabel")}
-              </p>
-              <p className="font-display text-2xl tracking-wide">
-                +995 32 2 99 00 00
-              </p>
-              <p className="mt-4 font-mono text-[10px] tracking-widest text-muted-foreground">
-                {t("showroom.emailLabel")}
-              </p>
-              <p className="font-display text-xl tracking-wide">
-                SHOWROOM@GMSTURBO.GE
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
 
+            <dl className="flex flex-col gap-7">
+              <div>
+                <dt className="text-sm text-ink-mute">
+                  {t("showroom.addressLabel")}
+                </dt>
+                <dd className="mt-1.5 font-display text-xl font-semibold text-ink">
+                  Tsereteli Ave 114, Tbilisi 0119
+                </dd>
+              </div>
+              <div>
+                <dt className="text-sm text-ink-mute">
+                  {t("showroom.callLabel")}
+                </dt>
+                <dd className="mt-1.5">
+                  <a
+                    href="tel:+995322990000"
+                    className="tnum font-display text-xl font-semibold text-ink transition-colors hover:text-turbo"
+                  >
+                    +995 32 2 99 00 00
+                  </a>
+                </dd>
+              </div>
+              <div>
+                <dt className="text-sm text-ink-mute">
+                  {t("showroom.emailLabel")}
+                </dt>
+                <dd className="mt-1.5">
+                  <a
+                    href="mailto:showroom@gmsturbo.ge"
+                    className="font-display text-xl font-semibold text-ink transition-colors hover:text-turbo"
+                  >
+                    showroom@gmsturbo.ge
+                  </a>
+                </dd>
+              </div>
+            </dl>
+          </div>
+        </section>
+      </main>
       <SiteFooter />
-    </div>
+    </>
   );
 }
 
-function Fact({ k, v }: { k: string; v: string }) {
+function GalleryTile({
+  src,
+  cap,
+  className,
+  priority = false,
+}: {
+  src: string;
+  cap: string;
+  className?: string;
+  priority?: boolean;
+}) {
   return (
-    <div className="bg-background p-5">
-      <p className="font-mono text-[10px] tracking-widest text-muted-foreground">
-        {k}
-      </p>
-      <p className="mt-2 font-display text-lg tracking-wide">{v}</p>
-    </div>
+    <figure
+      className={cn(
+        // lg:h-full lets the tile fill a spanned grid area once aspect-auto
+        // takes over. The aspect ratio itself is passed in per tile, since
+        // it changes across breakpoints.
+        "group relative overflow-hidden rounded-2xl bg-graphite lg:h-full",
+        className,
+      )}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={src}
+        alt={cap}
+        loading={priority ? "eager" : "lazy"}
+        width={1200}
+        height={900}
+        className="h-full w-full object-cover transition-transform duration-[900ms] ease-smooth group-hover:scale-[1.04]"
+      />
+      {/* Caption fades in on hover instead of sitting in a permanent
+          translucent slab over the photo. */}
+      <figcaption className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-base/85 to-transparent p-3 text-sm font-semibold text-ink opacity-0 transition-opacity duration-300 group-hover:opacity-100 sm:p-4">
+        {cap}
+      </figcaption>
+    </figure>
   );
 }

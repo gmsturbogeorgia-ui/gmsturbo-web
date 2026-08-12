@@ -9,120 +9,108 @@ const findImg = "/images/showroom-display-minimal.jpeg";
 export function ContactClient() {
   const { t } = useLanguage();
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <>
       <SiteHeader />
-
-      {/* Header */}
-      <section className="border-b border-border">
-        <div className="mx-auto max-w-[1400px] px-6 py-16 lg:py-24">
-          <p className="mb-8 font-mono text-[11px] tracking-[0.25em] text-muted-foreground">
-            {t("contact.tag")}
-          </p>
-          <h1 className="font-display text-[clamp(3rem,9vw,8rem)] leading-[0.86] tracking-tight">
-            {t("contact.title1")}
-            <br />
+      <main>
+        <section className="shell pb-14 pt-10 md:pt-16">
+          <p className="eyebrow">{t("contact.tag")}</p>
+          <h1 className="mt-4 max-w-3xl text-[clamp(2.5rem,6.5vw,4.75rem)] font-bold">
+            {t("contact.title1")}{" "}
             <span className="text-turbo">{t("contact.title2")}</span>
           </h1>
-          <p className="mt-8 max-w-md text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-6 max-w-xl text-[1.0625rem] leading-relaxed text-ink-soft">
             {t("contact.blurb")}
           </p>
-        </div>
-      </section>
+        </section>
 
-      {/* 01 — Reach us */}
-      <section className="border-b border-border">
-        <div className="mx-auto max-w-[1400px] px-6 py-16">
-          <p className="mb-10 font-mono text-[11px] tracking-[0.25em] text-muted-foreground">
-            {t("contact.reachKicker")}
-          </p>
-          <div className="grid grid-cols-1 gap-px bg-border md:grid-cols-2 lg:grid-cols-4">
-            <InfoCard label={t("contact.phoneLabel")}>
+        {/* Reach us — four blocks of plain text, spaced. The old version was
+            four bordered cells with a 1px gap showing the border through. */}
+        <section className="shell pb-20">
+          <div className="grid gap-x-12 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+            <InfoBlock label={t("contact.phoneLabel")}>
               <a
                 href="tel:+995322990000"
-                className="font-display text-2xl tracking-wide hover:text-turbo"
+                className="tnum font-display text-xl font-semibold text-ink transition-colors hover:text-turbo"
               >
                 +995 32 2 99 00 00
               </a>
-            </InfoCard>
-            <InfoCard label={t("contact.emailLabel")}>
+            </InfoBlock>
+
+            <InfoBlock label={t("contact.emailLabel")}>
               <a
                 href="mailto:showroom@gmsturbo.ge"
-                className="font-display text-2xl tracking-wide hover:text-turbo"
+                className="font-display text-xl font-semibold text-ink transition-colors hover:text-turbo"
               >
-                SHOWROOM@GMSTURBO.GE
+                showroom@gmsturbo.ge
               </a>
-            </InfoCard>
-            <InfoCard label={t("contact.addressLabel")}>
-              <p className="font-display text-2xl leading-tight tracking-wide">
-                TSERETELI AVE 114
+            </InfoBlock>
+
+            <InfoBlock label={t("contact.addressLabel")}>
+              <p className="font-display text-xl font-semibold leading-snug text-ink">
+                Tsereteli Ave 114
                 <br />
-                TBILISI 0119
+                Tbilisi 0119
               </p>
-            </InfoCard>
-            <InfoCard label={t("contact.hoursLabel")}>
-              <p className="font-display text-2xl tracking-wide">
+            </InfoBlock>
+
+            <InfoBlock label={t("contact.hoursLabel")}>
+              <p className="font-display text-xl font-semibold text-ink">
                 {t("contact.hoursVal")}
               </p>
-              <p className="mt-2 font-mono text-[10px] tracking-widest text-muted-foreground">
+              <p className="mt-2 text-sm text-ink-mute">
                 {t("contact.saturdayLabel")} · {t("contact.saturdayVal")}
               </p>
-            </InfoCard>
+            </InfoBlock>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* 02 — Book a call */}
-      <section className="border-b border-border bg-graphite">
-        <div className="mx-auto grid max-w-[1400px] grid-cols-1 items-center gap-10 px-6 py-20 lg:grid-cols-[1.3fr_1fr]">
-          <div>
-            <p className="mb-3 font-mono text-[11px] tracking-[0.25em] text-muted-foreground">
-              {t("contact.bookKicker")}
-            </p>
-            <h2 className="font-display text-5xl leading-[0.95] md:text-6xl">
-              {t("contact.bookTitle1")}
-              <br />
-              <span className="text-turbo">{t("contact.bookTitle2")}</span>
-            </h2>
-            <p className="mt-5 max-w-md text-sm leading-relaxed text-muted-foreground">
-              {t("contact.bookBlurb")}
-            </p>
+        {/* Book a call */}
+        <section className="shell">
+          <div className="grid items-center gap-10 rounded-[2rem] bg-turbo-wash px-6 py-14 md:px-12 lg:grid-cols-[1.3fr_1fr] lg:py-16">
+            <div>
+              <p className="eyebrow text-turbo">{t("contact.bookKicker")}</p>
+              <h2 className="mt-3 text-[clamp(1.875rem,4vw,3rem)]">
+                {t("contact.bookTitle1")}{" "}
+                <span className="text-turbo">{t("contact.bookTitle2")}</span>
+              </h2>
+              <p className="mt-5 max-w-md text-[0.9375rem] leading-relaxed text-ink-soft">
+                {t("contact.bookBlurb")}
+              </p>
+            </div>
+            <div className="lg:justify-self-end">
+              <BookCallButton className="w-full sm:w-auto" />
+            </div>
           </div>
-          <div className="flex lg:justify-end">
-            <BookCallButton className="w-full sm:w-auto" />
-          </div>
-        </div>
-      </section>
+        </section>
 
-      {/* 03 — Find us */}
-      <section className="border-b border-border">
-        <div className="mx-auto max-w-[1400px] px-6 py-16">
-          <p className="mb-8 font-mono text-[11px] tracking-[0.25em] text-muted-foreground">
-            {t("contact.findKicker")}
-          </p>
-          <div className="relative aspect-[16/9] w-full overflow-hidden bg-graphite md:aspect-[21/9]">
+        {/* Find us */}
+        <section className="shell py-20">
+          <p className="eyebrow">{t("contact.findKicker")}</p>
+          <h2 className="mt-3 text-[clamp(1.5rem,3vw,2.25rem)]">
+            {t("contact.findTitle")}
+          </h2>
+          <div className="mt-8 overflow-hidden rounded-3xl">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={findImg}
-              alt="GMS Turbo Georgia showroom, Tsereteli Ave 114, Tbilisi"
+              alt="The GMS Turbo Georgia showroom at Tsereteli Ave 114, Tbilisi"
               loading="lazy"
               width={1536}
               height={1024}
-              className="h-full w-full object-cover"
+              className="aspect-[16/9] w-full object-cover md:aspect-[21/9]"
             />
-            <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between border-t border-border bg-background/90 px-5 py-4 font-mono text-[10px] tracking-widest text-muted-foreground backdrop-blur">
-              <span>{t("contact.findTitle")}</span>
-              <span>TSERETELI AVE 114 · TBILISI</span>
-            </div>
           </div>
-        </div>
-      </section>
-
+          <p className="mt-4 text-sm text-ink-mute">
+            Tsereteli Ave 114 · Tbilisi
+          </p>
+        </section>
+      </main>
       <SiteFooter />
-    </div>
+    </>
   );
 }
 
-function InfoCard({
+function InfoBlock({
   label,
   children,
 }: {
@@ -130,10 +118,8 @@ function InfoCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="bg-background p-7">
-      <p className="mb-4 font-mono text-[10px] tracking-widest text-muted-foreground">
-        {label}
-      </p>
+    <div>
+      <p className="eyebrow mb-3">{label}</p>
       {children}
     </div>
   );

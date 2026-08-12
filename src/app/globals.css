@@ -1,108 +1,272 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:is(.dark *));
+/* ==========================================================================
+   GMS TURBO — design tokens
+
+   The original brand colours: turbo red on near-black, with ember as the
+   warm second. Nothing here changes the palette. What changed is how the
+   layout is held together:
+
+   1. NO HAIRLINES. Separation comes from the surface ramp
+      (base → graphite → carbon → steel), never from 1px borders. The old
+      build drew a border on nearly every element, which is what made it
+      read like a wireframe.
+   2. NO BOXES. Product tiles are a rounded image sitting on the page with
+      text underneath — no panel, no ring, no bordered cell.
+   3. Radius everywhere. Every radius used to be pinned to 0px.
+
+   Contrast note: --turbo is 6.1:1 on the base and safe for text. It is NOT
+   safe under white button labels (3.3:1), so solid buttons use --turbo-deep
+   — visually the same red, 4.8:1 under white.
+   ========================================================================== */
 
 @theme inline {
-  --radius-sm: 0px;
-  --radius-md: 0px;
-  --radius-lg: 0px;
-  --radius-xl: 0px;
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --radius-2xl: 24px;
+  --radius-3xl: 30px;
 
-  --color-turbo: var(--turbo);
-  --color-ember: var(--ember);
+  --shadow-soft: 0 8px 24px -12px rgba(0, 0, 0, 0.75);
+  --shadow-lift: 0 24px 60px -24px rgba(0, 0, 0, 0.9);
+  --shadow-glow: 0 10px 34px -12px rgba(255, 74, 43, 0.5);
+
+  --color-background: var(--base);
+  --color-foreground: var(--ink);
+  --color-base: var(--base);
   --color-graphite: var(--graphite);
   --color-carbon: var(--carbon);
   --color-steel: var(--steel);
+  --color-card: var(--carbon);
+  --color-card-foreground: var(--ink);
+  --color-popover: var(--carbon);
+  --color-popover-foreground: var(--ink);
 
-  /* Georgian (Mkhedruli) glyphs aren't in any of the Latin faces above, so
-     --font-georgian is listed as a fallback in every stack: the browser
-     renders Latin/digits in the primary face and Georgian text in Noto Sans
-     Georgian automatically, per-character, with no JS/lang switching. */
-  --font-display: var(--font-anton), var(--font-georgian), sans-serif;
-  --font-heading: var(--font-oswald), var(--font-georgian), sans-serif;
-  --font-sans: var(--font-inter), var(--font-georgian), system-ui, sans-serif;
-  --font-mono: var(--font-jetbrains-mono), var(--font-georgian), ui-monospace,
-    monospace;
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-mute: var(--ink-mute);
+  --color-muted: var(--graphite);
+  --color-muted-foreground: var(--ink-mute);
+
+  --color-line: var(--line);
+  --color-border: var(--line);
+  --color-input: var(--carbon);
+  --color-ring: var(--turbo);
+
+  --color-turbo: var(--turbo);
+  --color-turbo-deep: var(--turbo-deep);
+  --color-turbo-wash: var(--turbo-wash);
+  --color-ember: var(--ember);
+
+  --color-primary: var(--turbo-deep);
+  --color-primary-foreground: #ffffff;
+  --color-secondary: var(--carbon);
+  --color-secondary-foreground: var(--ink);
+  --color-accent: var(--turbo-wash);
+  --color-accent-foreground: var(--turbo);
+  --color-destructive: var(--turbo-deep);
+  --color-destructive-foreground: #ffffff;
+
+  /* Georgian (Mkhedruli) glyphs aren't in the Latin faces, so --font-georgian
+     is the fallback in every stack: Latin and digits render in the primary
+     face, Georgian per-character in Noto Sans Georgian, no JS involved. */
+  --font-display: var(--font-bricolage), var(--font-georgian), sans-serif;
+  --font-sans: var(--font-instrument), var(--font-georgian), system-ui,
+    sans-serif;
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
+
+  --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 :root {
-  --radius: 0px;
-  --background: oklch(0.04 0 0); /* #050505 */
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.1 0 0); /* #111 */
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.1 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.66 0.21 32); /* turbo red #FF4A2B */
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.16 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.14 0 0);
-  --muted-foreground: oklch(0.62 0.01 0);
-  --accent: oklch(0.72 0.2 50); /* burnt orange #FF6A00 */
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.66 0.21 32);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.22 0 0);
-  --input: oklch(0.18 0 0);
-  --ring: oklch(0.66 0.21 32);
+  color-scheme: dark;
 
-  --turbo: #ff4a2b;
-  --ember: #ff6a00;
+  /* Surface ramp — the original greys, now doing the job borders used to. */
+  --base: #050505;
   --graphite: #111111;
   --carbon: #1a1a1a;
   --steel: #2a2a2a;
-}
 
-.dark {
-  --background: oklch(0.04 0 0);
-  --foreground: oklch(0.985 0 0);
+  --ink: #fafafa;
+  --ink-soft: #a3a3a3;
+  --ink-mute: #6f6a67;
+
+  --line: #2a2a2a; /* kept for the rare genuinely load-bearing divider */
+
+  --turbo: #ff4a2b; /* brand red — 6.1:1 on base, safe for text */
+  --turbo-deep: #d93411; /* same red, safe under white button labels */
+  --ember: #ff6a00;
+  --turbo-wash: #1f0c07; /* tinted fill for callout blocks */
 }
 
 @layer base {
-  * {
-    border-color: var(--color-border);
+  html {
+    /* Sticky header is 4.5rem; without this every in-page anchor lands with
+       its heading hidden underneath it. */
+    scroll-padding-top: 6rem;
+    background-color: var(--base);
   }
-  html,
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
   body {
-    background-color: var(--color-background);
-    color: var(--color-foreground);
+    background-color: var(--base);
+    color: var(--ink-soft);
     font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.07;
+    text-wrap: balance;
+  }
+
+  /* Prices and specs should line up in columns. */
+  .tnum,
+  table,
+  time {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* The previous build set focus:outline-none on inputs and buttons with no
+     replacement, leaving keyboard users with no visible focus at all. */
+  :focus-visible {
+    outline: 2px solid var(--turbo);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
   ::selection {
     background: var(--turbo);
     color: #fff;
   }
+
+  ::placeholder {
+    color: var(--ink-mute);
+  }
+
+  img {
+    background-color: var(--graphite);
+  }
 }
 
-@utility font-display {
-  font-family: var(--font-display);
-  letter-spacing: 0.01em;
-}
-@utility font-heading {
-  font-family: var(--font-heading);
+/* --------------------------------------------------------------------------
+   Utilities
+   -------------------------------------------------------------------------- */
+
+/* The single page gutter + measure, so sections stop re-declaring
+   `mx-auto max-w-[1400px] px-6` twenty times over. */
+@utility shell {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 82rem;
+  padding-inline: 1.125rem;
 }
 
-@utility hairline {
-  border-top: 1px solid var(--color-border);
+@media (min-width: 768px) {
+  .shell {
+    padding-inline: 2rem;
+  }
+}
+
+/* Small label. Replaces the mono + tracking-[0.25em] "/ 02 —" eyebrow that
+   sat on top of every single section before. */
+@utility eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+/* Hides the native scrollbar on horizontal rails. Only use it where an
+   alternative affordance exists — the product gallery pairs it with edge
+   fades and scroll-snap, so the scrollability is still discoverable. */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@utility rise {
+  animation: rise 0.75s var(--ease-smooth) both;
+}
+
+/* Slow push-in on the active hero slide. Starts where the outgoing slide
+   left off so the crossfade never shows two images at different scales. */
+@keyframes heroZoom {
+  from {
+    transform: scale(1.08);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@utility hero-zoom {
+  animation: heroZoom 9s var(--ease-smooth) both;
+}
+
+/* Slow vertical drift for the hero product. Long enough (9s) and small
+   enough (10px) that it reads as the object being weightless rather than as
+   an animation playing. */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@utility float-slow {
+  animation: float 9s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise,
+  .float-slow,
+  .hero-zoom {
+    animation: none;
+  }
+  *,
+  *::before,
+  *::after {
+    /* iteration-count matters: collapsing duration alone would leave any
+       `infinite` animation looping thousands of times a second. */
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

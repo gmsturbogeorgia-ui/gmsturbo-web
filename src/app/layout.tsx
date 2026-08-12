@@ -1,58 +1,44 @@
 import type { Metadata, Viewport } from "next";
 import {
-  Anton,
+  Bricolage_Grotesque,
+  Instrument_Sans,
   Noto_Sans_Georgian,
-  Oswald,
-  Inter,
-  JetBrains_Mono,
 } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/lib/i18n/context";
 import { BookingProvider } from "@/components/Booking";
 
-// Anton — a bold, ultra-condensed Google Font built for big poster-style
-// headlines. Replaces the generic Bebas Neue as the site's headline face;
-// same tall, high-impact role, but a distinct, more deliberate shape for an
-// "industrial precision" turbo-engineering brand. Anton only ships one
-// static weight (400), which is by design for this kind of display face.
-const anton = Anton({
-  weight: "400",
+// Two faces, not five. The previous build loaded Anton + Oswald + Inter +
+// JetBrains Mono and used all four on a single screen, which is what made
+// the type feel assembled rather than designed.
+//
+// Bricolage Grotesque — headline face. A humanist grotesque with genuine
+// quirks in the a, g and R; it holds up at poster sizes without the rigid
+// condensed-industrial cliché Anton brought. Variable, so one file covers
+// the full 400–800 range the layouts need.
+const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
-  variable: "--font-anton",
+  variable: "--font-bricolage",
   display: "swap",
 });
 
-// Noto Sans Georgian — Anton, Oswald, Inter and JetBrains Mono only cover
-// Latin glyphs, so Georgian (Mkhedruli) text was silently falling back to
-// whatever generic sans the OS ships. Listed as the fallback in every font
-// stack below, so any Georgian character renders in this font automatically
-// (per Unicode-range coverage) while Latin/digits/codes keep using the
-// primary faces.
+// Instrument Sans — interface and body face. Slightly warm, tall x-height,
+// reads cleanly at 14–18px where most of this site actually lives.
+const instrument = Instrument_Sans({
+  subsets: ["latin"],
+  variable: "--font-instrument",
+  display: "swap",
+});
+
+// Noto Sans Georgian — the Latin faces above carry no Mkhedruli glyphs, so
+// Georgian text would silently fall back to whatever sans the OS ships.
+// Listed as the fallback in every stack in globals.css, so Georgian
+// characters resolve here automatically (by Unicode range) while
+// Latin/digits keep the primary faces.
 const notoGeorgian = Noto_Sans_Georgian({
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700"],
   subsets: ["georgian"],
   variable: "--font-georgian",
-  display: "swap",
-});
-
-const oswald = Oswald({
-  weight: ["400", "500", "600", "700"],
-  subsets: ["latin"],
-  variable: "--font-oswald",
-  display: "swap",
-});
-
-const inter = Inter({
-  weight: ["300", "400", "500", "600", "700"],
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  weight: ["400", "500"],
-  subsets: ["latin"],
-  variable: "--font-jetbrains-mono",
   display: "swap",
 });
 
@@ -90,7 +76,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#050505",
+  themeColor: "#fbf9f5",
 };
 
 const jsonLd = {
@@ -118,9 +104,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${anton.variable} ${notoGeorgian.variable} ${oswald.variable} ${inter.variable} ${jetbrainsMono.variable}`}
+      className={`${bricolage.variable} ${instrument.variable} ${notoGeorgian.variable}`}
     >
-      <body className="bg-background text-foreground">
+      <body className="bg-paper text-ink-soft antialiased">
         <LanguageProvider>
           <BookingProvider>{children}</BookingProvider>
         </LanguageProvider>

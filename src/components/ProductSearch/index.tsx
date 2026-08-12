@@ -7,6 +7,23 @@ import {
   searchProducts,
   type SearchHit,
 } from "@/lib/product-search";
+import { useLanguage } from "@/lib/i18n/context";
+import { categoryLabel } from "@/lib/i18n/dictionary";
+import { cn } from "@/lib/utils";
+
+/* ==========================================================================
+   Product search.
+
+   Speaks the same language as the rest of the site:
+     · controls are pills (this field, the chips, the buttons)
+     · surfaces are rounded rectangles separated by fill, never by a border
+     · a raised surface carries a 1px inset highlight along its top edge
+
+   `surface` picks which step of the ramp the field sits on. Inside the
+   catalog's graphite control panel it renders as a "well" (darker than its
+   container, the way the card image tiles do); standing alone on the page
+   it renders "raised".
+   ========================================================================== */
 
 type Props = {
   value: string;
@@ -14,6 +31,7 @@ type Props = {
   onSubmit?: (next: string) => void;
   placeholder?: string;
   maxResults?: number;
+  surface?: "raised" | "well";
 };
 
 export function ProductSearch({
@@ -22,7 +40,9 @@ export function ProductSearch({
   onSubmit,
   placeholder = "Search turbos, codes, vehicles, specs…",
   maxResults = 6,
+  surface = "raised",
 }: Props) {
+  const { lang } = useLanguage();
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -47,7 +67,7 @@ export function ProductSearch({
 
   return (
     <div ref={wrapRef} className="relative w-full">
-      <div className="relative flex items-center">
+      <div className="group relative flex items-center">
         <SearchIcon />
         <input
           ref={inputRef}
@@ -84,8 +104,19 @@ export function ProductSearch({
               inputRef.current?.blur();
             }
           }}
-          className="w-full border border-border bg-background py-2.5 pl-10 pr-10 font-mono text-[12px] tracking-wide text-foreground placeholder:text-muted-foreground focus:border-turbo focus:outline-none"
+          className={cn(
+            "w-full rounded-full py-3.5 pl-12 pr-12 text-[0.9375rem] text-ink",
+            "transition-[background-color,box-shadow] duration-300 ease-smooth",
+            "placeholder:text-ink-mute focus:outline-none focus-visible:outline-none",
+            surface === "well"
+              ? "bg-base hover:bg-base focus:bg-base"
+              : "bg-carbon hover:bg-steel focus:bg-steel",
+            // Focus reads as the field lighting up from within, matching the
+            // hover glow on the product tiles — not as an outline snapping on.
+            "focus:shadow-[inset_0_0_0_1px_var(--turbo),0_0_0_4px_rgba(255,74,43,0.12)]",
+          )}
         />
+
         {value && (
           <button
             type="button"
@@ -94,9 +125,19 @@ export function ProductSearch({
               onChange("");
               inputRef.current?.focus();
             }}
-            className="absolute right-2 text-muted-foreground hover:text-turbo"
+            className="absolute right-3 flex h-7 w-7 items-center justify-center rounded-full text-ink-mute transition-colors duration-200 hover:bg-steel hover:text-ink"
           >
-            <span className="font-mono text-xs">✕</span>
+            <svg
+              viewBox="0 0 16 16"
+              className="h-3 w-3"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              aria-hidden
+            >
+              <path d="M3 3l10 10M13 3L3 13" />
+            </svg>
           </button>
         )}
       </div>
@@ -105,12 +146,21 @@ export function ProductSearch({
         <div
           id="product-search-listbox"
           role="listbox"
-          className="absolute left-0 right-0 top-[calc(100%+4px)] z-50 max-h-[70vh] overflow-auto border border-border bg-background shadow-2xl"
+          className={cn(
+            "absolute left-0 right-0 top-[calc(100%+10px)] z-50 max-h-[70vh] overflow-auto",
+            "rounded-[1.375rem] bg-carbon p-2",
+            // Both shadows must be ONE class: tailwind-merge treats
+            // `shadow-lift` and `shadow-[inset…]` as the same utility group
+            // and would keep only the last, dropping the drop shadow.
+            "shadow-[inset_0_1px_0_rgba(255,255,255,0.055),0_24px_60px_-24px_rgba(0,0,0,0.9)]",
+          )}
+          style={{ animation: "rise .25s var(--ease-smooth) both" }}
         >
           {hits.length === 0 ? (
-            <div className="px-4 py-6 text-center font-mono text-[11px] tracking-widest text-muted-foreground">
-              NO MATCHES FOR "{value.trim().toUpperCase()}"
-            </div>
+            <p className="px-4 py-10 text-center text-sm text-ink-mute">
+              No matches for{" "}
+              <span className="font-semibold text-ink">“{value.trim()}”</span>
+            </p>
           ) : (
             <ul>
               {hits.map((h, i) => (
@@ -123,14 +173,12 @@ export function ProductSearch({
                     hit={h}
                     query={value}
                     active={i === active}
+                    lang={lang}
                     onHover={() => setActive(i)}
                     onClick={() => setOpen(false)}
                   />
                 </li>
               ))}
-              <li className="border-t border-border bg-graphite/40 px-4 py-2 font-mono text-[10px] tracking-widest text-muted-foreground">
-                ↑↓ NAVIGATE · ↵ OPEN · ESC CLOSE
-              </li>
             </ul>
           )}
         </div>
@@ -143,30 +191,31 @@ function ResultRow({
   hit,
   query,
   active,
+  lang,
   onHover,
   onClick,
 }: {
   hit: SearchHit;
   query: string;
   active: boolean;
+  lang: "EN" | "KA";
   onHover: () => void;
   onClick: () => void;
 }) {
   const p = hit.product;
-  const snippet = hit.matched.find(
-    (m) => m.field !== "name" && m.field !== "code" && m.field !== "category",
-  );
 
   return (
     <Link
       href={`/catalog/${p.id}`}
       onMouseEnter={onHover}
       onClick={onClick}
-      className={`flex items-stretch gap-4 border-b border-border px-4 py-3 transition-colors ${
-        active ? "bg-carbon" : "hover:bg-carbon"
-      }`}
+      className={cn(
+        "flex items-center gap-3.5 rounded-2xl p-2.5 transition-colors duration-200",
+        active ? "bg-steel" : "hover:bg-steel",
+      )}
     >
-      <div className="h-14 w-14 shrink-0 overflow-hidden bg-graphite">
+      {/* Same nested-radius treatment as the product tiles. */}
+      <div className="h-12 w-12 shrink-0 overflow-hidden rounded-xl bg-base">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={p.img}
@@ -175,27 +224,22 @@ function ResultRow({
           loading="lazy"
         />
       </div>
+
       <div className="min-w-0 flex-1">
-        <div className="flex items-baseline justify-between gap-3">
-          <p className="truncate font-display text-base leading-tight tracking-wide">
-            <Highlighted text={p.name} query={query} />
-          </p>
-          <span className="shrink-0 font-display text-sm text-turbo">
-            {p.price.toLocaleString()} GEL
-          </span>
-        </div>
-        <p className="mt-1 truncate font-mono text-[10px] tracking-widest text-muted-foreground">
-          <Highlighted
-            text={`${p.code} · ${p.category} · ${p.vehicles.join(" / ")}`}
-            query={query}
-          />
+        <p className="truncate text-sm font-semibold text-ink">
+          <Highlighted text={p.name} query={query} />
         </p>
-        {snippet && (
-          <p className="mt-1 line-clamp-1 font-mono text-[10px] tracking-wide text-muted-foreground/80">
-            <Highlighted text={snippet.text} query={query} />
-          </p>
-        )}
+        <p className="mt-0.5 truncate text-xs text-ink-mute">
+          {categoryLabel(p.category, lang)}
+          <span className="mx-1.5 text-ink-mute/50">·</span>
+          <Highlighted text={p.code} query={query} />
+        </p>
       </div>
+
+      <span className="tnum shrink-0 text-sm font-semibold text-ink">
+        {p.price.toLocaleString()}
+        <span className="ml-1 text-xs font-medium text-ink-mute">GEL</span>
+      </span>
     </Link>
   );
 }
@@ -206,7 +250,7 @@ export function Highlighted({ text, query }: { text: string; query: string }) {
     <>
       {segments.map((s, i) =>
         s.match ? (
-          <mark key={i} className="bg-turbo/30 px-0.5 text-foreground">
+          <mark key={i} className="rounded bg-turbo/25 px-0.5 text-inherit">
             {s.text}
           </mark>
         ) : (
@@ -220,11 +264,11 @@ export function Highlighted({ text, query }: { text: string; query: string }) {
 function SearchIcon() {
   return (
     <svg
-      className="absolute left-3 h-4 w-4 text-muted-foreground"
+      className="pointer-events-none absolute left-4 h-4 w-4 text-ink-mute transition-colors duration-300 group-focus-within:text-turbo"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.8"
+      strokeWidth="2"
       aria-hidden="true"
     >
       <circle cx="11" cy="11" r="7" />

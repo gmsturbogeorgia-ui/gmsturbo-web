@@ -54,7 +54,9 @@ function jsonLdFor(p: Product) {
     mpn: p.code,
     category: p.category,
     description: p.description,
-    image: p.gallery,
+    // gallery is optional in the CMS; an empty array here would emit
+    // "image": [] which is invalid for schema.org/Product.
+    image: p.gallery.length > 0 ? p.gallery : [p.img],
     brand: { "@type": "Brand", name: "GMS Turbo Georgia" },
     manufacturer: { "@type": "Organization", name: "GMS Turbo Georgia" },
     additionalProperty: [
