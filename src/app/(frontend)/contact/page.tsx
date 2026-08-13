@@ -1,5 +1,10 @@
 import type { Metadata } from "next";
+import { getContact } from "@/lib/getContact";
 import { ContactClient } from "./ContactClient";
+
+// Read the contact page content from the Payload/Postgres DB on each
+// request — same reasoning as / (src/app/(frontend)/page.tsx).
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Contact — Book a Call & Visit",
@@ -49,14 +54,16 @@ const jsonLd = {
   ],
 };
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const contact = await getContact();
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <ContactClient />
+      <ContactClient contact={contact} />
     </>
   );
 }

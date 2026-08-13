@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { getProducts } from "@/lib/getProducts";
+import { getCatalog } from "@/lib/getCatalog";
 import { CatalogClient } from "./CatalogClient";
 
 // Read the catalog from the Payload/Postgres DB on each request.
@@ -26,7 +27,7 @@ export const metadata: Metadata = {
 };
 
 export default async function CatalogPage() {
-  const products = await getProducts();
+  const [products, catalog] = await Promise.all([getProducts(), getCatalog()]);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -60,7 +61,7 @@ export default async function CatalogPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <Suspense fallback={null}>
-        <CatalogClient products={products} />
+        <CatalogClient products={products} catalog={catalog} />
       </Suspense>
     </>
   );

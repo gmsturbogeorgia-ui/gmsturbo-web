@@ -1,5 +1,11 @@
 import type { Metadata } from "next";
+import { getHome } from "@/lib/getHome";
+import { getProducts } from "@/lib/getProducts";
 import { HomeClient } from "./HomeClient";
+
+// Read the home page content and featured products from the Payload/Postgres
+// DB on each request — same reasoning as /catalog (src/app/catalog/page.tsx).
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "GMS Turbo Georgia — Premium Turbocharger Engineering",
@@ -28,14 +34,17 @@ const jsonLd = {
   inLanguage: ["ka-GE", "en-US"],
 };
 
-export default function Index() {
+export default async function Index() {
+  const [home, products] = await Promise.all([getHome(), getProducts()]);
+  const featured = products.slice(0, 4);
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <HomeClient />
+      <HomeClient home={home} featured={featured} />
     </>
   );
 }

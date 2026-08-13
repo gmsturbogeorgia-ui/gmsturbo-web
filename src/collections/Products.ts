@@ -101,20 +101,8 @@ export const Products: CollectionConfig = {
       defaultValue: "IN STOCK",
       options: ["IN STOCK", "MADE TO ORDER", "LOW STOCK"],
     },
-    { name: "tagline", type: "text", required: true },
-    {
-      name: "taglineKa",
-      type: "text",
-      required: true,
-      label: "Tagline (Georgian)",
-    },
-    { name: "description", type: "textarea", required: true },
-    {
-      name: "descriptionKa",
-      type: "textarea",
-      required: true,
-      label: "Description (Georgian)",
-    },
+    { name: "tagline", type: "text", required: true, localized: true },
+    { name: "description", type: "textarea", required: true, localized: true },
     {
       name: "specs",
       type: "array",

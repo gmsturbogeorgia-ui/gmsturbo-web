@@ -4,7 +4,12 @@ import Link from "next/link";
 import { PRODUCTS, type Product } from "@/lib/products";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { ProductCard, ProductGrid } from "@/components/ProductCard";
-import { SectionHead, Tag, TextLink } from "@/components/Primitives";
+import {
+  SectionHead,
+  Tag,
+  TextLink,
+  TireTrack,
+} from "@/components/Primitives";
 import { useLanguage } from "@/lib/i18n/context";
 import { specLabel, vehicleLabel } from "@/lib/i18n/dictionary";
 import { ProductShowcase } from "./ProductShowcase";
@@ -19,6 +24,7 @@ export function ProductDetailClient({ product }: { product: Product }) {
         <ProductShowcase product={product} />
         <Specs product={product} />
         <Compatibility product={product} />
+        <TireTrack className="mx-6 my-4 h-14 opacity-[0.22] md:my-8 md:h-20" />
         <ProductQuoteForm product={product} />
         <RelatedProducts current={product} />
       </main>

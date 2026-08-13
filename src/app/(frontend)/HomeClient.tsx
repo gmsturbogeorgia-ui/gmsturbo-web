@@ -11,28 +11,30 @@ import {
   TextLink,
   TireTrack,
 } from "@/components/Primitives";
-import { PRODUCTS } from "@/lib/products";
+import type { Product } from "@/lib/products";
+import type { HomeContent } from "@/lib/getHome";
 import { useLanguage } from "@/lib/i18n/context";
 
-// The hero holds the showroom-interior shot, so the workshop block takes a
-// different one — no photo should appear twice on the same page.
-const workshopImg = "/images/warehouse-stock.jpeg";
-const featured = PRODUCTS.slice(0, 4);
-
-export function HomeClient() {
+export function HomeClient({
+  home,
+  featured,
+}: {
+  home: HomeContent;
+  featured: Product[];
+}) {
   return (
     <>
       <SiteHeader overlay />
       <main>
-        <Hero />
-        <TrustStrip />
-        <Inventory />
-        <Process />
-        <Workshop />
+        <Hero hero={home.hero} />
+        <TrustStrip stats={home.stats} />
+        <Inventory inventory={home.inventory} featured={featured} />
+        <Process journey={home.journey} />
+        <Workshop workshop={home.workshop} />
         {/* Standalone skid as the lead-in to the booking block. Louder than
             the one inside Process, since here it is the moment. */}
         <TireTrack className="my-4 h-14 opacity-[0.22] md:my-8 md:h-20" />
-        <BookingCTA />
+        <BookingCTA booking={home.booking} />
       </main>
       <SiteFooter />
     </>
@@ -52,10 +54,9 @@ export function HomeClient() {
    No slider: one photograph, held. A single strong image with room to
    breathe says more than four rotating past.
    -------------------------------------------------------------------------- */
-const heroImg = "/images/showroom-interior-wide.jpeg";
-
-function Hero() {
-  const { t } = useLanguage();
+function Hero({ hero }: { hero: HomeContent["hero"] }) {
+  const { lang } = useLanguage();
+  const pick = (en: string, ka: string) => (lang === "KA" ? ka : en);
 
   return (
     <section
@@ -66,7 +67,7 @@ function Hero() {
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={heroImg}
+        src={hero.image}
         alt="The GMS Turbo Georgia showroom floor in Tbilisi"
         width={1600}
         height={1000}
@@ -95,7 +96,7 @@ function Hero() {
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-turbo opacity-60" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-turbo" />
           </span>
-          {t("home.heroKicker")}
+          {pick(hero.kicker, hero.kickerKa)}
         </p>
 
         {/* Display type wants tighter tracking and leading than the base h1
@@ -104,9 +105,10 @@ function Hero() {
           className="rise mt-6 max-w-3xl text-[clamp(2.5rem,6.5vw,4.75rem)] font-bold leading-[1.03] tracking-[-0.035em]"
           style={{ animationDelay: "60ms" }}
         >
-          {t("home.heroLine1")} {t("home.heroLine2")}{" "}
+          {pick(hero.line1, hero.line1Ka)} {pick(hero.line2, hero.line2Ka)}{" "}
           <span className="text-turbo [text-shadow:0_0_48px_rgba(255,74,43,0.45)]">
-            {t("home.heroLine3a")} {t("home.heroLine3b")}
+            {pick(hero.line3a, hero.line3aKa)}{" "}
+            {pick(hero.line3b, hero.line3bKa)}
           </span>
         </h1>
 
@@ -114,14 +116,16 @@ function Hero() {
           className="rise mt-6 max-w-lg text-[1.0625rem] leading-relaxed text-ink-soft"
           style={{ animationDelay: "120ms" }}
         >
-          {t("home.heroBlurb")}
+          {pick(hero.blurb, hero.blurbKa)}
         </p>
 
         <div
           className="rise mt-9 flex flex-wrap items-center gap-3"
           style={{ animationDelay: "180ms" }}
         >
-          <ButtonLink href="/catalog">{t("home.heroCtaCatalog")}</ButtonLink>
+          <ButtonLink href="/catalog">
+            {pick(hero.ctaLabel, hero.ctaLabelKa)}
+          </ButtonLink>
           <BookCallButton variant="secondary" />
         </div>
       </div>
@@ -134,8 +138,8 @@ function Hero() {
    held together by 1px gaps showing the border colour through — a lot of
    scaffolding for four short facts.
    -------------------------------------------------------------------------- */
-function TrustStrip() {
-  const { t } = useLanguage();
+function TrustStrip({ stats }: { stats: HomeContent["stats"] }) {
+  const { lang } = useLanguage();
   return (
     // Flames on both edges, so the band reads as a burning slab rather than
     // a rectangle: rising into the hero above, falling toward the catalog
@@ -145,19 +149,13 @@ function TrustStrip() {
       <FlameEdge />
       <div className="bg-graphite">
         <div className="shell grid grid-cols-2 gap-8 py-10 md:grid-cols-4 md:py-12">
-          <Stat value={t("home.factEstVal")} label={t("home.factEst")} />
-          <Stat
-            value={t("home.factRebuiltVal")}
-            label={t("home.factRebuilt")}
-          />
-          <Stat
-            value={t("home.factTurnaroundVal")}
-            label={t("home.factTurnaround")}
-          />
-          <Stat
-            value={t("home.factWarrantyVal")}
-            label={t("home.factWarranty")}
-          />
+          {stats.map((s) => (
+            <Stat
+              key={s.label}
+              value={lang === "KA" ? s.valueKa : s.value}
+              label={lang === "KA" ? s.labelKa : s.label}
+            />
+          ))}
         </div>
       </div>
       <FlameEdge flip />
@@ -166,16 +164,25 @@ function TrustStrip() {
 }
 
 /* ----------------------------------------------------------- INVENTORY ---- */
-function Inventory() {
-  const { t } = useLanguage();
+function Inventory({
+  inventory,
+  featured,
+}: {
+  inventory: HomeContent["inventory"];
+  featured: Product[];
+}) {
+  const { t, lang } = useLanguage();
+  const pick = (en: string, ka: string) => (lang === "KA" ? ka : en);
   return (
     <section id="inventory" className="shell py-20 md:py-28">
       <SectionHead
         eyebrow={t("nav.inventory")}
-        title={t("home.inventoryTitle")}
-        lead={t("home.inventoryLead")}
+        title={pick(inventory.title, inventory.titleKa)}
+        lead={pick(inventory.lead, inventory.leadKa)}
         action={
-          <TextLink href="/catalog">{t("home.inventoryViewAll")}</TextLink>
+          <TextLink href="/catalog">
+            {pick(inventory.viewAllLabel, inventory.viewAllLabelKa)}
+          </TextLink>
         }
       />
       <ProductGrid className="mt-12">
@@ -188,54 +195,9 @@ function Inventory() {
 }
 
 /* -------------------------------------------------------------- PROCESS ---- */
-const steps = [
-  {
-    n: "01",
-    title: "Diagnostics",
-    titleKa: "დიაგნოსტიკა",
-    desc: "Computerised fault scan, boost and pressure analysis.",
-    descKa: "კომპიუტერული ხარვეზების სკანირება, დატენვისა და წნევის ანალიზი.",
-  },
-  {
-    n: "02",
-    title: "Inspection",
-    titleKa: "ინსპექცია",
-    desc: "Disassembly, wear mapping, compressor and turbine evaluation.",
-    descKa: "დაშლა, ცვეთის რუკირება, კომპრესორისა და ტურბინის შეფასება.",
-  },
-  {
-    n: "03",
-    title: "Repair",
-    titleKa: "შეკეთება",
-    desc: "Machining, shaft balancing, seal and bearing replacement.",
-    descKa:
-      "დამუშავება, ლილვის დაბალანსება, საცობებისა და საკისრების ჩანაცვლება.",
-  },
-  {
-    n: "04",
-    title: "Rebuild",
-    titleKa: "აღდგენა",
-    desc: "OEM-spec reassembly with new core internals.",
-    descKa: "OEM-სპეც აწყობა ახალი შიდა ნაწილებით.",
-  },
-  {
-    n: "05",
-    title: "Testing",
-    titleKa: "ტესტირება",
-    desc: "VSR bench balancing and live pressure verification.",
-    descKa: "VSR სტენდზე დაბალანსება და წნევის რეალურ დროში შემოწმება.",
-  },
-  {
-    n: "06",
-    title: "Delivery",
-    titleKa: "მიწოდება",
-    desc: "Documented, sealed and shipped Caucasus-wide.",
-    descKa: "დოკუმენტირებული, დალუქული და გაგზავნილი მთელ კავკასიაში.",
-  },
-];
-
-function Process() {
-  const { t, lang } = useLanguage();
+function Process({ journey }: { journey: HomeContent["journey"] }) {
+  const { lang } = useLanguage();
+  const pick = (en: string, ka: string) => (lang === "KA" ? ka : en);
   return (
     <section id="process" className="relative overflow-hidden bg-graphite">
       {/* Skid running along the base of the band. Sits low so it lands in the
@@ -246,13 +208,13 @@ function Process() {
 
       <div className="shell relative py-20 md:py-28">
         <SectionHead
-          eyebrow={t("home.journeyKicker")}
-          title={t("home.journeyTitle")}
-          lead={t("home.journeyLead")}
+          eyebrow={pick(journey.kicker, journey.kickerKa)}
+          title={pick(journey.title, journey.titleKa)}
+          lead={pick(journey.lead, journey.leadKa)}
         />
 
         <ol className="mt-14 grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
-          {steps.map((s) => (
+          {journey.steps.map((s) => (
             <li key={s.n} className="group">
               {/* The oversized numeral does the counting — no badge square,
                   no connector rail, no coloured chip. */}
@@ -263,10 +225,10 @@ function Process() {
                 {s.n}
               </span>
               <h3 className="mt-4 font-display text-xl font-semibold">
-                {lang === "KA" ? s.titleKa : s.title}
+                {pick(s.title, s.titleKa)}
               </h3>
               <p className="mt-2 max-w-xs text-[0.9375rem] text-ink-soft">
-                {lang === "KA" ? s.descKa : s.desc}
+                {pick(s.desc, s.descKa)}
               </p>
             </li>
           ))}
@@ -277,15 +239,16 @@ function Process() {
 }
 
 /* ------------------------------------------------------------- WORKSHOP ---- */
-function Workshop() {
-  const { t } = useLanguage();
+function Workshop({ workshop }: { workshop: HomeContent["workshop"] }) {
+  const { lang } = useLanguage();
+  const pick = (en: string, ka: string) => (lang === "KA" ? ka : en);
   return (
     <section className="shell py-20 md:py-28">
       <div className="grid items-center gap-10 lg:grid-cols-[1.35fr_1fr] lg:gap-14">
         <div className="overflow-hidden rounded-3xl">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={workshopImg}
+            src={workshop.image}
             alt="The GMS Turbo showroom floor in Tbilisi"
             loading="lazy"
             width={1600}
@@ -295,15 +258,17 @@ function Workshop() {
         </div>
 
         <div>
-          <p className="eyebrow">{t("home.workshopTag")}</p>
+          <p className="eyebrow">{pick(workshop.tag, workshop.tagKa)}</p>
           <h2 className="mt-4 text-[clamp(1.75rem,3.4vw,2.75rem)]">
-            {t("home.workshopTitle")}
+            {pick(workshop.title, workshop.titleKa)}
           </h2>
           <p className="mt-6 max-w-md text-[1.0625rem] leading-relaxed text-ink-soft">
-            {t("home.workshopBlurb")}
+            {pick(workshop.blurb, workshop.blurbKa)}
           </p>
           <div className="mt-8">
-            <TextLink href="/contact">{t("home.scheduleVisit")}</TextLink>
+            <TextLink href="/contact">
+              {pick(workshop.scheduleVisitLabel, workshop.scheduleVisitLabelKa)}
+            </TextLink>
           </div>
         </div>
       </div>
@@ -312,20 +277,25 @@ function Workshop() {
 }
 
 /* ------------------------------------------------------------- BOOK CTA ---- */
-function BookingCTA() {
-  const { t } = useLanguage();
+function BookingCTA({ booking }: { booking: HomeContent["booking"] }) {
+  const { t, lang } = useLanguage();
+  const pick = (en: string, ka: string) => (lang === "KA" ? ka : en);
   return (
     <section id="contact" className="shell">
       <div className="rounded-[2rem] bg-turbo-wash px-6 py-16 md:px-14 md:py-20">
         <div className="grid gap-12 lg:grid-cols-[1.3fr_1fr] lg:gap-16">
           <div>
-            <p className="eyebrow text-turbo">{t("home.bookKicker")}</p>
+            <p className="eyebrow text-turbo">
+              {pick(booking.kicker, booking.kickerKa)}
+            </p>
             <h2 className="mt-4 text-[clamp(2rem,4.5vw,3.5rem)]">
-              {t("home.bookTitle1")}{" "}
-              <span className="text-turbo">{t("home.bookTitle2")}</span>
+              {pick(booking.title1, booking.title1Ka)}{" "}
+              <span className="text-turbo">
+                {pick(booking.title2, booking.title2Ka)}
+              </span>
             </h2>
             <p className="mt-6 max-w-md text-[1.0625rem] leading-relaxed text-ink-soft">
-              {t("home.bookBlurb")}
+              {pick(booking.blurb, booking.blurbKa)}
             </p>
             <div className="mt-9 flex flex-wrap gap-3">
               <BookCallButton />

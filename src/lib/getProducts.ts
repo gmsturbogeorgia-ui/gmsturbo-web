@@ -6,6 +6,14 @@ import type { Category, Product, Vehicle } from "./products";
 // document back onto the exact `Product` shape the site already renders, so the
 // catalog/detail pages can swap the static PRODUCTS array for live DB data
 // without touching any presentation code. Inverse of src/seed/runSeed.ts.
+//
+// `tagline`/`description` are `localized: true` in the collection (see
+// src/collections/Products.ts) — querying with `locale: "all"` returns each
+// as `{ en, ka }` instead of a plain string. Flattening that back onto
+// `tagline`/`taglineKa` here means every consumer of `Product` (ProductCard,
+// ProductShowcase, product-search, …) is untouched by the localization move.
+type LocalizedString = { en: string; ka: string };
+
 type ProductDoc = {
   productId: string;
   name: string;
@@ -19,10 +27,8 @@ type ProductDoc = {
   img: string;
   gallery?: { src: string }[];
   stock: string;
-  tagline: string;
-  taglineKa: string;
-  description: string;
-  descriptionKa: string;
+  tagline: LocalizedString;
+  description: LocalizedString;
   specs?: { label: string; value: string }[];
 };
 
@@ -45,10 +51,10 @@ function mapDoc(doc: ProductDoc): Product {
     img: doc.img,
     gallery: (doc.gallery ?? []).map((g) => g.src),
     stock: doc.stock as Product["stock"],
-    tagline: doc.tagline,
-    taglineKa: doc.taglineKa,
-    description: doc.description,
-    descriptionKa: doc.descriptionKa,
+    tagline: doc.tagline.en,
+    taglineKa: doc.tagline.ka,
+    description: doc.description.en,
+    descriptionKa: doc.description.ka,
     specs: (doc.specs ?? []).map((s) => ({ label: s.label, value: s.value })),
   };
 }
@@ -57,6 +63,7 @@ export async function getProducts(): Promise<Product[]> {
   const payload = await getPayload({ config });
   const result = await payload.find({
     collection: "products",
+    locale: "all",
     limit: 200,
     sort: "createdAt", // preserve seed/insertion order for "FEATURED"
     depth: 0,
@@ -68,6 +75,7 @@ export async function getProductById(id: string): Promise<Product | null> {
   const payload = await getPayload({ config });
   const result = await payload.find({
     collection: "products",
+    locale: "all",
     where: { productId: { equals: id } },
     limit: 1,
     depth: 0,

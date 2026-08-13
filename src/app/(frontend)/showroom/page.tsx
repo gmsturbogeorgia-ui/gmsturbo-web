@@ -1,5 +1,12 @@
 import type { Metadata } from "next";
+import { getShowroom } from "@/lib/getShowroom";
+import { getProducts } from "@/lib/getProducts";
 import { ShowroomClient } from "./ShowroomClient";
+
+// Read the showroom page content and highlighted products from the
+// Payload/Postgres DB on each request — same reasoning as /
+// (src/app/(frontend)/page.tsx).
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Showroom — Tbilisi Flagship",
@@ -47,14 +54,20 @@ const jsonLd = {
   ],
 };
 
-export default function ShowroomPage() {
+export default async function ShowroomPage() {
+  const [showroom, products] = await Promise.all([
+    getShowroom(),
+    getProducts(),
+  ]);
+  const highlights = products.slice(0, 4);
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <ShowroomClient />
+      <ShowroomClient showroom={showroom} highlights={highlights} />
     </>
   );
 }

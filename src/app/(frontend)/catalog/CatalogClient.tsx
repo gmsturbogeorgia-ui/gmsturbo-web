@@ -19,19 +19,14 @@ import {
   ChipButton,
   MultiSelect,
   SelectMenu,
+  TireTrack,
 } from "@/components/Primitives";
+import type { CatalogContent } from "@/lib/getCatalog";
 import { useLanguage } from "@/lib/i18n/context";
 import { categoryLabel, vehicleLabel } from "@/lib/i18n/dictionary";
 
 const SORTS = ["FEATURED", "PRICE_ASC", "PRICE_DESC", "BOOST"] as const;
 type Sort = (typeof SORTS)[number];
-
-const SORT_KEYS: Record<Sort, string> = {
-  FEATURED: "catalog.sortFeatured",
-  PRICE_ASC: "catalog.sortPriceAsc",
-  PRICE_DESC: "catalog.sortPriceDesc",
-  BOOST: "catalog.sortBoost",
-};
 
 /* "ALL" is a UI affordance, not a value — it just means "nothing selected".
    Keeping it out of the selectable lists is what lets the filters be
@@ -69,10 +64,31 @@ function toggle<T extends string>(list: T[], value: T, allowed: readonly T[]) {
   return allowed.filter((a) => next.includes(a));
 }
 
-export function CatalogClient({ products }: { products: Product[] }) {
+export function CatalogClient({
+  products,
+  catalog,
+}: {
+  products: Product[];
+  catalog: CatalogContent;
+}) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { t, lang } = useLanguage();
+  const { lang } = useLanguage();
+  const pick = (en: string, ka: string) => (lang === "KA" ? ka : en);
+  const { hero, search, toolbar, emptyState, customBuilds } = catalog;
+
+  const sortLabel = (s: Sort): string => {
+    switch (s) {
+      case "FEATURED":
+        return pick(toolbar.sortFeatured, toolbar.sortFeaturedKa);
+      case "PRICE_ASC":
+        return pick(toolbar.sortPriceAsc, toolbar.sortPriceAscKa);
+      case "PRICE_DESC":
+        return pick(toolbar.sortPriceDesc, toolbar.sortPriceDescKa);
+      case "BOOST":
+        return pick(toolbar.sortBoost, toolbar.sortBoostKa);
+    }
+  };
 
   const q = searchParams.get("q") ?? "";
   const cats = parseList(searchParams.get("category"), CAT_OPTIONS);
@@ -126,11 +142,13 @@ export function CatalogClient({ products }: { products: Product[] }) {
       <main className="shell">
         <header className="pb-10 pt-8 md:pb-12 md:pt-12">
           <h1 className="max-w-3xl text-[clamp(2.25rem,5.5vw,4rem)] font-bold">
-            {t("catalog.titleLine1")}{" "}
-            <span className="text-turbo">{t("catalog.titleLine2")}</span>
+            {pick(hero.titleLine1, hero.titleLine1Ka)}{" "}
+            <span className="text-turbo">
+              {pick(hero.titleLine2, hero.titleLine2Ka)}
+            </span>
           </h1>
           <p className="mt-5 max-w-xl text-[1.0625rem] leading-relaxed text-ink-soft">
-            {t("catalog.blurb")}
+            {pick(hero.blurb, hero.blurbKa)}
           </p>
         </header>
 
@@ -147,28 +165,28 @@ export function CatalogClient({ products }: { products: Product[] }) {
             value={q}
             surface="well"
             onChange={(next) => update({ q: next })}
-            placeholder={t("catalog.searchPlaceholder")}
+            placeholder={pick(search.placeholder, search.placeholderKa)}
           />
 
           <div className="mt-4 hidden items-center gap-2.5 lg:flex">
             <MultiSelect
-              label={t("catalog.category")}
+              label={pick(toolbar.categoryLabel, toolbar.categoryLabelKa)}
               options={CAT_OPTIONS}
               selected={cats}
               renderOption={(c) => categoryLabel(c, lang)}
               onToggle={toggleCat}
               onClear={() => update({ cats: [] })}
-              allLabel={t("catalog.allOption")}
+              allLabel={pick(toolbar.allOption, toolbar.allOptionKa)}
               className="w-52"
             />
             <MultiSelect
-              label={t("catalog.vehicle")}
+              label={pick(toolbar.vehicleLabel, toolbar.vehicleLabelKa)}
               options={VEH_OPTIONS}
               selected={vehs}
               renderOption={(v) => vehicleLabel(v, lang)}
               onToggle={toggleVeh}
               onClear={() => update({ vehs: [] })}
-              allLabel={t("catalog.allOption")}
+              allLabel={pick(toolbar.allOption, toolbar.allOptionKa)}
               className="w-52"
             />
 
@@ -177,7 +195,7 @@ export function CatalogClient({ products }: { products: Product[] }) {
                 onClick={() => update({ cats: [], vehs: [] })}
                 className="ml-1 text-sm font-semibold text-ink-mute transition-colors hover:text-turbo"
               >
-                {t("catalog.clearAll")}
+                {pick(toolbar.clearAll, toolbar.clearAllKa)}
               </button>
             )}
           </div>
@@ -195,7 +213,7 @@ export function CatalogClient({ products }: { products: Product[] }) {
             onClick={() => setSheetOpen(true)}
             className="shrink-0 lg:hidden"
           >
-            {t("catalog.filters")}
+            {pick(toolbar.filtersLabel, toolbar.filtersLabelKa)}
             {filterCount > 0 && (
               <span className="ml-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-turbo-deep px-1.5 text-[0.6875rem] text-white">
                 {filterCount}
@@ -204,15 +222,15 @@ export function CatalogClient({ products }: { products: Product[] }) {
           </Button>
 
           <p className="tnum min-w-0 truncate text-sm text-ink-mute">
-            {filtered.length} {t("catalog.unitsSuffix")}
+            {filtered.length} {pick(toolbar.unitsSuffix, toolbar.unitsSuffixKa)}
           </p>
 
           <SelectMenu
-            ariaLabel={t("catalog.sort")}
-            prefix={t("catalog.sort")}
+            ariaLabel={pick(toolbar.sortLabel, toolbar.sortLabelKa)}
+            prefix={pick(toolbar.sortLabel, toolbar.sortLabelKa)}
             value={sort}
             options={SORTS}
-            renderOption={(s) => t(SORT_KEYS[s])}
+            renderOption={(s) => sortLabel(s)}
             onChange={(s) => update({ sort: s })}
             align="right"
             className="ml-auto min-w-0 shrink"
@@ -246,7 +264,7 @@ export function CatalogClient({ products }: { products: Product[] }) {
               onClick={clearAll}
               className="ml-1 text-sm font-semibold text-turbo transition-colors hover:text-ember"
             >
-              {t("catalog.clearAll")}
+              {pick(toolbar.clearAll, toolbar.clearAllKa)}
             </button>
           </div>
         )}
@@ -254,6 +272,7 @@ export function CatalogClient({ products }: { products: Product[] }) {
         <section className="pb-8 pt-8">
           {filtered.length === 0 ? (
             <EmptyState
+              emptyState={emptyState}
               query={q}
               cats={cats}
               vehs={vehs}
@@ -270,20 +289,26 @@ export function CatalogClient({ products }: { products: Product[] }) {
           )}
         </section>
 
+        <TireTrack className="my-4 h-14 opacity-[0.22] md:my-8 md:h-20" />
+
         <section className="mb-4 rounded-[2rem] bg-graphite px-6 py-14 md:px-12">
           <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
             <div className="max-w-lg">
-              <p className="eyebrow">{t("catalog.customBuilds")}</p>
+              <p className="eyebrow">
+                {pick(customBuilds.kicker, customBuilds.kickerKa)}
+              </p>
               <h2 className="mt-3 text-[clamp(1.75rem,3.4vw,2.5rem)]">
-                {t("catalog.cantFind1")}{" "}
-                <span className="text-turbo">{t("catalog.cantFind2")}</span>
+                {pick(customBuilds.title1, customBuilds.title1Ka)}{" "}
+                <span className="text-turbo">
+                  {pick(customBuilds.title2, customBuilds.title2Ka)}
+                </span>
               </h2>
               <p className="mt-4 text-[0.9375rem] leading-relaxed text-ink-soft">
-                {t("catalog.customBlurb")}
+                {pick(customBuilds.blurb, customBuilds.blurbKa)}
               </p>
             </div>
             <ButtonLink href="/contact" className="shrink-0">
-              {t("catalog.requestQuote")}
+              {pick(customBuilds.ctaLabel, customBuilds.ctaLabelKa)}
             </ButtonLink>
           </div>
         </section>
@@ -291,6 +316,7 @@ export function CatalogClient({ products }: { products: Product[] }) {
 
       {sheetOpen && (
         <FilterSheet
+          toolbar={toolbar}
           cats={cats}
           vehs={vehs}
           resultCount={filtered.length}
@@ -345,6 +371,7 @@ function AppliedChip({
    button just dismisses and reports the count, so there is no "apply" step
    to forget and no draft state to keep in sync with the URL. */
 function FilterSheet({
+  toolbar,
   cats,
   vehs,
   resultCount,
@@ -355,6 +382,7 @@ function FilterSheet({
   onClearAll,
   onClose,
 }: {
+  toolbar: CatalogContent["toolbar"];
   cats: Cat[];
   vehs: Veh[];
   resultCount: number;
@@ -365,7 +393,8 @@ function FilterSheet({
   onClearAll: () => void;
   onClose: () => void;
 }) {
-  const { t, lang } = useLanguage();
+  const { lang } = useLanguage();
+  const pick = (en: string, ka: string) => (lang === "KA" ? ka : en);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -386,7 +415,7 @@ function FilterSheet({
       style={{ animation: "rise .3s var(--ease-smooth) both" }}
       role="dialog"
       aria-modal="true"
-      aria-label={t("catalog.filters")}
+      aria-label={pick(toolbar.filtersLabel, toolbar.filtersLabelKa)}
       onClick={onClose}
     >
       <div
@@ -401,20 +430,21 @@ function FilterSheet({
           />
           <div className="flex items-center justify-between">
             <h2 className="font-display text-xl font-semibold">
-              {t("catalog.filters")}
+              {pick(toolbar.filtersLabel, toolbar.filtersLabelKa)}
             </h2>
             <button
               onClick={onClearAll}
               className="text-sm font-semibold text-turbo"
             >
-              {t("catalog.clearAll")}
+              {pick(toolbar.clearAll, toolbar.clearAllKa)}
             </button>
           </div>
         </div>
 
         <div className="px-5 pb-5">
           <SheetGroup
-            label={t("catalog.category")}
+            label={pick(toolbar.categoryLabel, toolbar.categoryLabelKa)}
+            allLabel={pick(toolbar.allOption, toolbar.allOptionKa)}
             allActive={cats.length === 0}
             onAll={onClearCats}
           >
@@ -430,7 +460,8 @@ function FilterSheet({
           </SheetGroup>
 
           <SheetGroup
-            label={t("catalog.vehicle")}
+            label={pick(toolbar.vehicleLabel, toolbar.vehicleLabelKa)}
+            allLabel={pick(toolbar.allOption, toolbar.allOptionKa)}
             allActive={vehs.length === 0}
             onAll={onClearVehs}
           >
@@ -448,7 +479,7 @@ function FilterSheet({
 
         <div className="sticky bottom-0 bg-graphite/95 px-5 pb-6 pt-3 backdrop-blur">
           <Button onClick={onClose} className="w-full">
-            {t("catalog.showResults")} ({resultCount})
+            {pick(toolbar.showResults, toolbar.showResultsKa)} ({resultCount})
           </Button>
         </div>
       </div>
@@ -458,22 +489,23 @@ function FilterSheet({
 
 function SheetGroup({
   label,
+  allLabel,
   allActive,
   onAll,
   children,
 }: {
   label: string;
+  allLabel: string;
   allActive: boolean;
   onAll: () => void;
   children: React.ReactNode;
 }) {
-  const { t } = useLanguage();
   return (
     <div className="pt-6">
       <p className="eyebrow mb-3">{label}</p>
       <div className="flex flex-wrap gap-2">
         <ChipButton active={allActive} onClick={onAll}>
-          {t("catalog.allOption")}
+          {allLabel}
         </ChipButton>
         {children}
       </div>
@@ -482,6 +514,7 @@ function SheetGroup({
 }
 
 function EmptyState({
+  emptyState,
   query,
   cats,
   vehs,
@@ -489,6 +522,7 @@ function EmptyState({
   onPickCategory,
   onPickVehicle,
 }: {
+  emptyState: CatalogContent["emptyState"];
   query: string;
   cats: Cat[];
   vehs: Veh[];
@@ -496,7 +530,8 @@ function EmptyState({
   onPickCategory: (c: Cat) => void;
   onPickVehicle: (v: Veh) => void;
 }) {
-  const { t, lang } = useLanguage();
+  const { lang } = useLanguage();
+  const pick = (en: string, ka: string) => (lang === "KA" ? ka : en);
   const term =
     query ||
     [...cats.map((c) => categoryLabel(c, lang)), ...vehs.map((v) => vehicleLabel(v, lang))].join(
@@ -507,25 +542,27 @@ function EmptyState({
     <div className="rounded-[2rem] bg-graphite px-6 py-16 md:py-20">
       <div className="mx-auto max-w-xl text-center">
         <h2 className="text-[clamp(1.5rem,3vw,2.25rem)]">
-          {t("catalog.noResultsTitle")}
+          {pick(emptyState.title, emptyState.titleKa)}
         </h2>
         <p className="mt-4 text-[0.9375rem] leading-relaxed text-ink-soft">
-          {t("catalog.noResultsBlurbLead")}{" "}
+          {pick(emptyState.blurbLead, emptyState.blurbLeadKa)}{" "}
           <span className="font-semibold text-ink">“{term}”</span>{" "}
-          {t("catalog.noResultsBlurbTail")}
+          {pick(emptyState.blurbTail, emptyState.blurbTailKa)}
         </p>
 
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <Button variant="secondary" onClick={onReset}>
-            {t("catalog.resetFilter")}
+            {pick(emptyState.resetFilter, emptyState.resetFilterKa)}
           </Button>
           <ButtonLink href="/contact">
-            {t("catalog.requestCustomSpec")}
+            {pick(emptyState.requestCustomSpec, emptyState.requestCustomSpecKa)}
           </ButtonLink>
         </div>
 
         <div className="mt-14">
-          <p className="eyebrow mb-4">{t("catalog.browseCore")}</p>
+          <p className="eyebrow mb-4">
+            {pick(emptyState.browseCore, emptyState.browseCoreKa)}
+          </p>
           <div className="flex flex-wrap justify-center gap-2">
             {CAT_OPTIONS.map((c) => (
               <ChipButton key={c} onClick={() => onPickCategory(c)}>
@@ -534,7 +571,9 @@ function EmptyState({
             ))}
           </div>
 
-          <p className="eyebrow mb-4 mt-8">{t("catalog.popularPlatforms")}</p>
+          <p className="eyebrow mb-4 mt-8">
+            {pick(emptyState.popularPlatforms, emptyState.popularPlatformsKa)}
+          </p>
           <div className="flex flex-wrap justify-center gap-2">
             {(["BMW", "AUDI", "PORSCHE", "MERCEDES"] as const).map((v) => (
               <ChipButton key={v} onClick={() => onPickVehicle(v)}>
