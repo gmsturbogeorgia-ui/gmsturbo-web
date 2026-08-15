@@ -1,4 +1,10 @@
 import type { GlobalConfig } from "payload";
+import {
+  formatLatLng,
+  isShortMapLink,
+  parseLatLng,
+  resolveShortMapLink,
+} from "@/lib/mapQuery";
 
 // Singleton content for /contact. Same pattern as src/globals/Home.ts:
 // every text block the page renders lives here instead of the i18n
@@ -91,17 +97,51 @@ export const Contact: GlobalConfig = {
     {
       name: "findUs",
       type: "group",
-      admin: { description: "The showroom photo + caption at the bottom." },
+      admin: { description: "The map + caption at the bottom." },
       fields: [
         { name: "kicker", type: "text", required: true, localized: true },
         { name: "title", type: "text", required: true, localized: true },
         {
-          name: "image",
+          name: "mapQuery",
           type: "text",
-          required: true,
           admin: {
             description:
-              "Showroom photo path, e.g. /images/showroom-display-minimal.jpeg",
+              "Paste any Google Maps link to the shop — the short share link (maps.app.goo.gl/…) works too — or type coordinates as \"lat,lng\". Whatever you paste is converted to coordinates when you hit save, because the map itself is OpenStreetMap and can't look up an address. Empty falls back to the workshop's default pin.",
+            placeholder: "https://maps.app.goo.gl/… or 41.697529,44.886512",
+          },
+          hooks: {
+            // Runs before validate, so the field is already coordinates by
+            // the time validate() checks it — and the editor sees the
+            // resolved "lat,lng" in the form after saving.
+            beforeValidate: [
+              async ({ value }) => {
+                if (typeof value !== "string" || !value.trim()) return value;
+                const raw = value.trim();
+                const link = isShortMapLink(raw)
+                  ? ((await resolveShortMapLink(raw)) ?? raw)
+                  : raw;
+                const coords = parseLatLng(link);
+                return coords ? formatLatLng(coords) : raw;
+              },
+            ],
+          },
+          validate: (value: string | null | undefined) => {
+            if (!value || parseLatLng(value)) return true;
+            if (isShortMapLink(value)) {
+              return "Couldn't reach Google to expand that short link. Open it in a browser and paste the full google.com/maps URL instead.";
+            }
+            return "No coordinates in that value. Paste a Google Maps link to the shop, or type them directly as \"41.697529,44.886512\" — a street address alone can't be placed on the map.";
+          },
+        },
+        {
+          name: "mapZoom",
+          type: "number",
+          min: 3,
+          max: 19,
+          admin: {
+            description:
+              "Zoom level: 14 shows the district, 16 the street (default), 18 the building.",
+            step: 1,
           },
         },
         { name: "caption", type: "text", required: true, localized: true },

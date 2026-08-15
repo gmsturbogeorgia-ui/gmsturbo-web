@@ -270,3 +270,103 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Leaflet (the /contact map)
+
+   Leaflet ships light chrome — white zoom buttons, white attribution strip —
+   which would be the only light surface on the site. This pulls it onto the
+   same ramp as everything else. Tiles are CARTO's dark basemap, so the map
+   body needs no filtering.
+   -------------------------------------------------------------------------- */
+
+.leaflet-container {
+  background: var(--graphite);
+  font-family: var(--font-sans);
+  /* Leaflet's default z-index puts panes at 400+, which would slide under
+     the sticky header on scroll. */
+  z-index: 0;
+}
+
+.leaflet-control-attribution {
+  background: rgba(5, 5, 5, 0.72) !important;
+  color: var(--ink-mute);
+  font-size: 0.6875rem;
+  padding: 2px 8px;
+}
+
+.leaflet-control-attribution a {
+  color: var(--ink-soft);
+}
+
+.leaflet-control-attribution a:hover {
+  color: var(--turbo);
+}
+
+.leaflet-bar,
+.leaflet-bar a {
+  background: var(--carbon);
+  border: 0;
+  color: var(--ink);
+  box-shadow: var(--shadow-soft);
+}
+
+.leaflet-bar a:hover,
+.leaflet-bar a:focus-visible {
+  background: var(--steel);
+  color: var(--turbo);
+}
+
+.leaflet-bar a.leaflet-disabled {
+  background: var(--graphite);
+  color: var(--ink-mute);
+}
+
+.leaflet-tooltip {
+  background: var(--carbon);
+  border: 0;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lift);
+  color: var(--ink);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 6px 10px;
+}
+
+.leaflet-tooltip-top::before {
+  border-top-color: var(--carbon);
+}
+
+/* The pin: a brand-red dot with a slow halo, in place of Leaflet's default
+   marker PNG (see the divIcon in components/ShopMap). */
+.shop-pin__dot,
+.shop-pin__pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+}
+
+.shop-pin__dot {
+  background: var(--turbo);
+  box-shadow:
+    0 0 0 3px rgba(5, 5, 5, 0.9),
+    var(--shadow-glow);
+  margin: 5px;
+}
+
+.shop-pin__pulse {
+  background: rgba(255, 74, 43, 0.35);
+  animation: shopPinPulse 2.8s var(--ease-smooth) infinite;
+}
+
+@keyframes shopPinPulse {
+  0% {
+    opacity: 0.7;
+    transform: scale(0.4);
+  }
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}

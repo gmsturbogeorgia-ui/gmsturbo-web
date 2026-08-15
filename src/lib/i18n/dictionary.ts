@@ -146,6 +146,8 @@ export const dict = {
         "Leave your number and what you're building. Our technical team will call you back during workshop hours to spec your build.",
       findKicker: "Find us",
       findTitle: "The workshop",
+      mapTitle: "Map of the GMS Turbo workshop",
+      mapCta: "Get directions",
     },
     catalog: {
       titleLine1: "Forged for",
@@ -435,6 +437,8 @@ export const dict = {
         "დატოვეთ თქვენი ნომერი და რას აწყობთ. ჩვენი ტექნიკური გუნდი დაგირეკავთ სამუშაო საათებში პროექტის დასაზუსტებლად.",
       findKicker: "მოგვძებნეთ",
       findTitle: "სახელოსნო",
+      mapTitle: "GMS Turbo-ს სახელოსნოს რუკა",
+      mapCta: "მარშრუტის აგება",
     },
     catalog: {
       titleLine1: "შექმნილია",

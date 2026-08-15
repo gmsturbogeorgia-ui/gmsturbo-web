@@ -54,7 +54,8 @@ export const CONTACT_SEED = {
     kickerKa: "მოგვძებნეთ",
     title: "The workshop",
     titleKa: "სახელოსნო",
-    image: "/images/showroom-display-minimal.jpeg",
+    mapQuery: "41.697529,44.886512",
+    mapZoom: 16,
     caption: "Tsereteli Ave 114 · Tbilisi",
     captionKa: "წერეთლის გამზ. 114 · თბილისი",
   },
@@ -132,7 +133,8 @@ export function contactSeedAllLocales() {
     findUs: {
       kicker: locale(CONTACT_SEED.findUs.kicker, CONTACT_SEED.findUs.kickerKa),
       title: locale(CONTACT_SEED.findUs.title, CONTACT_SEED.findUs.titleKa),
-      image: CONTACT_SEED.findUs.image,
+      mapQuery: CONTACT_SEED.findUs.mapQuery,
+      mapZoom: CONTACT_SEED.findUs.mapZoom,
       caption: locale(
         CONTACT_SEED.findUs.caption,
         CONTACT_SEED.findUs.captionKa,

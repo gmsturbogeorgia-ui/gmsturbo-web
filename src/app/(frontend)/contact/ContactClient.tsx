@@ -3,13 +3,20 @@
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { BookCallButton } from "@/components/Booking";
 import { TireTrack } from "@/components/Primitives";
+import { ShopMap } from "@/components/ShopMap";
 import type { ContactContent } from "@/lib/getContact";
 import { useLanguage } from "@/lib/i18n/context";
 
 export function ContactClient({ contact }: { contact: ContactContent }) {
-  const { lang } = useLanguage();
+  const { lang, t } = useLanguage();
   const pick = (en: string, ka: string) => (lang === "KA" ? ka : en);
   const { hero, info, booking, findUs } = contact;
+
+  // The map itself is OpenStreetMap, but "get me there" should still open
+  // whatever navigation app the visitor actually uses, so the link out stays
+  // a Google Maps directions URL pointed at the same pin.
+  const { lat, lng, zoom } = findUs.map;
+  const directionsHref = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
 
   return (
     <>
@@ -95,26 +102,34 @@ export function ContactClient({ contact }: { contact: ContactContent }) {
           </div>
         </section>
 
-        {/* Find us */}
+        {/* Find us — a live map instead of a still photo of the front. */}
         <section className="shell py-20">
           <p className="eyebrow">{pick(findUs.kicker, findUs.kickerKa)}</p>
           <h2 className="mt-3 text-[clamp(1.5rem,3vw,2.25rem)]">
             {pick(findUs.title, findUs.titleKa)}
           </h2>
-          <div className="mt-8 overflow-hidden rounded-3xl">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={findUs.image}
-              alt="The GMS Turbo Georgia showroom at Tsereteli Ave 114, Tbilisi"
-              loading="lazy"
-              width={1536}
-              height={1024}
-              className="aspect-[16/9] w-full object-cover md:aspect-[21/9]"
+          <div className="mt-8 overflow-hidden rounded-3xl bg-graphite">
+            <ShopMap
+              lat={lat}
+              lng={lng}
+              zoom={zoom}
+              label={t("contact.mapTitle")}
+              className="aspect-[16/9] w-full md:aspect-[21/9]"
             />
           </div>
-          <p className="mt-4 text-sm text-ink-mute">
-            {pick(findUs.caption, findUs.captionKa)}
-          </p>
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
+            <p className="text-sm text-ink-mute">
+              {pick(findUs.caption, findUs.captionKa)}
+            </p>
+            <a
+              href={directionsHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block text-sm font-semibold text-turbo underline decoration-transparent decoration-2 underline-offset-[6px] transition-[color,text-decoration-color] duration-300 hover:decoration-turbo"
+            >
+              {t("contact.mapCta")}
+            </a>
+          </div>
         </section>
       </main>
       <SiteFooter />

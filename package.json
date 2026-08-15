@@ -13,12 +13,14 @@
     "generate:types": "payload generate:types"
   },
   "dependencies": {
-    "@tanstack/react-start": "^1.131.50",
     "@payloadcms/db-postgres": "3.85.0",
     "@payloadcms/next": "3.85.0",
     "@payloadcms/richtext-lexical": "3.85.0",
+    "@tanstack/react-start": "^1.131.50",
+    "@types/leaflet": "^1.9.22",
     "clsx": "^2.1.1",
     "graphql": "^16.9.0",
+    "leaflet": "^1.9.4",
     "next": "15.4.11",
     "payload": "3.85.0",
     "react": "^19.0.0",

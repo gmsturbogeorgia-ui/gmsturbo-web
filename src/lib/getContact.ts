@@ -1,5 +1,10 @@
 import { getPayload } from "payload";
 import config from "@payload-config";
+import {
+  DEFAULT_MAP_CENTER,
+  DEFAULT_MAP_ZOOM,
+  parseLatLng,
+} from "@/lib/mapQuery";
 
 // Server-only data access for the `contact` Payload global. Maps the DB doc
 // onto the shape ContactClient renders — mirrors src/lib/getHome.ts.
@@ -51,7 +56,8 @@ export type ContactContent = {
     kickerKa: string;
     title: string;
     titleKa: string;
-    image: string;
+    /** Where the Leaflet map drops its pin, and how tight it zooms in. */
+    map: { lat: number; lng: number; zoom: number };
     caption: string;
     captionKa: string;
   };
@@ -79,7 +85,13 @@ type ContactDoc = {
     saturdayVal: L;
   };
   booking: { kicker: L; title1: L; title2: L; blurb: L };
-  findUs: { kicker: L; title: L; image: string; caption: L };
+  findUs: {
+    kicker: L;
+    title: L;
+    mapQuery?: string | null;
+    mapZoom?: number | null;
+    caption: L;
+  };
 };
 
 function mapDoc(doc: ContactDoc): ContactContent {
@@ -131,7 +143,13 @@ function mapDoc(doc: ContactDoc): ContactContent {
       kickerKa: doc.findUs.kicker.ka,
       title: doc.findUs.title.en,
       titleKa: doc.findUs.title.ka,
-      image: doc.findUs.image,
+      // mapQuery is stored as "lat,lng" (the field hook resolves whatever
+      // link was pasted). Parsing again here keeps rows written before that
+      // hook existed — or by hand — from putting the map in the sea.
+      map: {
+        ...(parseLatLng(doc.findUs.mapQuery) ?? DEFAULT_MAP_CENTER),
+        zoom: doc.findUs.mapZoom ?? DEFAULT_MAP_ZOOM,
+      },
       caption: doc.findUs.caption.en,
       captionKa: doc.findUs.caption.ka,
     },
