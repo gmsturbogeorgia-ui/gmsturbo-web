@@ -5,144 +5,57 @@ import {
   DEFAULT_MAP_ZOOM,
   parseLatLng,
 } from "@/lib/mapQuery";
+import type { Locale } from "./i18n/locales";
 
-// Server-only data access for the `contact` Payload global. Maps the DB doc
-// onto the shape ContactClient renders — mirrors src/lib/getHome.ts.
+// Server-only data access for the `contact` Payload global — same shape as
+// src/lib/getHome.ts, which see for why this is no longer a field-by-field
+// mapping of `{ en, ka }` pairs.
 export type ContactContent = {
-  hero: {
-    tag: string;
-    tagKa: string;
-    title1: string;
-    title1Ka: string;
-    title2: string;
-    title2Ka: string;
-    blurb: string;
-    blurbKa: string;
-  };
+  hero: { tag: string; title1: string; title2: string; blurb: string };
   info: {
     phoneLabel: string;
-    phoneLabelKa: string;
     phone: string;
     emailLabel: string;
-    emailLabelKa: string;
     email: string;
     addressLabel: string;
-    addressLabelKa: string;
     addressLine1: string;
-    addressLine1Ka: string;
     addressLine2: string;
-    addressLine2Ka: string;
     hoursLabel: string;
-    hoursLabelKa: string;
     hoursVal: string;
-    hoursValKa: string;
     saturdayLabel: string;
-    saturdayLabelKa: string;
     saturdayVal: string;
-    saturdayValKa: string;
   };
-  booking: {
-    kicker: string;
-    kickerKa: string;
-    title1: string;
-    title1Ka: string;
-    title2: string;
-    title2Ka: string;
-    blurb: string;
-    blurbKa: string;
-  };
+  booking: { kicker: string; title1: string; title2: string; blurb: string };
   findUs: {
     kicker: string;
-    kickerKa: string;
     title: string;
-    titleKa: string;
     /** Where the Leaflet map drops its pin, and how tight it zooms in. */
     map: { lat: number; lng: number; zoom: number };
     caption: string;
-    captionKa: string;
   };
 };
 
-// Shape returned by Payload when querying `locale: "all"` — every
-// `localized: true` leaf comes back as `{ en, ka }` (see the `localization`
-// block in payload.config.ts). Non-localized leaves (phone, email, image
-// paths) stay plain strings.
-type L = { en: string; ka: string };
-
-type ContactDoc = {
-  hero: { tag: L; title1: L; title2: L; blurb: L };
-  info: {
-    phoneLabel: L;
-    phone: string;
-    emailLabel: L;
-    email: string;
-    addressLabel: L;
-    addressLine1: L;
-    addressLine2: L;
-    hoursLabel: L;
-    hoursVal: L;
-    saturdayLabel: L;
-    saturdayVal: L;
-  };
-  booking: { kicker: L; title1: L; title2: L; blurb: L };
-  findUs: {
-    kicker: L;
-    title: L;
+// The map coordinates are the one field that isn't stored the way the page
+// wants it: the admin holds a "lat,lng" string plus a zoom, both nullable.
+type ContactDoc = Omit<ContactContent, "findUs"> & {
+  findUs: Omit<ContactContent["findUs"], "map"> & {
     mapQuery?: string | null;
     mapZoom?: number | null;
-    caption: L;
   };
 };
 
-function mapDoc(doc: ContactDoc): ContactContent {
+export async function getContact(locale: Locale): Promise<ContactContent> {
+  const payload = await getPayload({ config });
+  const doc = (await payload.findGlobal({
+    slug: "contact",
+    locale,
+    depth: 0,
+  })) as unknown as ContactDoc;
+
   return {
-    hero: {
-      tag: doc.hero.tag.en,
-      tagKa: doc.hero.tag.ka,
-      title1: doc.hero.title1.en,
-      title1Ka: doc.hero.title1.ka,
-      title2: doc.hero.title2.en,
-      title2Ka: doc.hero.title2.ka,
-      blurb: doc.hero.blurb.en,
-      blurbKa: doc.hero.blurb.ka,
-    },
-    info: {
-      phoneLabel: doc.info.phoneLabel.en,
-      phoneLabelKa: doc.info.phoneLabel.ka,
-      phone: doc.info.phone,
-      emailLabel: doc.info.emailLabel.en,
-      emailLabelKa: doc.info.emailLabel.ka,
-      email: doc.info.email,
-      addressLabel: doc.info.addressLabel.en,
-      addressLabelKa: doc.info.addressLabel.ka,
-      addressLine1: doc.info.addressLine1.en,
-      addressLine1Ka: doc.info.addressLine1.ka,
-      addressLine2: doc.info.addressLine2.en,
-      addressLine2Ka: doc.info.addressLine2.ka,
-      hoursLabel: doc.info.hoursLabel.en,
-      hoursLabelKa: doc.info.hoursLabel.ka,
-      hoursVal: doc.info.hoursVal.en,
-      hoursValKa: doc.info.hoursVal.ka,
-      saturdayLabel: doc.info.saturdayLabel.en,
-      saturdayLabelKa: doc.info.saturdayLabel.ka,
-      saturdayVal: doc.info.saturdayVal.en,
-      saturdayValKa: doc.info.saturdayVal.ka,
-    },
-    booking: {
-      kicker: doc.booking.kicker.en,
-      kickerKa: doc.booking.kicker.ka,
-      title1: doc.booking.title1.en,
-      title1Ka: doc.booking.title1.ka,
-      title2: doc.booking.title2.en,
-      title2Ka: doc.booking.title2.ka,
-      blurb: doc.booking.blurb.en,
-      blurbKa: doc.booking.blurb.ka,
-    },
+    ...doc,
     findUs: {
-      kicker: doc.findUs.kicker.en,
-      kickerKa: doc.findUs.kicker.ka,
-      title: doc.findUs.title.en,
-      titleKa: doc.findUs.title.ka,
+      ...doc.findUs,
       // mapQuery is stored as "lat,lng" (the field hook resolves whatever
       // link was pasted). Parsing again here keeps rows written before that
       // hook existed — or by hand — from putting the map in the sea.
@@ -150,18 +63,6 @@ function mapDoc(doc: ContactDoc): ContactContent {
         ...(parseLatLng(doc.findUs.mapQuery) ?? DEFAULT_MAP_CENTER),
         zoom: doc.findUs.mapZoom ?? DEFAULT_MAP_ZOOM,
       },
-      caption: doc.findUs.caption.en,
-      captionKa: doc.findUs.caption.ka,
     },
   };
-}
-
-export async function getContact(): Promise<ContactContent> {
-  const payload = await getPayload({ config });
-  const doc = await payload.findGlobal({
-    slug: "contact",
-    locale: "all",
-    depth: 0,
-  });
-  return mapDoc(doc as unknown as ContactDoc);
 }

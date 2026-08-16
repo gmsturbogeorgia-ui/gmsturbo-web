@@ -1,9 +1,10 @@
 "use client";
 
-import Link from "next/link";
+import { LocaleLink as Link } from "@/components/LocaleLink";
 import type { Product } from "@/lib/products";
 import { useLanguage } from "@/lib/i18n/context";
-import { categoryLabel, stockLabel, vehicleLabel } from "@/lib/i18n/dictionary";
+import { stockLabel } from "@/lib/i18n/dictionary";
+import { useTaxonomy } from "@/lib/i18n/taxonomy-context";
 import { Highlighted } from "@/components/ProductSearch";
 import { cn } from "@/lib/utils";
 
@@ -37,6 +38,7 @@ export function ProductCard({
   priority?: boolean;
 }) {
   const { t, lang } = useLanguage();
+  const { catLabel, vehLabel } = useTaxonomy();
 
   // Only flag stock when it's something the buyer must act on. "In stock" is
   // the default state and doesn't earn a badge.
@@ -88,7 +90,7 @@ export function ProductCard({
 
       <div className="px-1.5 pb-1.5 pt-3.5">
         <p className="text-xs text-ink-mute">
-          {categoryLabel(product.category, lang)}
+          {catLabel(product.category)}
         </p>
 
         <h3 className="mt-1 text-[0.9375rem] font-semibold leading-snug text-ink transition-colors duration-300 group-hover:text-turbo">
@@ -113,7 +115,7 @@ export function ProductCard({
           </p>
 
           <p className="truncate text-[0.6875rem] text-ink-mute">
-            {shownPlatforms.map((v) => vehicleLabel(v, lang)).join(" · ")}
+            {shownPlatforms.map(vehLabel).join(" · ")}
             {extraPlatforms > 0 && ` +${extraPlatforms}`}
           </p>
         </div>

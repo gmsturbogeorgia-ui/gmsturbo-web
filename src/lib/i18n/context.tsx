@@ -1,9 +1,16 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { createContext, useCallback, useContext, useMemo } from "react";
 import { dict, type Lang } from "./dictionary";
+import {
+  switchLocalePath,
+  toLang,
+  toLocale,
+  type Locale,
+} from "./locales";
 
-const STORAGE_KEY = "gms-turbo-lang";
+const LOCALE_COOKIE = "gms-turbo-locale";
 
 function getPath(obj: unknown, path: string): unknown {
   return path
@@ -18,7 +25,11 @@ function getPath(obj: unknown, path: string): unknown {
 }
 
 type LanguageContextValue = {
+  /** Uppercase spelling used by the static dictionary and the components. */
   lang: Lang;
+  /** Lowercase URL/Payload spelling of the same thing. */
+  locale: Locale;
+  /** Navigates to the same page in the other language. */
   setLang: (l: Lang) => void;
   /** Translate a dotted key path, e.g. t("home.heroTitle"). Falls back to EN, then the key itself. */
   t: (path: string) => string;
@@ -28,29 +39,37 @@ const LanguageContext = createContext<LanguageContextValue | undefined>(
   undefined,
 );
 
-export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [lang, setLangState] = useState<Lang>("KA");
+/**
+ * The current language now comes from the URL (/ka/… or /en/…), passed down
+ * by the locale layout, rather than from localStorage read after mount.
+ *
+ * That removes the old first-paint flash — the server already rendered the
+ * right language — and makes the choice shareable, since the URL carries it.
+ * Switching language is a navigation, not a setState.
+ */
+export function LanguageProvider({
+  locale,
+  children,
+}: {
+  locale: Locale;
+  children: React.ReactNode;
+}) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const lang = toLang(locale);
 
-  useEffect(() => {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    if (stored === "EN" || stored === "KA") setLangState(stored);
-  }, []);
-
-  // Keep <html lang="..."> in sync with the toggle. Needed for a11y/SEO, and
-  // it also gives CSS a :lang(ka) hook to target Georgian (Kartuli) text —
-  // e.g. bumping heading weight so it matches the Latin display font's punch.
-  useEffect(() => {
-    document.documentElement.lang = lang === "KA" ? "ka" : "en";
-  }, [lang]);
-
-  const setLang = (l: Lang) => {
-    setLangState(l);
-    try {
-      window.localStorage.setItem(STORAGE_KEY, l);
-    } catch {
-      // localStorage unavailable (private browsing, etc.) — ignore.
-    }
-  };
+  const setLang = useCallback(
+    (next: Lang) => {
+      const nextLocale = toLocale(next);
+      if (nextLocale === locale) return;
+      // Remembered so that typing the bare domain later lands on the language
+      // last chosen — middleware.ts reads this cookie. Not the source of
+      // truth for the current page; the URL is.
+      document.cookie = `${LOCALE_COOKIE}=${nextLocale};path=/;max-age=31536000;samesite=lax`;
+      router.push(switchLocalePath(pathname, nextLocale));
+    },
+    [locale, pathname, router],
+  );
 
   const t = useMemo(() => {
     return (path: string): string => {
@@ -59,7 +78,10 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     };
   }, [lang]);
 
-  const value = useMemo(() => ({ lang, setLang, t }), [lang, t]);
+  const value = useMemo(
+    () => ({ lang, locale, setLang, t }),
+    [lang, locale, setLang, t],
+  );
 
   return (
     <LanguageContext.Provider value={value}>

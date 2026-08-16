@@ -31,11 +31,12 @@ export const Showroom: GlobalConfig = {
         { name: "title2", type: "text", required: true, localized: true },
         {
           name: "image",
-          type: "text",
+          type: "upload",
+          relationTo: "media",
           required: true,
           admin: {
             description:
-              "Hero photo path, e.g. /images/showroom-reception-neon.jpeg",
+              "Hero photo — upload a new file or pick one already in Media.",
           },
         },
       ],
@@ -81,9 +82,10 @@ export const Showroom: GlobalConfig = {
         { name: "lead", type: "textarea", required: true, localized: true },
         {
           name: "bannerImage",
-          type: "text",
+          type: "upload",
+          relationTo: "media",
           required: true,
-          admin: { description: "Full-width banner photo path." },
+          admin: { description: "Full-width banner photo." },
         },
         {
           name: "bannerCaption",
@@ -99,7 +101,12 @@ export const Showroom: GlobalConfig = {
           labels: { singular: "Photo", plural: "Photos" },
           admin: { description: "The six mosaic tiles after the banner." },
           fields: [
-            { name: "image", type: "text", required: true },
+            {
+              name: "image",
+              type: "upload",
+              relationTo: "media",
+              required: true,
+            },
             { name: "caption", type: "text", required: true, localized: true },
           ],
         },

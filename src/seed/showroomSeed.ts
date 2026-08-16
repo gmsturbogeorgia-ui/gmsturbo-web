@@ -3,6 +3,12 @@
 // previously lived in src/lib/i18n/dictionary.ts under the `showroom` key,
 // plus the gallery captions and phone/email/address that were hardcoded in
 // ShowroomClient.
+//
+// As in src/seed/homeSeed.ts, the `/images/…` values below are repo paths,
+// not what gets stored — runSeed uploads each into the `media` collection
+// and writes that doc's id, because the CMS image fields are uploads now.
+import type { MediaResolver } from "./mediaSeed";
+
 export const SHOWROOM_SEED = {
   hero: {
     tag: "Flagship · Tsereteli Ave 114, Tbilisi",
@@ -140,13 +146,13 @@ const locale = (en: string, ka: string): L => ({ en, ka });
  * them, so `stats` and `gallery.items` would lose whichever locale was
  * written first).
  */
-export function showroomSeedAllLocales() {
+export function showroomSeedAllLocales(media: MediaResolver) {
   return {
     hero: {
       tag: locale(SHOWROOM_SEED.hero.tag, SHOWROOM_SEED.hero.tagKa),
       title1: locale(SHOWROOM_SEED.hero.title1, SHOWROOM_SEED.hero.title1Ka),
       title2: locale(SHOWROOM_SEED.hero.title2, SHOWROOM_SEED.hero.title2Ka),
-      image: SHOWROOM_SEED.hero.image,
+      image: media(SHOWROOM_SEED.hero.image),
     },
     stats: SHOWROOM_SEED.stats.map((s) => ({
       value: locale(s.value, s.valueKa),
@@ -176,13 +182,13 @@ export function showroomSeedAllLocales() {
       ),
       title: locale(SHOWROOM_SEED.gallery.title, SHOWROOM_SEED.gallery.titleKa),
       lead: locale(SHOWROOM_SEED.gallery.lead, SHOWROOM_SEED.gallery.leadKa),
-      bannerImage: SHOWROOM_SEED.gallery.bannerImage,
+      bannerImage: media(SHOWROOM_SEED.gallery.bannerImage),
       bannerCaption: locale(
         SHOWROOM_SEED.gallery.bannerCaption,
         SHOWROOM_SEED.gallery.bannerCaptionKa,
       ),
       items: SHOWROOM_SEED.gallery.items.map((i) => ({
-        image: i.image,
+        image: media(i.image),
         caption: locale(i.caption, i.captionKa),
       })),
     },

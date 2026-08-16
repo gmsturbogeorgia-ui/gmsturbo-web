@@ -1,7 +1,15 @@
+import type { MediaResolver } from "./mediaSeed";
+
 // Default content for the `home` Payload global, seeded once so /admin and
 // the live site both start populated. Copied verbatim from the strings that
 // previously lived in src/lib/i18n/dictionary.ts under the `home` key and
 // the process `steps` array in src/app/HomeClient.tsx.
+//
+// The `image` values stay written as `/images/…` paths here because that's
+// where the source files live in the repo. They are not what gets stored:
+// runSeed uploads each one into the `media` collection and swaps the path
+// for that media doc's id, since every image field in the CMS is an upload
+// relationship (see src/seed/mediaSeed.ts).
 export const HOME_SEED = {
   hero: {
     kicker: "Turbocharger engineering · Tbilisi, est. 2014",
@@ -151,7 +159,7 @@ const locale = (en: string, ka: string): L => ({ en, ka });
  * both locales into one write sidesteps that entirely: each row is created
  * once, with both locale companion rows attached from the start.
  */
-export function homeSeedAllLocales() {
+export function homeSeedAllLocales(media: MediaResolver) {
   return {
     hero: {
       kicker: locale(HOME_SEED.hero.kicker, HOME_SEED.hero.kickerKa),
@@ -161,7 +169,7 @@ export function homeSeedAllLocales() {
       line3b: locale(HOME_SEED.hero.line3b, HOME_SEED.hero.line3bKa),
       blurb: locale(HOME_SEED.hero.blurb, HOME_SEED.hero.blurbKa),
       ctaLabel: locale(HOME_SEED.hero.ctaLabel, HOME_SEED.hero.ctaLabelKa),
-      image: HOME_SEED.hero.image,
+      image: media(HOME_SEED.hero.image),
     },
     stats: HOME_SEED.stats.map((s) => ({
       value: locale(s.value, s.valueKa),
@@ -193,7 +201,7 @@ export function homeSeedAllLocales() {
         HOME_SEED.workshop.scheduleVisitLabel,
         HOME_SEED.workshop.scheduleVisitLabelKa,
       ),
-      image: HOME_SEED.workshop.image,
+      image: media(HOME_SEED.workshop.image),
     },
     booking: {
       kicker: locale(HOME_SEED.booking.kicker, HOME_SEED.booking.kickerKa),

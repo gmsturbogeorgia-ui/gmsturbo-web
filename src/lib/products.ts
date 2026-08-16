@@ -1,24 +1,34 @@
-export const CATEGORIES = [
-  "ALL",
-  "HYBRID",
-  "BILLET",
-  "OEM REPLACEMENT",
-  "COMPETITION",
-] as const;
-export const VEHICLES = [
-  "ALL",
-  "BMW",
-  "AUDI",
-  "VW",
-  "MERCEDES",
-  "PORSCHE",
-  "SUBARU",
-  "TOYOTA",
-  "NISSAN",
+// Seed defaults for the `categories` and `vehicles` collections — these are
+// no longer the authoritative list. Both are editable from /admin now (see
+// src/collections/Categories.ts), so anything reading a category or make at
+// runtime gets it from the DB via src/lib/getTaxonomies.ts; this array only
+// says what a fresh database starts with. `label`/`labelKa` seed the
+// localized display name, `value` is the stable key products are filed under.
+export const CATEGORY_SEED = [
+  { value: "HYBRID", label: "Hybrid", labelKa: "ჰიბრიდი" },
+  { value: "BILLET", label: "Billet", labelKa: "ბილეტი" },
+  { value: "OEM REPLACEMENT", label: "OEM replacement", labelKa: "OEM ჩანაცვლება" },
+  { value: "COMPETITION", label: "Competition", labelKa: "სპორტული" },
 ] as const;
 
-export type Category = (typeof CATEGORIES)[number];
-export type Vehicle = (typeof VEHICLES)[number];
+// Marques keep their own house styling in both languages (BMW and VW are
+// genuinely initialisms; Porsche and Subaru are not), so most labels match.
+export const VEHICLE_SEED = [
+  { value: "BMW", label: "BMW", labelKa: "BMW", popular: true },
+  { value: "AUDI", label: "Audi", labelKa: "Audi", popular: true },
+  { value: "VW", label: "VW", labelKa: "VW", popular: false },
+  { value: "MERCEDES", label: "Mercedes", labelKa: "Mercedes", popular: true },
+  { value: "PORSCHE", label: "Porsche", labelKa: "Porsche", popular: true },
+  { value: "SUBARU", label: "Subaru", labelKa: "Subaru", popular: false },
+  { value: "TOYOTA", label: "Toyota", labelKa: "Toyota", popular: false },
+  { value: "NISSAN", label: "Nissan", labelKa: "Nissan", popular: false },
+] as const;
+
+// Categories and makes are user-editable rows now, not a closed set, so these
+// are plain strings holding a taxonomy `value`. They stay named types because
+// every filter/search signature in the app reads better for it.
+export type Category = string;
+export type Vehicle = string;
 
 // Real GMS Turbo studio photography, shared per catalog category. The first
 // entry is the product's lead image; the rest populate the detail gallery.
@@ -59,12 +69,15 @@ function galleryFor(category: Exclude<Category, "ALL">): string[] {
   return CATEGORY_IMAGES[category];
 }
 
+// A product as the site renders it: text already in the page's language,
+// because the locale is a URL segment and getProducts queries Payload for
+// that one locale (see src/lib/getProducts.ts).
 export type Product = {
   id: string;
   name: string;
   code: string;
-  category: Exclude<Category, "ALL">;
-  vehicles: Exclude<Vehicle, "ALL">[];
+  category: Category;
+  vehicles: Vehicle[];
   fitments: { make: string; model: string; years: string; engine: string }[];
   boost: number;
   hp: number;
@@ -73,13 +86,21 @@ export type Product = {
   gallery: string[];
   stock: "IN STOCK" | "MADE TO ORDER" | "LOW STOCK";
   tagline: string;
-  taglineKa: string;
   description: string;
-  descriptionKa: string;
   specs: { label: string; value: string }[];
 };
 
-export const PRODUCTS: Product[] = [
+// The seed carries both languages at once, since one seed run writes the en
+// and ka rows together (see the note in src/seed/runSeed.ts about Payload's
+// Postgres adapter recreating array rows per write).
+export type ProductSeed = Omit<Product, "tagline" | "description"> & {
+  tagline: string;
+  taglineKa: string;
+  description: string;
+  descriptionKa: string;
+};
+
+export const PRODUCTS: ProductSeed[] = [
   {
     id: "t450",
     name: "GMS T-450 HYBRID",

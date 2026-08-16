@@ -40,11 +40,12 @@ export const Home: GlobalConfig = {
         },
         {
           name: "image",
-          type: "text",
+          type: "upload",
+          relationTo: "media",
           required: true,
           admin: {
             description:
-              "Hero photo path, e.g. /images/showroom-interior-wide.jpeg",
+              "Hero photo — upload a new file or pick one already in Media.",
           },
         },
       ],
@@ -116,9 +117,10 @@ export const Home: GlobalConfig = {
         },
         {
           name: "image",
-          type: "text",
+          type: "upload",
+          relationTo: "media",
           required: true,
-          admin: { description: "Workshop photo path." },
+          admin: { description: "Workshop photo." },
         },
       ],
     },

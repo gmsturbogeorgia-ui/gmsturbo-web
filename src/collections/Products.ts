@@ -28,27 +28,24 @@ export const Products: CollectionConfig = {
     },
     { name: "name", type: "text", required: true },
     { name: "code", type: "text", required: true },
+    // Category and vehicle makes were hardcoded `select` options here, so the
+    // list could only grow through a deploy. They're their own collections
+    // now (src/collections/Categories.ts, src/collections/Vehicles.ts) —
+    // editable from /admin, with localized labels.
     {
       name: "category",
-      type: "select",
+      type: "relationship",
+      relationTo: "categories",
       required: true,
-      options: ["HYBRID", "BILLET", "OEM REPLACEMENT", "COMPETITION"],
+      admin: { description: "Manage the list under Taxonomy → Categories." },
     },
     {
       name: "vehicles",
-      type: "select",
+      type: "relationship",
+      relationTo: "vehicles",
       hasMany: true,
       required: true,
-      options: [
-        "BMW",
-        "AUDI",
-        "VW",
-        "MERCEDES",
-        "PORSCHE",
-        "SUBARU",
-        "TOYOTA",
-        "NISSAN",
-      ],
+      admin: { description: "Manage the list under Taxonomy → Vehicles." },
     },
     {
       name: "fitments",
@@ -81,18 +78,25 @@ export const Products: CollectionConfig = {
     },
     {
       name: "img",
-      type: "text",
+      type: "upload",
+      relationTo: "media",
       required: true,
       admin: {
         description:
-          "Lead/card image path, e.g. /images/products/gms-turbo-silver.jpeg",
+          "Lead/card image — upload a new file or pick one already in Media.",
       },
     },
     {
       name: "gallery",
       type: "array",
       labels: { singular: "Gallery image", plural: "Gallery images" },
-      fields: [{ name: "src", type: "text", required: true }],
+      admin: {
+        description:
+          "Extra shots for the product page. Leave empty to show the lead image alone.",
+      },
+      fields: [
+        { name: "src", type: "upload", relationTo: "media", required: true },
+      ],
     },
     {
       name: "stock",

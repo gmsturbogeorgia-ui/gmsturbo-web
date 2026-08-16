@@ -1,14 +1,14 @@
 "use client";
 
-import Link from "next/link";
+import { LocaleLink as Link, useLocale } from "@/components/LocaleLink";
+import { localeHref } from "@/lib/i18n/locales";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   highlight,
   searchProducts,
   type SearchHit,
 } from "@/lib/product-search";
-import { useLanguage } from "@/lib/i18n/context";
-import { categoryLabel } from "@/lib/i18n/dictionary";
+import { useTaxonomy } from "@/lib/i18n/taxonomy-context";
 import { cn } from "@/lib/utils";
 
 /* ==========================================================================
@@ -42,7 +42,7 @@ export function ProductSearch({
   maxResults = 6,
   surface = "raised",
 }: Props) {
-  const { lang } = useLanguage();
+  const locale = useLocale();
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -94,7 +94,9 @@ export function ProductSearch({
             } else if (e.key === "Enter") {
               if (hits[active] && showDropdown) {
                 e.preventDefault();
-                window.location.assign(`/catalog/${hits[active].product.id}`);
+                window.location.assign(
+                  localeHref(locale, `/catalog/${hits[active].product.id}`),
+                );
               } else {
                 onSubmit?.(value);
                 setOpen(false);
@@ -173,7 +175,6 @@ export function ProductSearch({
                     hit={h}
                     query={value}
                     active={i === active}
-                    lang={lang}
                     onHover={() => setActive(i)}
                     onClick={() => setOpen(false)}
                   />
@@ -191,18 +192,19 @@ function ResultRow({
   hit,
   query,
   active,
-  lang,
   onHover,
   onClick,
 }: {
   hit: SearchHit;
   query: string;
   active: boolean;
-  lang: "EN" | "KA";
   onHover: () => void;
   onClick: () => void;
 }) {
   const p = hit.product;
+  // Category labels are admin-editable rows now, so they come from the
+  // taxonomy context rather than being passed down with the language.
+  const { catLabel } = useTaxonomy();
 
   return (
     <Link
@@ -230,7 +232,7 @@ function ResultRow({
           <Highlighted text={p.name} query={query} />
         </p>
         <p className="mt-0.5 truncate text-xs text-ink-mute">
-          {categoryLabel(p.category, lang)}
+          {catLabel(p.category)}
           <span className="mx-1.5 text-ink-mute/50">·</span>
           <Highlighted text={p.code} query={query} />
         </p>

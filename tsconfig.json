@@ -30,12 +30,5 @@
     "**/*.tsx",
     ".next/types/**/*.ts"
   ],
-  "exclude": [
-    "node_modules",
-    "src/routes",
-    "src/router.tsx",
-    "src/server.ts",
-    "src/start.ts",
-    "src/routeTree.gen.ts"
-  ]
+  "exclude": ["node_modules"]
 }

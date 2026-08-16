@@ -631,35 +631,12 @@ export const STOCK_KA: Record<string, string> = {
   "MADE TO ORDER": "შეკვეთით",
 };
 
-const CATEGORY_EN: Record<string, string> = {
-  ALL: "All",
-  HYBRID: "Hybrid",
-  BILLET: "Billet",
-  "OEM REPLACEMENT": "OEM replacement",
-  COMPETITION: "Competition",
-};
-
-export const CATEGORY_KA: Record<string, string> = {
-  ALL: "ყველა",
-  HYBRID: "ჰიბრიდი",
-  BILLET: "ბილეტი",
-  "OEM REPLACEMENT": "OEM ჩანაცვლება",
-  COMPETITION: "სპორტული",
-};
-
-// Marques keep their own house styling (BMW and VW are genuinely initialisms;
-// Porsche and Subaru are not).
-const VEHICLE_EN: Record<string, string> = {
-  ALL: "All makes",
-  BMW: "BMW",
-  AUDI: "Audi",
-  VW: "VW",
-  MERCEDES: "Mercedes",
-  PORSCHE: "Porsche",
-  SUBARU: "Subaru",
-  TOYOTA: "Toyota",
-  NISSAN: "Nissan",
-};
+// Category and vehicle labels used to be hardcoded maps here. They're rows in
+// the `categories` and `vehicles` collections now — added, reordered and
+// renamed from /admin, with the en/ka pair stored on each row — so the labels
+// come from the DB via src/lib/getTaxonomies.ts and reach components through
+// src/lib/i18n/taxonomy-context.tsx. Keeping a copy here would have meant a
+// second source of truth that silently wins for anything added in the admin.
 
 export function specLabel(label: string, lang: Lang): string {
   return lang === "KA" ? (SPEC_LABEL_KA[label] ?? label) : label;
@@ -671,13 +648,3 @@ export function stockLabel(stock: string, lang: Lang): string {
     : (STOCK_EN[stock] ?? stock);
 }
 
-export function categoryLabel(category: string, lang: Lang): string {
-  return lang === "KA"
-    ? (CATEGORY_KA[category] ?? category)
-    : (CATEGORY_EN[category] ?? category);
-}
-
-export function vehicleLabel(vehicle: string, lang: Lang): string {
-  if (vehicle === "ALL") return lang === "KA" ? "ყველა მარკა" : "All makes";
-  return VEHICLE_EN[vehicle] ?? vehicle;
-}
