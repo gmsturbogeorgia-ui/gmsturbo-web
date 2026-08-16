@@ -5,13 +5,24 @@ import { DEFAULT_LOCALE, LOCALES, localeHref } from "@/lib/i18n/locales";
 const BASE_URL = "https://gmsturbo.ge";
 
 /**
+ * Generated per request, not at build time.
+ *
+ * Next prerenders sitemap.xml by default, which would mean opening a Postgres
+ * connection during `next build` — and the build runs several workers at once,
+ * so on a session-mode pooler (pool_size 15) that is exactly where connections
+ * run out. Nothing else in this app touches the DB at build time: every page
+ * is `force-dynamic`.
+ *
+ * Serving it dynamically also means a product added through /admin appears in
+ * the sitemap immediately rather than at the next deploy.
+ */
+export const dynamic = "force-dynamic";
+
+/**
  * Every page exists in both languages, so each one is listed once per locale
  * with an `alternates.languages` block pointing at its translations — the
  * sitemap equivalent of the hreflang tags in the page head. Without it the two
  * versions look like duplicate content competing for the same ranking.
- *
- * Products come from the DB rather than the seed array, so anything added
- * through /admin is in the sitemap without a redeploy.
  */
 function alternatesFor(path: string) {
   return {

@@ -67,6 +67,16 @@ export default buildConfig({
   db: postgresAdapter({
     pool: {
       connectionString: process.env.DATABASE_URI,
+      // node-postgres defaults to 10 connections PER POOL, and there is one
+      // pool per running instance — each serverless function, each build
+      // worker. Against a session-mode pooler capped at 15 clients that runs
+      // out almost immediately: two warm instances alone would exceed it.
+      //
+      // Every page here is `force-dynamic`, so a request always hits the DB;
+      // what saves us is that a serverless instance serves one request at a
+      // time, so a small pool is enough. Raise DATABASE_POOL_MAX only if the
+      // database can actually take instances × max connections.
+      max: Number(process.env.DATABASE_POOL_MAX ?? 3),
     },
   }),
   plugins: r2Enabled
