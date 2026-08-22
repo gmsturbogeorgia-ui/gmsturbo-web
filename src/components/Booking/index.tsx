@@ -8,7 +8,6 @@ import {
   useRef,
   useState,
 } from "react";
-import emailjs from "@emailjs/browser";
 import { useLanguage } from "@/lib/i18n/context";
 import { Button, Field, INPUT } from "@/components/Primitives";
 import { cn } from "@/lib/utils";
@@ -17,9 +16,9 @@ import { cn } from "@/lib/utils";
  * Site-wide "Book a Call" modal.
  *
  * Mounted once (via <BookingProvider> in the root layout) so any client
- * component can trigger it with `useBooking().open()`. Submitting sends the
- * form to gmsturbogeorgia@gmail.com through EmailJS, then shows a
- * confirmation state.
+ * component can trigger it with `useBooking().open()`. Submitting POSTs to
+ * /api/booking, which sends the request to the workshop inbox via Resend,
+ * then shows a confirmation state.
  * ------------------------------------------------------------------ */
 
 type BookingContextValue = {
@@ -30,19 +29,6 @@ type BookingContextValue = {
 const BookingContext = createContext<BookingContextValue | undefined>(
   undefined,
 );
-
-// EmailJS credentials are public by design (the service is called straight
-// from the browser); the allowed-origins setting in the EmailJS dashboard is
-// what stops the template being used from anywhere else.
-const EMAILJS_SERVICE_ID = process.env.EMAILJS_SERVICE_ID;
-const EMAILJS_TEMPLATE_ID = process.env.EMAILJS_TEMPLATE_ID;
-const EMAILJS_PUBLIC_KEY = process.env.EMAILJS_PUBLIC_KEY;
-
-/** Where callback requests land. Mirrors the To field of the EmailJS template. */
-const BOOKING_INBOX = "gmsturbogeorgia@gmail.com";
-
-/** Placeholder for optional fields left blank. */
-const EMPTY = "—";
 
 export function useBooking(): BookingContextValue {
   const ctx = useContext(BookingContext);
@@ -96,55 +82,33 @@ function BookingModal({ onClose }: { onClose: () => void }) {
     e.preventDefault();
     if (sending || !formRef.current) return;
 
-    if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY) {
-      console.error("EmailJS environment variables are not configured.");
-      setError(true);
-      return;
-    }
-
-    // Read the fields by hand rather than using `sendForm`: the template has
-    // no conditionals, so empty optional fields have to arrive as a dash
-    // instead of a blank gap in the email.
     const data = new FormData(formRef.current);
     const field = (key: string) =>
       ((data.get(key) as string | null) ?? "").trim();
-    const email = field("email");
 
     setSending(true);
     setError(false);
     try {
-      await emailjs.send(
-        EMAILJS_SERVICE_ID,
-        EMAILJS_TEMPLATE_ID,
-        {
-          to_email: BOOKING_INBOX,
-          // So hitting reply in Gmail answers the customer, not ourselves.
-          reply_to: email || BOOKING_INBOX,
+      const res = await fetch("/api/booking", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
           name: field("name"),
           phone: field("phone"),
-          email: email || EMPTY,
+          email: field("email"),
           topic: field("topic"),
-          preferred: field("preferred") || EMPTY,
-          message: field("message") || EMPTY,
-          submitted_at: new Intl.DateTimeFormat("en-GB", {
-            timeZone: "Asia/Tbilisi",
-            dateStyle: "medium",
-            timeStyle: "short",
-          }).format(new Date()),
+          preferred: field("preferred"),
+          message: field("message"),
+          company: field("company"), // honeypot
           locale: lang,
-        },
-        { publicKey: EMAILJS_PUBLIC_KEY },
-      );
+        }),
+      });
+      if (!res.ok) {
+        throw new Error(`/api/booking responded ${res.status}`);
+      }
       setSent(true);
     } catch (err) {
-      // EmailJS rejects with { status, text }; `text` is the only thing that
-      // says *why* (bad key, empty recipient, strict mode…), so pull it out
-      // rather than logging an object that prints as [object Object].
-      const detail =
-        err && typeof err === "object" && "text" in err
-          ? String((err as { text: unknown }).text)
-          : String(err);
-      console.error(`Booking request failed to send — EmailJS: ${detail}`, err);
+      console.error("Booking request failed to send", err);
       setError(true);
     } finally {
       setSending(false);
@@ -237,6 +201,18 @@ function BookingModal({ onClose }: { onClose: () => void }) {
           </div>
         ) : (
           <form ref={formRef} onSubmit={onSubmit} className="px-6 py-6 sm:px-8">
+            {/* Honeypot. Off-screen rather than display:none, which some
+                bots know to skip. Real people never reach it: no tab stop,
+                hidden from screen readers, and autofill is off. */}
+            <input
+              type="text"
+              name="company"
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden
+              className="absolute left-[-9999px] h-0 w-0 opacity-0"
+            />
+
             <p className="text-[0.9375rem] leading-relaxed text-ink-soft">
               {t("booking.blurb")}
             </p>
