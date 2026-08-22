@@ -55,13 +55,12 @@ export function HomeClient({
    breathe says more than four rotating past.
    -------------------------------------------------------------------------- */
 function Hero({ hero }: { hero: HomeContent["hero"] }) {
-
   return (
     <section
       // -mt-18 pulls the section up under the sticky 4.5rem header so the
       // photograph runs behind it; the content adds the height back as
       // padding so nothing sits underneath the nav.
-      className="relative -mt-18 flex h-[92svh] min-h-[620px] w-full items-center overflow-hidden"
+      className="relative -mt-18 flex h-[70dvh] min-h-[620px] w-full items-center overflow-hidden"
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
@@ -105,8 +104,7 @@ function Hero({ hero }: { hero: HomeContent["hero"] }) {
         >
           {hero.line1} {hero.line2}{" "}
           <span className="text-turbo [text-shadow:0_0_48px_rgba(255,74,43,0.45)]">
-            {hero.line3a}{" "}
-            {hero.line3b}
+            {hero.line3a} {hero.line3b}
           </span>
         </h1>
 
@@ -121,9 +119,7 @@ function Hero({ hero }: { hero: HomeContent["hero"] }) {
           className="rise mt-9 flex flex-wrap items-center gap-3"
           style={{ animationDelay: "180ms" }}
         >
-          <ButtonLink href="/catalog">
-            {hero.ctaLabel}
-          </ButtonLink>
+          <ButtonLink href="/catalog">{hero.ctaLabel}</ButtonLink>
           <BookCallButton variant="secondary" />
         </div>
       </div>
@@ -147,11 +143,7 @@ function TrustStrip({ stats }: { stats: HomeContent["stats"] }) {
       <div className="bg-graphite">
         <div className="shell grid grid-cols-2 gap-8 py-10 md:grid-cols-4 md:py-12">
           {stats.map((s) => (
-            <Stat
-              key={s.label}
-              value={s.value}
-              label={s.label}
-            />
+            <Stat key={s.label} value={s.value} label={s.label} />
           ))}
         </div>
       </div>
@@ -175,11 +167,7 @@ function Inventory({
         eyebrow={t("nav.inventory")}
         title={inventory.title}
         lead={inventory.lead}
-        action={
-          <TextLink href="/catalog">
-            {inventory.viewAllLabel}
-          </TextLink>
-        }
+        action={<TextLink href="/catalog">{inventory.viewAllLabel}</TextLink>}
       />
       <ProductGrid className="mt-12">
         {featured.map((p) => (
@@ -258,9 +246,7 @@ function Workshop({ workshop }: { workshop: HomeContent["workshop"] }) {
             {workshop.blurb}
           </p>
           <div className="mt-8">
-            <TextLink href="/contact">
-              {workshop.scheduleVisitLabel}
-            </TextLink>
+            <TextLink href="/contact">{workshop.scheduleVisitLabel}</TextLink>
           </div>
         </div>
       </div>
@@ -276,14 +262,10 @@ function BookingCTA({ booking }: { booking: HomeContent["booking"] }) {
       <div className="rounded-[2rem] bg-turbo-wash px-6 py-16 md:px-14 md:py-20">
         <div className="grid gap-12 lg:grid-cols-[1.3fr_1fr] lg:gap-16">
           <div>
-            <p className="eyebrow text-turbo">
-              {booking.kicker}
-            </p>
+            <p className="eyebrow text-turbo">{booking.kicker}</p>
             <h2 className="mt-4 text-[clamp(2rem,4.5vw,3.5rem)]">
               {booking.title1}{" "}
-              <span className="text-turbo">
-                {booking.title2}
-              </span>
+              <span className="text-turbo">{booking.title2}</span>
             </h2>
             <p className="mt-6 max-w-md text-[1.0625rem] leading-relaxed text-ink-soft">
               {booking.blurb}
