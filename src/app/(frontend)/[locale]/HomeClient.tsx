@@ -283,10 +283,10 @@ function BookingCTA({ booking }: { booking: HomeContent["booking"] }) {
               <dt className="text-sm text-ink-mute">{t("home.callDirect")}</dt>
               <dd className="mt-1.5">
                 <a
-                  href="tel:+995322990000"
+                  href="tel:+995571244222"
                   className="tnum font-display text-2xl font-semibold text-ink transition-colors hover:text-turbo"
                 >
-                  +995 32 2 99 00 00
+                  +995 571 244 222
                 </a>
               </dd>
             </div>
