@@ -53,13 +53,13 @@ const SITE_META: Record<
   { title: string; description: string; ogLocale: string }
 > = {
   ka: {
-    title: "GMS Turbo Georgia — ტურბოკომპრესორების ინჟინერია",
+    title: "GMS Turbo Georgia - ტურბოკომპრესორების ინჟინერია",
     description:
       "ტურბოკომპრესორების გაყიდვა, დიაგნოსტიკა, აღდგენა და წარმადობის გადაწყვეტები თბილისში.",
     ogLocale: "ka_GE",
   },
   en: {
-    title: "GMS Turbo Georgia — Premium Turbocharger Engineering",
+    title: "GMS Turbo Georgia - Premium Turbocharger Engineering",
     description:
       "Premium turbocharger sales, diagnostics, repair and performance solutions in Tbilisi, Georgia.",
     ogLocale: "en_US",
@@ -85,7 +85,7 @@ export async function generateMetadata({
     metadataBase: new URL("https://gmsturbo.ge"),
     title: {
       default: meta.title,
-      template: "%s — GMS Turbo Georgia",
+      template: "%s - GMS Turbo Georgia",
     },
     description: meta.description,
     keywords: [

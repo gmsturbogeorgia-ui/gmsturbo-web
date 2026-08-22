@@ -127,5 +127,5 @@ export async function runSeed(payload: Payload): Promise<string> {
   });
   payload.logger.info("Updated catalog page content (en + ka)");
 
-  return `Seed complete — ${PRODUCTS.length} products, home + contact + showroom + catalog page content.`;
+  return `Seed complete. ${PRODUCTS.length} products, home + contact + showroom + catalog page content.`;
 }

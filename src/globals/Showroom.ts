@@ -36,7 +36,7 @@ export const Showroom: GlobalConfig = {
           required: true,
           admin: {
             description:
-              "Hero photo — upload a new file or pick one already in Media.",
+              "Hero photo. Upload a new file or pick one already in Media.",
           },
         },
       ],
@@ -53,24 +53,6 @@ export const Showroom: GlobalConfig = {
       fields: [
         { name: "value", type: "text", required: true, localized: true },
         { name: "label", type: "text", required: true, localized: true },
-      ],
-    },
-    {
-      name: "space",
-      type: "group",
-      admin: { description: "The 'A room for the obsessed' section." },
-      fields: [
-        { name: "kicker", type: "text", required: true, localized: true },
-        { name: "title1", type: "text", required: true, localized: true },
-        { name: "title2", type: "text", required: true, localized: true },
-        { name: "p1", type: "textarea", required: true, localized: true },
-        { name: "p2", type: "textarea", required: true, localized: true },
-        {
-          name: "bookViewingLabel",
-          type: "text",
-          required: true,
-          localized: true,
-        },
       ],
     },
     {

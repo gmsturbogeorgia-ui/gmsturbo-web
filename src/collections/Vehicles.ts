@@ -37,7 +37,7 @@ export const Vehicles: CollectionConfig = {
       index: true,
       admin: {
         description:
-          "Stable key, e.g. MERCEDES. Stored on every product fitting this make and used in /catalog?vehicle=… links. Set it once and leave it — changing it drops the products already filed here out of that filter and breaks any shared link.",
+          "Stable key, e.g. MERCEDES. Stored on every product fitting this make and used in /catalog?vehicle=… links. Set it once and leave it. Changing it drops the products already filed here out of that filter and breaks any shared link.",
       },
       hooks: {
         beforeValidate: [

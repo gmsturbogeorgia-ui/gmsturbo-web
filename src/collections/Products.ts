@@ -65,13 +65,13 @@ export const Products: CollectionConfig = {
     {
       name: "boost",
       type: "number",
-      admin: { description: "Max boost, PSI — optional, leave empty to hide." },
+      admin: { description: "Max boost, PSI. Optional, leave empty to hide." },
     },
     {
       name: "hp",
       type: "number",
       admin: {
-        description: "Crank HP potential — optional, leave empty to hide.",
+        description: "Crank HP potential. Optional, leave empty to hide.",
       },
     },
     {
@@ -79,7 +79,7 @@ export const Products: CollectionConfig = {
       type: "number",
       admin: {
         description:
-          'Price in GEL — optional, leave empty to show "Price on request".',
+          'Price in GEL. Optional, leave empty to show "Price on request".',
       },
     },
     {
@@ -89,7 +89,7 @@ export const Products: CollectionConfig = {
       required: true,
       admin: {
         description:
-          "Lead/card image — upload a new file or pick one already in Media.",
+          "Lead/card image. Upload a new file or pick one already in Media.",
       },
     },
     {
@@ -98,7 +98,7 @@ export const Products: CollectionConfig = {
       labels: { singular: "Gallery image", plural: "Gallery images" },
       admin: {
         description:
-          "Extra shots for the product page. The lead image above is added as the first frame automatically — no need to upload it again.",
+          "Extra shots for the product page. The lead image above is added as the first frame automatically, no need to upload it again.",
       },
       fields: [
         { name: "src", type: "upload", relationTo: "media", required: true },

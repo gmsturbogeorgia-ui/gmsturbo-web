@@ -14,7 +14,7 @@ export function ShowroomClient({
   showroom: ShowroomContent;
   highlights: Product[];
 }) {
-  const { hero, stats, space, gallery, display, visit } = showroom;
+  const { hero, stats, gallery, display, visit } = showroom;
 
   return (
     <>
@@ -56,31 +56,9 @@ export function ShowroomClient({
           </div>
         </section>
 
-        {/* The space */}
-        <section className="shell grid gap-10 py-20 md:py-28 lg:grid-cols-[1fr_1.3fr] lg:gap-16">
-          <div>
-            <p className="eyebrow">{space.kicker}</p>
-            <h2 className="mt-3 text-[clamp(1.875rem,4vw,3rem)]">
-              {space.title1}{" "}
-              <span className="text-turbo">
-                {space.title2}
-              </span>
-            </h2>
-          </div>
-          <div className="space-y-5 text-[1.0625rem] leading-relaxed text-ink-soft">
-            <p>{space.p1}</p>
-            <p>{space.p2}</p>
-            <div className="pt-3">
-              <TextLink href="/contact">
-                {space.bookViewingLabel}
-              </TextLink>
-            </div>
-          </div>
-        </section>
-
         {/* Gallery — a proper mosaic, not six identical cells in a hairline
             grid. The banner spans, the rest alternate weights. */}
-        <section className="shell pb-20 md:pb-28">
+        <section className="shell py-20 md:py-28">
           <SectionHead
             eyebrow={gallery.kicker}
             title={gallery.title}

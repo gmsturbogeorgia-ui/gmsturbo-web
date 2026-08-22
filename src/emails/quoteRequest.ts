@@ -44,7 +44,7 @@ const priceLabel = (price: number | null) =>
   typeof price === "number" ? `${price.toLocaleString("en-US")} GEL` : "On request";
 
 export function quoteSubject(req: QuoteRequest): string {
-  return `Quote: ${req.product.code} — ${req.name.trim()}`;
+  return `Quote: ${req.product.code} - ${req.name.trim()}`;
 }
 
 /** Plain-text alternative, for clients that refuse HTML. */

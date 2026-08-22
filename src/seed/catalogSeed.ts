@@ -68,9 +68,9 @@ export const CATALOG_SEED = {
     title2: "fitment?",
     title2Ka: "მორგებას?",
     blurb:
-      "Send us your platform, target power and fuel — we'll spec the exact housing, wheel set and CHRA for your build.",
+      "Send us your platform, target power and fuel. We'll spec the exact housing, wheel set and CHRA for your build.",
     blurbKa:
-      "გამოგვიგზავნეთ თქვენი პლატფორმა, სამიზნე სიმძლავრე და საწვავის ტიპი — ჩვენ შევარჩევთ ზუსტ კორპუსს, ბორბლების ნაკრებსა და CHRA-ს თქვენი პროექტისთვის.",
+      "გამოგვიგზავნეთ თქვენი პლატფორმა, სამიზნე სიმძლავრე და საწვავის ტიპი, ჩვენ შევარჩევთ ზუსტ კორპუსს, ბორბლების ნაკრებსა და CHRA-ს თქვენი პროექტისთვის.",
     ctaLabel: "Request a quote",
     ctaLabelKa: "ფასის მოთხოვნა",
   },

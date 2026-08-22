@@ -65,7 +65,7 @@ export function Logo({ onImage = false }: { onImage?: boolean } = {}) {
     <Link
       href="/"
       className="group inline-flex items-center gap-2.5"
-      aria-label="GMS Turbo Georgia — home"
+      aria-label="GMS Turbo Georgia - home"
     >
       {/* Scale, not spin. The mark isn't radially symmetric — it has the
           housing tab at top right — so rotating it throws the whole glyph
@@ -336,7 +336,7 @@ export function SiteFooter() {
             <span>Tsereteli Ave 114, Tbilisi 0119</span>
           </div>
           <p className="text-sm text-ink-mute">
-            © {new Date().getFullYear()} GMS Turbo Georgia — {t("footer.builtIn")}
+            © {new Date().getFullYear()} GMS Turbo Georgia - {t("footer.builtIn")}
           </p>
         </div>
         </div>

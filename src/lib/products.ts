@@ -237,7 +237,7 @@ export const PRODUCTS: ProductSeed[] = [
       { label: "Crank HP Potential", value: "920 HP" },
       { label: "Cooling", value: "Water + oil" },
       { label: "Bearing System", value: "Dual ceramic ball" },
-      { label: "Warranty", value: "Competition use — none" },
+      { label: "Warranty", value: "Competition use - none" },
     ],
   },
   {
@@ -271,7 +271,7 @@ export const PRODUCTS: ProductSeed[] = [
     description:
       "Direct replacement for OE units. Balanced CHRA, new actuator and gaskets included. Plug-and-play installation.",
     descriptionKa:
-      "პირდაპირი ჩანაცვლება OE ერთეულებისთვის. დაბალანსებული CHRA, ახალი აქტუატორი და საცობები შედის კომპლექტში. მონტაჟი — ჩართე და გამოიყენე.",
+      "პირდაპირი ჩანაცვლება OE ერთეულებისთვის. დაბალანსებული CHRA, ახალი აქტუატორი და საცობები შედის კომპლექტში. მონტაჟი, ჩართე და გამოიყენე.",
     specs: [
       { label: "Compressor Wheel", value: "OE 6+6, 41/55 mm" },
       { label: "Turbine Wheel", value: "OE-spec 9-blade, 49 mm" },
@@ -359,7 +359,7 @@ export const PRODUCTS: ProductSeed[] = [
     gallery: galleryFor("HYBRID"),
     stock: "IN STOCK",
     tagline: "Plug-and-play Stage 2 upgrade for EA888.",
-    taglineKa: "ჩართე და გამოიყენე — Stage 2 განახლება EA888-სთვის.",
+    taglineKa: "ჩართე და გამოიყენე, Stage 2 განახლება EA888-სთვის.",
     description:
       "Bolt-on hybrid using OE housing with upgraded billet wheel and reinforced shaft. Pair with a Stage 2 tune for 380–410 HP.",
     descriptionKa:
@@ -415,7 +415,7 @@ export const PRODUCTS: ProductSeed[] = [
       { label: "Crank HP Potential", value: "820 HP" },
       { label: "Cooling", value: "Water + oil" },
       { label: "Bearing System", value: "Dual ceramic ball" },
-      { label: "Warranty", value: "Race use — 6 months" },
+      { label: "Warranty", value: "Race use - 6 months" },
     ],
   },
   {

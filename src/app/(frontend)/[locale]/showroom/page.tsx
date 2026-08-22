@@ -12,12 +12,12 @@ export const dynamic = "force-dynamic";
 
 const META: Record<Locale, { title: string; description: string }> = {
   ka: {
-    title: "სავიტრინო დარბაზი — თბილისი",
+    title: "სავიტრინო დარბაზი - თბილისი",
     description:
       "ეწვიეთ GMS Turbo Georgia-ს სავიტრინო დარბაზს თბილისის ცენტრში. ხელით დამუშავებული ჰიბრიდული, ბილეტ და სპორტული ტურბოკომპრესორები მუდმივ ექსპოზიციაზე.",
   },
   en: {
-    title: "Showroom — Tbilisi Flagship",
+    title: "Showroom - Tbilisi Flagship",
     description:
       "Visit the GMS Turbo Georgia flagship showroom in central Tbilisi. Hand-finished hybrid, billet and competition turbochargers on permanent display.",
   },
@@ -48,7 +48,7 @@ export async function generateMetadata({
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "AutomotiveBusiness",
-  name: "GMS Turbo Georgia — Flagship Showroom",
+  name: "GMS Turbo Georgia - Flagship Showroom",
   image: "/og-image.jpg",
   telephone: "+995 32 2 99 00 00",
   address: {

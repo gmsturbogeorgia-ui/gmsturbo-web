@@ -12,7 +12,7 @@
 export const FONT = "'Helvetica Neue',Helvetica,Arial,sans-serif";
 
 /** Shown in place of an optional field the visitor left blank. */
-export const EMPTY = "—";
+export const EMPTY = "-";
 
 /**
  * Everything interpolated into these templates is typed by a stranger on

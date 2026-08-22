@@ -39,7 +39,7 @@ export default buildConfig({
   admin: {
     user: Users.slug,
     meta: {
-      titleSuffix: "— GMS Turbo Admin",
+      titleSuffix: "- GMS Turbo Admin",
     },
   },
   collections: [Users, Media, Products, Categories, Vehicles],

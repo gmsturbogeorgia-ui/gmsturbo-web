@@ -10,7 +10,7 @@ export function renderErrorPage(): string {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Something went wrong — GMS Turbo Georgia</title>
+    <title>Something went wrong - GMS Turbo Georgia</title>
     <style>
       html, body {
         margin: 0;

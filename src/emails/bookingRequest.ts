@@ -25,7 +25,7 @@ export type BookingRequest = {
 };
 
 export function bookingSubject(req: BookingRequest): string {
-  return `Callback: ${req.name.trim()} — ${req.topic.trim()}`;
+  return `Callback: ${req.name.trim()} - ${req.topic.trim()}`;
 }
 
 /** Plain-text alternative, for clients that refuse HTML. */

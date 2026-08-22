@@ -11,12 +11,12 @@ export const dynamic = "force-dynamic";
 
 const META: Record<Locale, { title: string; description: string }> = {
   ka: {
-    title: "GMS Turbo Georgia — ტურბოკომპრესორების ინჟინერია",
+    title: "GMS Turbo Georgia - ტურბოკომპრესორების ინჟინერია",
     description:
       "ტურბოკომპრესორების გაყიდვა, დიაგნოსტიკა, აღდგენა და წარმადობის გადაწყვეტები. ჰიბრიდული, ბილეტ და OEM ტურბოები, აწყობილი თბილისში.",
   },
   en: {
-    title: "GMS Turbo Georgia — Premium Turbocharger Engineering",
+    title: "GMS Turbo Georgia - Premium Turbocharger Engineering",
     description:
       "Premium turbocharger sales, diagnostics, repair and performance solutions. Hybrid, billet and OEM turbos engineered in Tbilisi, Georgia.",
   },

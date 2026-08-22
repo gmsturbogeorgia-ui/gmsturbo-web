@@ -27,7 +27,7 @@ export const dict = {
     },
     footer: {
       blurb:
-        "Turbocharger sales, diagnostics, repair and performance engineering — built in Tbilisi since 2014.",
+        "Turbocharger sales, diagnostics, repair and performance engineering, built in Tbilisi since 2014.",
       navigation: "Navigation",
       inventory: "Inventory",
       services: "Services",
@@ -46,7 +46,7 @@ export const dict = {
       heroCta1: "Browse the catalog",
       heroCta2: "Our services",
       heroBlurb:
-        "Sales, diagnostics, rebuilds and performance turbos — specced, balanced and bench-tested by the engineers who assemble them.",
+        "Sales, diagnostics, rebuilds and performance turbos. Specced, balanced and bench-tested by the engineers who assemble them.",
       heroLiveTag: "Live from the workshop",
       heroPhotoCaption: "Bench-tested before it ships",
       inventoryTitle: "Built and ready to ship",
@@ -60,7 +60,7 @@ export const dict = {
         "Every turbo that passes our bench is fully disassembled, ultrasonically cleaned, balanced to sub-micron tolerances and pressure-tested before delivery. We don't ship anything we wouldn't run in our own car.",
       precisionQuote:
         "The difference between a rebuild and a real rebuild is the obsession that goes into it. GMS is the only shop in the Caucasus I trust.",
-      precisionQuoteAuthor: "Daviti K. — time attack driver",
+      precisionQuoteAuthor: "Daviti K., time attack driver",
       statBalance: "Balance tolerance",
       statTurnaround: "Average turnaround",
       statRebuilt: "Units rebuilt",
@@ -72,7 +72,7 @@ export const dict = {
       workshopTag: "Inside the workshop",
       workshopTitle: "A garage built for engineers, not salesmen.",
       workshopBlurb:
-        "CNC machining, VSR balancing rigs, ultrasonic cleaning lines and full flow-bench testing — under one roof in central Tbilisi.",
+        "CNC machining, VSR balancing rigs, ultrasonic cleaning lines and full flow-bench testing, under one roof in central Tbilisi.",
       scheduleVisit: "Schedule a visit",
       ctaTitle1: "Ready to",
       ctaTitle2: "upgrade?",
@@ -94,14 +94,14 @@ export const dict = {
       bookTitle1: "Ready to",
       bookTitle2: "spec your build?",
       bookBlurb:
-        "Book a call with our technical team, or reach us directly — we'll confirm fitment, lead time and price, usually within one business day.",
+        "Book a call with our technical team, or reach us directly. We'll confirm fitment, lead time and price, usually within one business day.",
     },
     booking: {
       cta: "Book a call",
       kicker: "Request a callback",
       title: "Book a call",
       blurb:
-        "Leave your details and what you're building. Our technical team will call you back to confirm fitment, timing and price — no obligation.",
+        "Leave your details and what you're building. Our technical team will call you back to confirm fitment, timing and price, no obligation.",
       name: "Full name",
       phone: "Phone",
       email: "Email",
@@ -118,14 +118,14 @@ export const dict = {
       submit: "Request callback",
       sending: "Sending…",
       error:
-        "Sorry — we couldn't send your request. Please try again or call us directly.",
+        "Sorry, we couldn't send your request. Please try again or call us directly.",
       privacy:
         "We'll only use your details to contact you about this request.",
       close: "Close",
       successKicker: "Request received",
       successTitle: "We'll be in touch",
       successBody:
-        "Thanks — your callback request is in. Our team will reach out shortly during workshop hours.",
+        "Thanks, your callback request is in. Our team will reach out shortly during workshop hours.",
       done: "Done",
     },
     contact: {
@@ -182,7 +182,7 @@ export const dict = {
       cantFind1: "Can't find your",
       cantFind2: "fitment?",
       customBlurb:
-        "Send us your platform, target power and fuel — we'll spec the exact housing, wheel set and CHRA for your build.",
+        "Send us your platform, target power and fuel. We'll spec the exact housing, wheel set and CHRA for your build.",
       requestQuote: "Request a quote",
       fits: "Fits",
       platforms: "platforms",
@@ -203,7 +203,7 @@ export const dict = {
       compatKicker: "Vehicle compatibility",
       compatTitle: "Confirmed fitments",
       compatBlurb:
-        "Verified against OEM service data. Contact our team for unlisted platforms — most engines can be adapted with the correct manifold and downpipe.",
+        "Verified against OEM service data. Contact our team for unlisted platforms. Most engines can be adapted with the correct manifold and downpipe.",
       fitmentTag: "Fitment",
       years: "Years",
       engine: "Engine",
@@ -211,7 +211,7 @@ export const dict = {
       quoteTitle1: "Spec your",
       quoteTitle2: "build",
       quoteBlurb:
-        "Tell us your vehicle, target power and fuel. Our technical team will confirm fitment, lead time and the final price tailored to your build — usually within one business day.",
+        "Tell us your vehicle, target power and fuel. Our technical team will confirm fitment, lead time and the final price tailored to your build, usually within one business day.",
       unit: "Unit",
       listPrice: "List price",
       stock: "Stock",
@@ -229,9 +229,9 @@ export const dict = {
       notesPlaceholder: "Supporting mods, timeline, anything we should know…",
       sendRequest: "Send request",
       sending: "Sending…",
-      requestSent: "Request sent — we'll be in touch",
+      requestSent: "Request sent. We'll be in touch",
       requestError:
-        "Sorry — we couldn't send your request. Please try again or call us directly.",
+        "Sorry, we couldn't send your request. Please try again or call us directly.",
       relatedKicker: "Same category",
       relatedTitle: "You may also consider",
       notFoundTitle: "Product not found",
@@ -248,7 +248,7 @@ export const dict = {
       title2b: "its",
       title3: "pressure.",
       blurb:
-        "Six dedicated workflows — from a 60-minute fault scan to a two-week competition build — performed by the same engineers, on the same bench, under the same obsession. No outsourcing. No shortcuts.",
+        "Six dedicated workflows, from a 60-minute fault scan to a two-week competition build, performed by the same engineers, on the same bench, under the same obsession. No outsourcing. No shortcuts.",
       unitsRebuilt: "Units rebuilt",
       mmTolerance: "mm tolerance",
       avgTurnaround: "Average turnaround",
@@ -286,16 +286,10 @@ export const dict = {
       viewingsVal: "By appointment",
       testFitLabel: "Test fit",
       testFitVal: "On-site",
-      spaceKicker: "The space",
-      spaceTitle1: "A room for the",
-      spaceTitle2: "obsessed.",
-      p1: "Inside an unmarked industrial unit on Tsereteli Avenue, the GMS flagship is half gallery, half engineering bench. Every turbocharger on display is a working unit — dyno-correlated, signed and ready to ship.",
-      p2: "The space was built for the people who walk in already knowing what an A/R ratio is. Sit at the bar, watch a CHRA being balanced through the glass wall, and spec your next build alongside the engineer who'll assemble it.",
-      bookViewing: "Book a private viewing",
       galleryKicker: "Gallery",
       galleryTitle: "Inside the flagship",
       galleryLead:
-        "Photographed on an ordinary Tuesday — no staging, no rendered shelves.",
+        "Photographed on an ordinary Tuesday, no staging, no rendered shelves.",
       displayKicker: "On display",
       collectionTitle: "The collection",
       fullCatalog: "Full catalog",
@@ -324,7 +318,7 @@ export const dict = {
     },
     footer: {
       blurb:
-        "ტურბოკომპრესორების გაყიდვა, დიაგნოსტიკა, რემონტი და წარმადობის ინჟინერია — შექმნილია თბილისში 2014 წლიდან.",
+        "ტურბოკომპრესორების გაყიდვა, დიაგნოსტიკა, რემონტი და წარმადობის ინჟინერია, შექმნილია თბილისში 2014 წლიდან.",
       navigation: "ნავიგაცია",
       inventory: "ინვენტარი",
       services: "სერვისები",
@@ -343,7 +337,7 @@ export const dict = {
       heroCta1: "კატალოგის დათვალიერება",
       heroCta2: "ჩვენი სერვისები",
       heroBlurb:
-        "გაყიდვა, დიაგნოსტიკა, აღდგენა და წარმადობის ტურბოები — შერჩეული, დაბალანსებული და სტენდზე ტესტირებული იმავე ინჟინრების მიერ, ვინც მათ აწყობს.",
+        "გაყიდვა, დიაგნოსტიკა, აღდგენა და წარმადობის ტურბოები, შერჩეული, დაბალანსებული და სტენდზე ტესტირებული იმავე ინჟინრების მიერ, ვინც მათ აწყობს.",
       heroLiveTag: "პირდაპირ სახელოსნოდან",
       heroPhotoCaption: "სტენდზე ტესტირებული გაგზავნამდე",
       inventoryTitle: "აწყობილი და გასაგზავნად მზადაა",
@@ -357,7 +351,7 @@ export const dict = {
         "ყოველი ტურბო, რომელიც ჩვენს სტენდზე გადის, სრულად იშლება, ულტრაბგერით სუფთავდება, მიკრონის სიზუსტით ბალანსდება და წნევაზე მოწმდება მიწოდებამდე. არასდროს ვგზავნით იმას, რასაც საკუთარ მანქანაში არ დავდგამდით.",
       precisionQuote:
         "განსხვავება უბრალო აღდგენასა და ნამდვილ აღდგენას შორის არის გატაცება, რაც მასშია ჩადებული. GMS არის ერთადერთი სახელოსნო კავკასიაში, რომელსაც ვენდობი.",
-      precisionQuoteAuthor: "დავითი კ. — თაიმ-ატაკის მძღოლი",
+      precisionQuoteAuthor: "დავითი კ., თაიმ-ატაკის მძღოლი",
       statBalance: "ბალანსის სიზუსტე",
       statTurnaround: "საშუალო ვადა",
       statRebuilt: "აღდგენილი ერთეული",
@@ -369,7 +363,7 @@ export const dict = {
       workshopTag: "სახელოსნოს შიგნით",
       workshopTitle: "გარაჟი აშენებულია ინჟინრებისთვის, არა გამყიდველებისთვის.",
       workshopBlurb:
-        "CNC დამუშავება, VSR საბალანსო სტენდები, ულტრაბგერითი გაწმენდის ხაზები და სრული ნაკადის სტენდზე ტესტირება — ერთი სახურავის ქვეშ, თბილისის ცენტრში.",
+        "CNC დამუშავება, VSR საბალანსო სტენდები, ულტრაბგერითი გაწმენდის ხაზები და სრული ნაკადის სტენდზე ტესტირება, ერთი სახურავის ქვეშ, თბილისის ცენტრში.",
       scheduleVisit: "ვიზიტის დაგეგმვა",
       ctaTitle1: "მზად ხარ",
       ctaTitle2: "განახლებისთვის?",
@@ -391,14 +385,14 @@ export const dict = {
       bookTitle1: "მზად ხარ",
       bookTitle2: "პროექტის დასაზუსტებლად?",
       bookBlurb:
-        "დაჯავშნეთ ზარი ჩვენს ტექნიკურ გუნდთან ან პირდაპირ დაგვიკავშირდით — დავადასტურებთ თავსებადობას, ვადებსა და ფასს, ჩვეულებრივ ერთ სამუშაო დღეში.",
+        "დაჯავშნეთ ზარი ჩვენს ტექნიკურ გუნდთან ან პირდაპირ დაგვიკავშირდით. დავადასტურებთ თავსებადობას, ვადებსა და ფასს, ჩვეულებრივ ერთ სამუშაო დღეში.",
     },
     booking: {
       cta: "დაჯავშნე ზარი",
       kicker: "გადმოგირეკავთ",
       title: "დაჯავშნე ზარი",
       blurb:
-        "დატოვეთ თქვენი მონაცემები და რას აწყობთ. ჩვენი ტექნიკური გუნდი დაგირეკავთ თავსებადობის, ვადებისა და ფასის დასაზუსტებლად — ვალდებულების გარეშე.",
+        "დატოვეთ თქვენი მონაცემები და რას აწყობთ. ჩვენი ტექნიკური გუნდი დაგირეკავთ თავსებადობის, ვადებისა და ფასის დასაზუსტებლად, ვალდებულების გარეშე.",
       name: "სრული სახელი",
       phone: "ტელეფონი",
       email: "ელფოსტა",
@@ -416,14 +410,14 @@ export const dict = {
       submit: "გამოძახების მოთხოვნა",
       sending: "იგზავნება…",
       error:
-        "ბოდიში — მოთხოვნის გაგზავნა ვერ მოხერხდა. სცადეთ ხელახლა ან დაგვირეკეთ პირდაპირ.",
+        "ბოდიში, მოთხოვნის გაგზავნა ვერ მოხერხდა. სცადეთ ხელახლა ან დაგვირეკეთ პირდაპირ.",
       privacy:
         "თქვენს მონაცემებს გამოვიყენებთ მხოლოდ ამ მოთხოვნაზე დასაკავშირებლად.",
       close: "დახურვა",
       successKicker: "მოთხოვნა მიღებულია",
       successTitle: "მალე დაგიკავშირდებით",
       successBody:
-        "გმადლობთ — თქვენი გამოძახების მოთხოვნა მიღებულია. ჩვენი გუნდი მალე დაგიკავშირდებათ სამუშაო საათებში.",
+        "გმადლობთ, თქვენი გამოძახების მოთხოვნა მიღებულია. ჩვენი გუნდი მალე დაგიკავშირდებათ სამუშაო საათებში.",
       done: "მზადაა",
     },
     contact: {
@@ -481,7 +475,7 @@ export const dict = {
       cantFind1: "ვერ პოულობთ თქვენს",
       cantFind2: "მორგებას?",
       customBlurb:
-        "გამოგვიგზავნეთ თქვენი პლატფორმა, სამიზნე სიმძლავრე და საწვავის ტიპი — ჩვენ შევარჩევთ ზუსტ კორპუსს, ბორბლების ნაკრებსა და CHRA-ს თქვენი პროექტისთვის.",
+        "გამოგვიგზავნეთ თქვენი პლატფორმა, სამიზნე სიმძლავრე და საწვავის ტიპი, ჩვენ შევარჩევთ ზუსტ კორპუსს, ბორბლების ნაკრებსა და CHRA-ს თქვენი პროექტისთვის.",
       requestQuote: "ფასის მოთხოვნა",
       fits: "თავსებადობა",
       platforms: "პლატფორმა",
@@ -502,7 +496,7 @@ export const dict = {
       compatKicker: "ავტომობილთან თავსებადობა",
       compatTitle: "დადასტურებული თავსებადობა",
       compatBlurb:
-        "დადასტურებულია OEM სერვის მონაცემებით. დაუკავშირდით ჩვენს გუნდს ჩამონათვალში არარსებული პლატფორმებისთვის — ძრავების უმეტესობის ადაპტირება შესაძლებელია სწორი კოლექტორითა და დაუნპაიპით.",
+        "დადასტურებულია OEM სერვის მონაცემებით. დაუკავშირდით ჩვენს გუნდს ჩამონათვალში არარსებული პლატფორმებისთვის. ძრავების უმეტესობის ადაპტირება შესაძლებელია სწორი კოლექტორითა და დაუნპაიპით.",
       fitmentTag: "თავსებადობა",
       years: "წლები",
       engine: "ძრავი",
@@ -510,7 +504,7 @@ export const dict = {
       quoteTitle1: "დააზუსტე შენი",
       quoteTitle2: "პროექტი",
       quoteBlurb:
-        "გვითხარით თქვენი ავტომობილი, სამიზნე სიმძლავრე და საწვავი. ჩვენი ტექნიკური გუნდი დაადასტურებს თავსებადობას, ვადებსა და საბოლოო ფასს — ჩვეულებრივ ერთი სამუშაო დღის განმავლობაში.",
+        "გვითხარით თქვენი ავტომობილი, სამიზნე სიმძლავრე და საწვავი. ჩვენი ტექნიკური გუნდი დაადასტურებს თავსებადობას, ვადებსა და საბოლოო ფასს, ჩვეულებრივ ერთი სამუშაო დღის განმავლობაში.",
       unit: "ერთეული",
       listPrice: "საბაზრო ფასი",
       stock: "მარაგი",
@@ -529,9 +523,9 @@ export const dict = {
         "დამატებითი მოდიფიკაციები, ვადები და ყველაფერი, რაც უნდა ვიცოდეთ…",
       sendRequest: "მოთხოვნის გაგზავნა",
       sending: "იგზავნება…",
-      requestSent: "მოთხოვნა გაგზავნილია — მალე დაგიკავშირდებით",
+      requestSent: "მოთხოვნა გაგზავნილია, მალე დაგიკავშირდებით",
       requestError:
-        "ბოდიში — მოთხოვნის გაგზავნა ვერ მოხერხდა. სცადეთ ხელახლა ან დაგვირეკეთ პირდაპირ.",
+        "ბოდიში, მოთხოვნის გაგზავნა ვერ მოხერხდა. სცადეთ ხელახლა ან დაგვირეკეთ პირდაპირ.",
       relatedKicker: "იგივე კატეგორია",
       relatedTitle: "შესაძლოა ასევე დაგაინტერესოთ",
       notFoundTitle: "პროდუქტი ვერ მოიძებნა",
@@ -548,7 +542,7 @@ export const dict = {
       title2b: "საკუთარ",
       title3: "წნევას.",
       blurb:
-        "ექვსი სპეციალიზებული სამუშაო პროცესი — 60-წუთიანი ხარვეზების სკანირებიდან ორკვირიან სპორტულ პროექტამდე — სრულდება იმავე ინჟინრების მიერ, იმავე სტენდზე, იმავე გატაცებით. აუთსორსინგის გარეშე. მალსახმობების გარეშე.",
+        "ექვსი სპეციალიზებული სამუშაო პროცესი, 60-წუთიანი ხარვეზების სკანირებიდან ორკვირიან სპორტულ პროექტამდე, სრულდება იმავე ინჟინრების მიერ, იმავე სტენდზე, იმავე გატაცებით. აუთსორსინგის გარეშე. მალსახმობების გარეშე.",
       unitsRebuilt: "აღდგენილი ერთეული",
       mmTolerance: "მმ სიზუსტე",
       avgTurnaround: "საშუალო ვადა",
@@ -586,16 +580,10 @@ export const dict = {
       viewingsVal: "წინასწარი ჩაწერით",
       testFitLabel: "სატესტო მორგება",
       testFitVal: "ადგილზე",
-      spaceKicker: "სივრცე",
-      spaceTitle1: "ოთახი",
-      spaceTitle2: "გატაცებულთათვის.",
-      p1: "წერეთლის გამზირზე, უნიშნო ინდუსტრიულ შენობაში, GMS-ის მთავარი დარბაზი ნახევრად გალერეაა, ნახევრად საინჟინრო სტენდი. ყოველი გამოფენილი ტურბოკომპრესორი მუშა ერთეულია — დინოზე შესწავლილი, ხელმოწერილი და გასაგზავნად მზადი.",
-      p2: "სივრცე შექმნილია იმ ადამიანებისთვის, ვინც შემოსვლისთანავე უკვე იცის, რა არის A/R კოეფიციენტი. დაჯექით ბარზე, უყურეთ, როგორ ბალანსდება CHRA მინის კედლის მიღმა, და დააზუსტეთ თქვენი შემდეგი პროექტი იმ ინჟინერთან ერთად, ვინც მას აწყობს.",
-      bookViewing: "დაჯავშნეთ პირადი ვიზიტი",
       galleryKicker: "გალერეა",
       galleryTitle: "მთავარი დარბაზის შიგნით",
       galleryLead:
-        "გადაღებულია ჩვეულებრივ სამშაბათს — დადგმის გარეშე.",
+        "გადაღებულია ჩვეულებრივ სამშაბათს, დადგმის გარეშე.",
       displayKicker: "გამოფენილი",
       collectionTitle: "კოლექცია",
       fullCatalog: "სრული კატალოგი",

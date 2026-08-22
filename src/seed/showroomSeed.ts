@@ -45,27 +45,13 @@ export const SHOWROOM_SEED = {
       labelKa: "სატესტო მორგება",
     },
   ],
-  space: {
-    kicker: "The space",
-    kickerKa: "სივრცე",
-    title1: "A room for the",
-    title1Ka: "ოთახი",
-    title2: "obsessed.",
-    title2Ka: "გატაცებულთათვის.",
-    p1: "Inside an unmarked industrial unit on Tsereteli Avenue, the GMS flagship is half gallery, half engineering bench. Every turbocharger on display is a working unit — dyno-correlated, signed and ready to ship.",
-    p1Ka: "წერეთლის გამზირზე, უნიშნო ინდუსტრიულ შენობაში, GMS-ის მთავარი დარბაზი ნახევრად გალერეაა, ნახევრად საინჟინრო სტენდი. ყოველი გამოფენილი ტურბოკომპრესორი მუშა ერთეულია — დინოზე შესწავლილი, ხელმოწერილი და გასაგზავნად მზადი.",
-    p2: "The space was built for the people who walk in already knowing what an A/R ratio is. Sit at the bar, watch a CHRA being balanced through the glass wall, and spec your next build alongside the engineer who'll assemble it.",
-    p2Ka: "სივრცე შექმნილია იმ ადამიანებისთვის, ვინც შემოსვლისთანავე უკვე იცის, რა არის A/R კოეფიციენტი. დაჯექით ბარზე, უყურეთ, როგორ ბალანსდება CHRA მინის კედლის მიღმა, და დააზუსტეთ თქვენი შემდეგი პროექტი იმ ინჟინერთან ერთად, ვინც მას აწყობს.",
-    bookViewingLabel: "Book a private viewing",
-    bookViewingLabelKa: "დაჯავშნეთ პირადი ვიზიტი",
-  },
   gallery: {
     kicker: "Gallery",
     kickerKa: "გალერეა",
     title: "Inside the flagship",
     titleKa: "მთავარი დარბაზის შიგნით",
-    lead: "Photographed on an ordinary Tuesday — no staging, no rendered shelves.",
-    leadKa: "გადაღებულია ჩვეულებრივ სამშაბათს — დადგმის გარეშე.",
+    lead: "Photographed on an ordinary Tuesday, no staging, no rendered shelves.",
+    leadKa: "გადაღებულია ჩვეულებრივ სამშაბათს, დადგმის გარეშე.",
     bannerImage: "/images/gms-turbo-neon-sign.jpeg",
     bannerCaption: "Tsereteli Ave 114",
     bannerCaptionKa: "წერეთლის გამზ. 114",
@@ -158,23 +144,6 @@ export function showroomSeedAllLocales(media: MediaResolver) {
       value: locale(s.value, s.valueKa),
       label: locale(s.label, s.labelKa),
     })),
-    space: {
-      kicker: locale(SHOWROOM_SEED.space.kicker, SHOWROOM_SEED.space.kickerKa),
-      title1: locale(
-        SHOWROOM_SEED.space.title1,
-        SHOWROOM_SEED.space.title1Ka,
-      ),
-      title2: locale(
-        SHOWROOM_SEED.space.title2,
-        SHOWROOM_SEED.space.title2Ka,
-      ),
-      p1: locale(SHOWROOM_SEED.space.p1, SHOWROOM_SEED.space.p1Ka),
-      p2: locale(SHOWROOM_SEED.space.p2, SHOWROOM_SEED.space.p2Ka),
-      bookViewingLabel: locale(
-        SHOWROOM_SEED.space.bookViewingLabel,
-        SHOWROOM_SEED.space.bookViewingLabelKa,
-      ),
-    },
     gallery: {
       kicker: locale(
         SHOWROOM_SEED.gallery.kicker,

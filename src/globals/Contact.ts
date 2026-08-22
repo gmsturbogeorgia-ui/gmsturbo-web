@@ -106,7 +106,7 @@ export const Contact: GlobalConfig = {
           type: "text",
           admin: {
             description:
-              "Paste any Google Maps link to the shop — the short share link (maps.app.goo.gl/…) works too — or type coordinates as \"lat,lng\". Whatever you paste is converted to coordinates when you hit save, because the map itself is OpenStreetMap and can't look up an address. Empty falls back to the workshop's default pin.",
+              "Paste any Google Maps link to the shop (the short share link maps.app.goo.gl/… works too), or type coordinates as \"lat,lng\". Whatever you paste is converted to coordinates when you hit save, because the map itself is OpenStreetMap and can't look up an address. Empty falls back to the workshop's default pin.",
             placeholder: "https://maps.app.goo.gl/… or 41.697529,44.886512",
           },
           hooks: {
@@ -130,7 +130,7 @@ export const Contact: GlobalConfig = {
             if (isShortMapLink(value)) {
               return "Couldn't reach Google to expand that short link. Open it in a browser and paste the full google.com/maps URL instead.";
             }
-            return "No coordinates in that value. Paste a Google Maps link to the shop, or type them directly as \"41.697529,44.886512\" — a street address alone can't be placed on the map.";
+            return "No coordinates in that value. Paste a Google Maps link to the shop, or type them directly as \"41.697529,44.886512\". A street address alone can't be placed on the map.";
           },
         },
         {

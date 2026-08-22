@@ -39,7 +39,7 @@ export const Categories: CollectionConfig = {
       index: true,
       admin: {
         description:
-          "Stable key, e.g. HYBRID. Stored on every product in this category and used in /catalog?category=… links. Set it once and leave it — changing it drops the products already filed here out of that filter and breaks any shared link.",
+          "Stable key, e.g. HYBRID. Stored on every product in this category and used in /catalog?category=… links. Set it once and leave it. Changing it drops the products already filed here out of that filter and breaks any shared link.",
       },
       hooks: {
         // Normalised so "hybrid" typed in the admin can't become a second,

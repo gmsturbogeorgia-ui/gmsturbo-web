@@ -23,9 +23,9 @@ export const HOME_SEED = {
     line3b: "life.",
     line3bKa: "სიცოცხლე.",
     blurb:
-      "Sales, diagnostics, rebuilds and performance turbos — specced, balanced and bench-tested by the engineers who assemble them.",
+      "Sales, diagnostics, rebuilds and performance turbos. Specced, balanced and bench-tested by the engineers who assemble them.",
     blurbKa:
-      "გაყიდვა, დიაგნოსტიკა, აღდგენა და წარმადობის ტურბოები — შერჩეული, დაბალანსებული და სტენდზე ტესტირებული იმავე ინჟინრების მიერ, ვინც მათ აწყობს.",
+      "გაყიდვა, დიაგნოსტიკა, აღდგენა და წარმადობის ტურბოები, შერჩეული, დაბალანსებული და სტენდზე ტესტირებული იმავე ინჟინრების მიერ, ვინც მათ აწყობს.",
     ctaLabel: "Browse the catalog",
     ctaLabelKa: "კატალოგის დათვალიერება",
     image: "/images/showroom-interior-wide.jpeg",
@@ -121,9 +121,9 @@ export const HOME_SEED = {
     title: "A garage built for engineers, not salesmen.",
     titleKa: "გარაჟი აშენებულია ინჟინრებისთვის, არა გამყიდველებისთვის.",
     blurb:
-      "CNC machining, VSR balancing rigs, ultrasonic cleaning lines and full flow-bench testing — under one roof in central Tbilisi.",
+      "CNC machining, VSR balancing rigs, ultrasonic cleaning lines and full flow-bench testing, under one roof in central Tbilisi.",
     blurbKa:
-      "CNC დამუშავება, VSR საბალანსო სტენდები, ულტრაბგერითი გაწმენდის ხაზები და სრული ნაკადის სტენდზე ტესტირება — ერთი სახურავის ქვეშ, თბილისის ცენტრში.",
+      "CNC დამუშავება, VSR საბალანსო სტენდები, ულტრაბგერითი გაწმენდის ხაზები და სრული ნაკადის სტენდზე ტესტირება, ერთი სახურავის ქვეშ, თბილისის ცენტრში.",
     scheduleVisitLabel: "Schedule a visit",
     scheduleVisitLabelKa: "ვიზიტის დაგეგმვა",
     image: "/images/warehouse-stock.jpeg",
@@ -136,9 +136,9 @@ export const HOME_SEED = {
     title2: "spec your build?",
     title2Ka: "პროექტის დასაზუსტებლად?",
     blurb:
-      "Book a call with our technical team, or reach us directly — we'll confirm fitment, lead time and price, usually within one business day.",
+      "Book a call with our technical team, or reach us directly. We'll confirm fitment, lead time and price, usually within one business day.",
     blurbKa:
-      "დაჯავშნეთ ზარი ჩვენს ტექნიკურ გუნდთან ან პირდაპირ დაგვიკავშირდით — დავადასტურებთ თავსებადობას, ვადებსა და ფასს, ჩვეულებრივ ერთ სამუშაო დღეში.",
+      "დაჯავშნეთ ზარი ჩვენს ტექნიკურ გუნდთან ან პირდაპირ დაგვიკავშირდით. დავადასტურებთ თავსებადობას, ვადებსა და ფასს, ჩვეულებრივ ერთ სამუშაო დღეში.",
   },
 };
 

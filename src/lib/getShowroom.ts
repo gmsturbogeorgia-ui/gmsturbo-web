@@ -9,14 +9,6 @@ import { mediaUrl, type MediaRef } from "./mediaUrl";
 export type ShowroomContent = {
   hero: { tag: string; title1: string; title2: string; image: string };
   stats: { value: string; label: string }[];
-  space: {
-    kicker: string;
-    title1: string;
-    title2: string;
-    p1: string;
-    p2: string;
-    bookViewingLabel: string;
-  };
   gallery: {
     kicker: string;
     title: string;

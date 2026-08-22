@@ -10,12 +10,12 @@ export const dynamic = "force-dynamic";
 
 const META: Record<Locale, { title: string; description: string }> = {
   ka: {
-    title: "კონტაქტი — დარეკვა და ვიზიტი",
+    title: "კონტაქტი - დარეკვა და ვიზიტი",
     description:
       "დაგვირეკეთ, მოგვწერეთ ან ეწვიეთ GMS Turbo Georgia-ს თბილისის ცენტრში. დაჯავშნეთ ზარი ჩვენს ტექნიკურ გუნდთან აღდგენის, ჰიბრიდული განახლების ან სპორტული აწყობის შესათანხმებლად.",
   },
   en: {
-    title: "Contact — Book a Call & Visit",
+    title: "Contact - Book a Call & Visit",
     description:
       "Call, email or visit GMS Turbo Georgia in central Tbilisi. Book a callback with our technical team to spec a rebuild, hybrid upgrade or competition build.",
   },

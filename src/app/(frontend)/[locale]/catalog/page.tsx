@@ -64,7 +64,7 @@ export default async function CatalogPage({
     "@type": "CollectionPage",
     name: "Turbocharger Catalog",
     url: "/catalog",
-    about: "Premium turbochargers — hybrid, billet, OEM, competition.",
+    about: "Premium turbochargers: hybrid, billet, OEM, competition.",
     numberOfItems: products.length,
     breadcrumb: {
       "@type": "BreadcrumbList",

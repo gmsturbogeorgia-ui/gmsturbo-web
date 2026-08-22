@@ -45,7 +45,7 @@ export const Home: GlobalConfig = {
           required: true,
           admin: {
             description:
-              "Hero photo — upload a new file or pick one already in Media.",
+              "Hero photo. Upload a new file or pick one already in Media.",
           },
         },
       ],
