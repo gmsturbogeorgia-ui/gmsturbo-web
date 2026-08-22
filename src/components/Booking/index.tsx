@@ -34,9 +34,9 @@ const BookingContext = createContext<BookingContextValue | undefined>(
 // EmailJS credentials are public by design (the service is called straight
 // from the browser); the allowed-origins setting in the EmailJS dashboard is
 // what stops the template being used from anywhere else.
-const EMAILJS_SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
-const EMAILJS_TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
-const EMAILJS_PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
+const EMAILJS_SERVICE_ID = process.env.EMAILJS_SERVICE_ID;
+const EMAILJS_TEMPLATE_ID = process.env.EMAILJS_TEMPLATE_ID;
+const EMAILJS_PUBLIC_KEY = process.env.EMAILJS_PUBLIC_KEY;
 
 /** Where callback requests land. Mirrors the To field of the EmailJS template. */
 const BOOKING_INBOX = "gmsturbogeorgia@gmail.com";
@@ -236,11 +236,7 @@ function BookingModal({ onClose }: { onClose: () => void }) {
             </Button>
           </div>
         ) : (
-          <form
-            ref={formRef}
-            onSubmit={onSubmit}
-            className="px-6 py-6 sm:px-8"
-          >
+          <form ref={formRef} onSubmit={onSubmit} className="px-6 py-6 sm:px-8">
             <p className="text-[0.9375rem] leading-relaxed text-ink-soft">
               {t("booking.blurb")}
             </p>
