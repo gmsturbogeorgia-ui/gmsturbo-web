@@ -74,7 +74,11 @@ export function ProductQuoteForm({ product }: { product: Product }) {
             />
             <Row
               label={t("product.listPrice")}
-              value={`${product.price.toLocaleString()} GEL`}
+              value={
+                typeof product.price === "number"
+                  ? `${product.price.toLocaleString()} GEL`
+                  : t("product.priceOnRequest")
+              }
             />
             <Row
               label={t("product.stock")}

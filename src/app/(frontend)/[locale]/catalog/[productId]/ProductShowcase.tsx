@@ -18,6 +18,8 @@ export function ProductShowcase({ product }: { product: Product }) {
   // gallery[active] straight out, which rendered <img> with NO src at all,
   // i.e. a blank hero image on every such product page. `img` is required,
   // so it's the guaranteed fallback.
+  // getProducts already puts the lead image at the head of `gallery`; this
+  // only catches a product whose image reference went missing entirely.
   const images = product.gallery.length > 0 ? product.gallery : [product.img];
   // Guard the index too, in case the list shrinks under a stale selection.
   const current = images[Math.min(active, images.length - 1)];
@@ -74,18 +76,23 @@ export function ProductShowcase({ product }: { product: Product }) {
         </p>
 
         {/* Headline figures. Three numbers on the page, spaced — not three
-            cells of a bordered table. */}
+            cells of a bordered table. Boost and HP are optional per product,
+            so a unit without them shows the warranty figure alone. */}
         <dl className="mt-9 flex flex-wrap gap-x-12 gap-y-6">
-          <HeadlineStat
-            label={t("product.maxBoost")}
-            value={String(product.boost)}
-            unit="PSI"
-          />
-          <HeadlineStat
-            label={t("product.hpPotential")}
-            value={String(product.hp)}
-            unit="HP"
-          />
+          {typeof product.boost === "number" && (
+            <HeadlineStat
+              label={t("product.maxBoost")}
+              value={String(product.boost)}
+              unit="PSI"
+            />
+          )}
+          {typeof product.hp === "number" && (
+            <HeadlineStat
+              label={t("product.hpPotential")}
+              value={String(product.hp)}
+              unit="HP"
+            />
+          )}
           <HeadlineStat
             label={t("product.warranty")}
             value={warrantyMonths}
@@ -94,13 +101,21 @@ export function ProductShowcase({ product }: { product: Product }) {
         </dl>
 
         <div className="mt-10">
-          <p className="text-sm text-ink-mute">{t("product.priceFrom")}</p>
-          <p className="tnum mt-1 font-display text-[2.75rem] font-bold leading-none text-ink">
-            {product.price.toLocaleString()}
-            <span className="ml-2 text-xl font-semibold text-ink-mute">
-              GEL
-            </span>
-          </p>
+          {typeof product.price === "number" ? (
+            <>
+              <p className="text-sm text-ink-mute">{t("product.priceFrom")}</p>
+              <p className="tnum mt-1 font-display text-[2.75rem] font-bold leading-none text-ink">
+                {product.price.toLocaleString()}
+                <span className="ml-2 text-xl font-semibold text-ink-mute">
+                  GEL
+                </span>
+              </p>
+            </>
+          ) : (
+            <p className="font-display text-[2rem] font-bold leading-none text-ink">
+              {t("product.priceOnRequest")}
+            </p>
+          )}
         </div>
 
         <div className="mt-8 flex flex-wrap gap-3">

@@ -79,9 +79,11 @@ export type Product = {
   category: Category;
   vehicles: Vehicle[];
   fitments: { make: string; model: string; years: string; engine: string }[];
-  boost: number;
-  hp: number;
-  price: number;
+  // Optional in the CMS — a unit with no published figure renders without
+  // that line, and a priceless unit reads "Price on request".
+  boost?: number | null;
+  hp?: number | null;
+  price?: number | null;
   img: string;
   gallery: string[];
   stock: "IN STOCK" | "MADE TO ORDER" | "LOW STOCK";

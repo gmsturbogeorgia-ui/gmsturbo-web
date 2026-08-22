@@ -58,23 +58,29 @@ export const Products: CollectionConfig = {
         { name: "engine", type: "text", required: true },
       ],
     },
+    // boost/hp/price are optional: not every unit has a published figure,
+    // and some are quoted per build. Left empty, the card and product page
+    // simply omit that line (price falls back to "Price on request") rather
+    // than printing a placeholder number.
     {
       name: "boost",
       type: "number",
-      required: true,
-      admin: { description: "Max boost, PSI" },
+      admin: { description: "Max boost, PSI — optional, leave empty to hide." },
     },
     {
       name: "hp",
       type: "number",
-      required: true,
-      admin: { description: "Crank HP potential" },
+      admin: {
+        description: "Crank HP potential — optional, leave empty to hide.",
+      },
     },
     {
       name: "price",
       type: "number",
-      required: true,
-      admin: { description: "Price in GEL" },
+      admin: {
+        description:
+          'Price in GEL — optional, leave empty to show "Price on request".',
+      },
     },
     {
       name: "img",
@@ -92,7 +98,7 @@ export const Products: CollectionConfig = {
       labels: { singular: "Gallery image", plural: "Gallery images" },
       admin: {
         description:
-          "Extra shots for the product page. Leave empty to show the lead image alone.",
+          "Extra shots for the product page. The lead image above is added as the first frame automatically — no need to upload it again.",
       },
       fields: [
         { name: "src", type: "upload", relationTo: "media", required: true },

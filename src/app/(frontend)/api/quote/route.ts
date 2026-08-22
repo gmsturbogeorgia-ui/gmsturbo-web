@@ -69,7 +69,7 @@ export async function POST(request: Request) {
     product: {
       name: product.name,
       code: product.code,
-      price: product.price,
+      price: product.price ?? null,
       stock: product.stock,
       // Same rule the form shows the visitor.
       leadTime:

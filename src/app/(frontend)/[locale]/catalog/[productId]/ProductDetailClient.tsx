@@ -58,9 +58,14 @@ function Breadcrumb({ product }: { product: Product }) {
 }
 
 /* Specs as a definition list on a graphite band. Two columns of rows with
-   the value right-aligned — readable as a table without drawing one. */
+   the value right-aligned — readable as a table without drawing one.
+
+   Specs are optional in the CMS: a product with no rows renders no section
+   at all, rather than a graphite band with a heading reading "0 parameters"
+   over empty space. */
 function Specs({ product }: { product: Product }) {
   const { t, lang } = useLanguage();
+  if (product.specs.length === 0) return null;
   return (
     <section className="bg-graphite">
       <div className="shell py-16 md:py-20">

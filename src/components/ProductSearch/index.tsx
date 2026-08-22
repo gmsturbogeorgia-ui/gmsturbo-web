@@ -9,6 +9,7 @@ import {
   type SearchHit,
 } from "@/lib/product-search";
 import { useTaxonomy } from "@/lib/i18n/taxonomy-context";
+import { useLanguage } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
 
 /* ==========================================================================
@@ -205,6 +206,7 @@ function ResultRow({
   // Category labels are admin-editable rows now, so they come from the
   // taxonomy context rather than being passed down with the language.
   const { catLabel } = useTaxonomy();
+  const { t } = useLanguage();
 
   return (
     <Link
@@ -238,10 +240,16 @@ function ResultRow({
         </p>
       </div>
 
-      <span className="tnum shrink-0 text-sm font-semibold text-ink">
-        {p.price.toLocaleString()}
-        <span className="ml-1 text-xs font-medium text-ink-mute">GEL</span>
-      </span>
+      {typeof p.price === "number" ? (
+        <span className="tnum shrink-0 text-sm font-semibold text-ink">
+          {p.price.toLocaleString()}
+          <span className="ml-1 text-xs font-medium text-ink-mute">GEL</span>
+        </span>
+      ) : (
+        <span className="shrink-0 text-xs font-medium text-ink-mute">
+          {t("product.priceOnRequest")}
+        </span>
+      )}
     </Link>
   );
 }

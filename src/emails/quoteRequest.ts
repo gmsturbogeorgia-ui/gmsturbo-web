@@ -32,15 +32,16 @@ export type QuoteRequest = {
   product: {
     name: string;
     code: string;
-    /** GEL, already a number on the server. */
-    price: number;
+    /** GEL, already a number on the server. Null when quoted per build. */
+    price: number | null;
     stock: string;
     leadTime: string;
     url: string;
   };
 };
 
-const priceLabel = (price: number) => `${price.toLocaleString("en-US")} GEL`;
+const priceLabel = (price: number | null) =>
+  typeof price === "number" ? `${price.toLocaleString("en-US")} GEL` : "On request";
 
 export function quoteSubject(req: QuoteRequest): string {
   return `Quote: ${req.product.code} — ${req.name.trim()}`;

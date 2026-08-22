@@ -61,9 +61,16 @@ function jsonLdFor(p: Product) {
     image: p.gallery.length > 0 ? p.gallery : [p.img],
     brand: { "@type": "Brand", name: "GMS Turbo Georgia" },
     manufacturer: { "@type": "Organization", name: "GMS Turbo Georgia" },
+    // boost/hp are optional in the CMS; a PropertyValue with no value is
+    // invalid, so leave the property out entirely when it wasn't filled in.
+    // Specs are optional too — see `additionalProperty` cleanup below.
     additionalProperty: [
-      { "@type": "PropertyValue", name: "Max Boost", value: p.boost, unitText: "PSI" },
-      { "@type": "PropertyValue", name: "Crank HP Potential", value: p.hp, unitText: "HP" },
+      ...(typeof p.boost === "number"
+        ? [{ "@type": "PropertyValue", name: "Max Boost", value: p.boost, unitText: "PSI" }]
+        : []),
+      ...(typeof p.hp === "number"
+        ? [{ "@type": "PropertyValue", name: "Crank HP Potential", value: p.hp, unitText: "HP" }]
+        : []),
       ...p.specs.map((s) => ({
         "@type": "PropertyValue",
         name: s.label,
@@ -77,15 +84,28 @@ function jsonLdFor(p: Product) {
       vehicleModelDate: f.years,
       vehicleEngine: { "@type": "EngineSpecification", name: f.engine },
     })),
+    // Price is optional too. Google rejects an Offer without one, so a
+    // quote-only unit gets a PriceSpecification-free listing instead.
     offers: {
       "@type": "Offer",
-      price: p.price,
-      priceCurrency: "GEL",
+      ...(typeof p.price === "number"
+        ? { price: p.price, priceCurrency: "GEL" }
+        : {}),
       availability,
       itemCondition: "https://schema.org/NewCondition",
       seller: { "@type": "Organization", name: "GMS Turbo Georgia" },
     },
   };
+
+  // A product with no boost, no hp and no spec rows would emit
+  // "additionalProperty": [], and likewise for an unfitted unit — both are
+  // invalid. Drop the empty keys rather than ship a broken snippet.
+  if (product.additionalProperty.length === 0) {
+    delete (product as Record<string, unknown>).additionalProperty;
+  }
+  if (product.isAccessoryOrSparePartFor.length === 0) {
+    delete (product as Record<string, unknown>).isAccessoryOrSparePartFor;
+  }
 
   const breadcrumb = {
     "@context": "https://schema.org",

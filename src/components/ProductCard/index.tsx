@@ -48,6 +48,12 @@ export function ProductCard({
   const shownPlatforms = product.vehicles.slice(0, 2);
   const extraPlatforms = product.vehicles.length - shownPlatforms.length;
 
+  // Boost and HP are optional per product; only render what's there.
+  const specs = [
+    typeof product.boost === "number" ? `${product.boost} PSI` : null,
+    typeof product.hp === "number" ? `${product.hp} HP` : null,
+  ].filter((s): s is string => s !== null);
+
   return (
     <Link
       href={`/catalog/${product.id}`}
@@ -101,18 +107,35 @@ export function ProductCard({
           )}
         </h3>
 
-        {/* The two numbers that actually decide the purchase. */}
-        <p className="tnum mt-1.5 text-xs text-ink-mute">
-          {product.boost} PSI
-          <span className="mx-1.5 text-ink-mute/50">·</span>
-          {product.hp} HP
-        </p>
+        {/* The two numbers that actually decide the purchase. Both are
+            optional in the CMS, so the line drops the half that's missing —
+            and disappears entirely when neither was filled in. */}
+        {specs.length > 0 && (
+          <p className="tnum mt-1.5 text-xs text-ink-mute">
+            {specs.map((spec, i) => (
+              <span key={spec}>
+                {i > 0 && (
+                  <span className="mx-1.5 text-ink-mute/50">·</span>
+                )}
+                {spec}
+              </span>
+            ))}
+          </p>
+        )}
 
         <div className="mt-3 flex items-end justify-between gap-3">
-          <p className="tnum text-[0.9375rem] font-semibold text-ink">
-            {product.price.toLocaleString()}
-            <span className="ml-1 text-xs font-medium text-ink-mute">GEL</span>
-          </p>
+          {typeof product.price === "number" ? (
+            <p className="tnum text-[0.9375rem] font-semibold text-ink">
+              {product.price.toLocaleString()}
+              <span className="ml-1 text-xs font-medium text-ink-mute">
+                GEL
+              </span>
+            </p>
+          ) : (
+            <p className="text-[0.9375rem] font-semibold text-ink-soft">
+              {t("product.priceOnRequest")}
+            </p>
+          )}
 
           <p className="truncate text-[0.6875rem] text-ink-mute">
             {shownPlatforms.map(vehLabel).join(" · ")}

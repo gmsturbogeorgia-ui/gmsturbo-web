@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { Product } from "@/lib/products";
 import { searchProducts } from "@/lib/product-search";
 import { ProductSearch } from "@/components/ProductSearch";
@@ -20,6 +20,9 @@ import { useTaxonomy } from "@/lib/i18n/taxonomy-context";
 
 const SORTS = ["FEATURED", "PRICE_ASC", "PRICE_DESC", "BOOST"] as const;
 type Sort = (typeof SORTS)[number];
+
+/** How long typing has to stop before the query is written to the URL. */
+const SEARCH_DEBOUNCE_MS = 1000;
 
 /* Both filters carry a taxonomy `value` ("BILLET", "BMW") — the stable key a
    product is filed under, which is also what goes in the URL. The options and
@@ -112,6 +115,10 @@ export function CatalogClient({
 
   const [sheetOpen, setSheetOpen] = useState(false);
 
+  // What's in the search field right now, which is NOT the same as what the
+  // URL says — see the debounce below.
+  const [draft, setDraft] = useState(q);
+
   const filtered = useMemo(() => {
     const base = products.filter(
       (p) =>
@@ -120,10 +127,23 @@ export function CatalogClient({
         (vehs.length === 0 || p.vehicles.some((v) => vehs.includes(v))),
     );
     let list = q.trim() ? searchProducts(q, base).map((h) => h.product) : base;
-    if (sort === "PRICE_ASC") list = [...list].sort((a, b) => a.price - b.price);
-    if (sort === "PRICE_DESC")
-      list = [...list].sort((a, b) => b.price - a.price);
-    if (sort === "BOOST") list = [...list].sort((a, b) => b.boost - a.boost);
+    // price/boost are optional per product. Sorting on a missing number
+    // would scatter those units through the list, so they sink to the
+    // bottom of every numeric sort instead, in their original order.
+    const byNumber = (
+      pick: (p: Product) => number | null | undefined,
+      dir: 1 | -1,
+    ) =>
+      [...list].sort((a, b) => {
+        const x = pick(a);
+        const y = pick(b);
+        if (typeof x !== "number") return typeof y !== "number" ? 0 : 1;
+        if (typeof y !== "number") return -1;
+        return (x - y) * dir;
+      });
+    if (sort === "PRICE_ASC") list = byNumber((p) => p.price, 1);
+    if (sort === "PRICE_DESC") list = byNumber((p) => p.price, -1);
+    if (sort === "BOOST") list = byNumber((p) => p.boost, -1);
     return list;
     // cats/vehs are fresh arrays each render; join() gives a stable dep.
   }, [products, q, cats.join(), vehs.join(), sort]);
@@ -139,6 +159,37 @@ export function CatalogClient({
     if (merged.sort !== "FEATURED") next.set("sort", merged.sort);
     const qs = next.toString();
     router.push(`/catalog${qs ? `?${qs}` : ""}`, { scroll: false });
+  };
+
+  // ---- Search debounce -------------------------------------------------
+  // /catalog is force-dynamic, so every `update` is a round trip to the
+  // server. Committing the query per keystroke fired one request per
+  // character typed. The field holds its own `draft` instead and the URL
+  // only catches up once typing stops; the dropdown reads `draft` directly,
+  // so suggestions still appear as fast as you type.
+  //
+  // `update` closes over the current filters, so a pending timer has to call
+  // the NEWEST one — otherwise a chip toggled mid-word would be undone when
+  // the timer fires with the filter state from before the click.
+  const updateRef = useRef(update);
+  updateRef.current = update;
+
+  // Back/forward, "clear all", or landing on /catalog?q=… — the field has to
+  // follow the URL when the change came from outside it.
+  useEffect(() => setDraft(q), [q]);
+
+  useEffect(() => {
+    if (draft === q) return;
+    // Emptying the field is a decision, not a pause: apply it immediately.
+    const delay = draft.trim() === "" ? 0 : SEARCH_DEBOUNCE_MS;
+    const timer = setTimeout(() => updateRef.current({ q: draft }), delay);
+    return () => clearTimeout(timer);
+  }, [draft, q]);
+
+  // Enter shouldn't make you sit out the debounce.
+  const submitSearch = (next: string) => {
+    setDraft(next);
+    updateRef.current({ q: next });
   };
 
   const toggleCat = (c: Cat) => update({ cats: toggle(cats, c, catOptions) });
@@ -175,9 +226,10 @@ export function CatalogClient({
             opens them as a sheet. */}
         <div className="rounded-[1.375rem] bg-graphite p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.055)] md:p-5">
           <ProductSearch
-            value={q}
+            value={draft}
             surface="well"
-            onChange={(next) => update({ q: next })}
+            onChange={setDraft}
+            onSubmit={submitSearch}
             placeholder={search.placeholder}
           />
 

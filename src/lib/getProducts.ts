@@ -40,6 +40,10 @@ type ProductDoc = Omit<
 };
 
 function mapDoc(doc: ProductDoc): Product {
+  const img = mediaUrl(doc.img);
+  // A gallery row whose upload was cleared in /admin would put an empty src
+  // into ProductShowcase's slider, so drop it here.
+  const extra = (doc.gallery ?? []).map((g) => mediaUrl(g.src)).filter(Boolean);
   return {
     ...doc,
     id: doc.productId,
@@ -47,10 +51,11 @@ function mapDoc(doc: ProductDoc): Product {
     // A make deleted from /admin leaves a dangling reference; drop it rather
     // than let "" into the filter comparisons.
     vehicles: (doc.vehicles ?? []).map(taxonomyValue).filter(Boolean),
-    img: mediaUrl(doc.img),
-    // A gallery row whose upload was cleared in /admin would put an empty
-    // src into ProductShowcase's slider, so drop it here.
-    gallery: (doc.gallery ?? []).map((g) => mediaUrl(g.src)).filter(Boolean),
+    img,
+    // The lead image is always the first frame of the gallery — nobody
+    // should have to upload the same photo twice to have it show up in the
+    // slider. `Set` covers the editor who added it to both fields anyway.
+    gallery: [...new Set([img, ...extra])].filter(Boolean),
     fitments: doc.fitments ?? [],
     specs: doc.specs ?? [],
   };

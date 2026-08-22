@@ -191,6 +191,7 @@ export const dict = {
     },
     product: {
       priceFrom: "Price from",
+      priceOnRequest: "Price on request",
       requestQuote: "Request a quote",
       callWorkshop: "Call the workshop",
       maxBoost: "Max boost",
@@ -489,6 +490,7 @@ export const dict = {
     },
     product: {
       priceFrom: "ფასი დან",
+      priceOnRequest: "ფასი შეთანხმებით",
       requestQuote: "ფასის მოთხოვნა",
       callWorkshop: "დარეკვა სახელოსნოში",
       maxBoost: "მაქს. ბუსტი",
