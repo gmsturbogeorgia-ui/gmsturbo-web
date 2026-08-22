@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
 } from "react";
+import emailjs from "@emailjs/browser";
 import { useLanguage } from "@/lib/i18n/context";
 import { Button, Field, INPUT } from "@/components/Primitives";
 import { cn } from "@/lib/utils";
@@ -16,8 +17,9 @@ import { cn } from "@/lib/utils";
  * Site-wide "Book a Call" modal.
  *
  * Mounted once (via <BookingProvider> in the root layout) so any client
- * component can trigger it with `useBooking().open()`. There is no backend
- * yet — submitting shows a confirmation state and clears on close.
+ * component can trigger it with `useBooking().open()`. Submitting sends the
+ * form to gmsturbogeorgia@gmail.com through EmailJS, then shows a
+ * confirmation state.
  * ------------------------------------------------------------------ */
 
 type BookingContextValue = {
@@ -28,6 +30,19 @@ type BookingContextValue = {
 const BookingContext = createContext<BookingContextValue | undefined>(
   undefined,
 );
+
+// EmailJS credentials are public by design (the service is called straight
+// from the browser); the allowed-origins setting in the EmailJS dashboard is
+// what stops the template being used from anywhere else.
+const EMAILJS_SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
+const EMAILJS_TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
+const EMAILJS_PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
+
+/** Where callback requests land. Mirrors the To field of the EmailJS template. */
+const BOOKING_INBOX = "gmsturbogeorgia@gmail.com";
+
+/** Placeholder for optional fields left blank. */
+const EMPTY = "—";
 
 export function useBooking(): BookingContextValue {
   const ctx = useContext(BookingContext);
@@ -70,9 +85,71 @@ export function BookCallButton({
 }
 
 function BookingModal({ onClose }: { onClose: () => void }) {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (sending || !formRef.current) return;
+
+    if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY) {
+      console.error("EmailJS environment variables are not configured.");
+      setError(true);
+      return;
+    }
+
+    // Read the fields by hand rather than using `sendForm`: the template has
+    // no conditionals, so empty optional fields have to arrive as a dash
+    // instead of a blank gap in the email.
+    const data = new FormData(formRef.current);
+    const field = (key: string) =>
+      ((data.get(key) as string | null) ?? "").trim();
+    const email = field("email");
+
+    setSending(true);
+    setError(false);
+    try {
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        {
+          to_email: BOOKING_INBOX,
+          // So hitting reply in Gmail answers the customer, not ourselves.
+          reply_to: email || BOOKING_INBOX,
+          name: field("name"),
+          phone: field("phone"),
+          email: email || EMPTY,
+          topic: field("topic"),
+          preferred: field("preferred") || EMPTY,
+          message: field("message") || EMPTY,
+          submitted_at: new Intl.DateTimeFormat("en-GB", {
+            timeZone: "Asia/Tbilisi",
+            dateStyle: "medium",
+            timeStyle: "short",
+          }).format(new Date()),
+          locale: lang,
+        },
+        { publicKey: EMAILJS_PUBLIC_KEY },
+      );
+      setSent(true);
+    } catch (err) {
+      // EmailJS rejects with { status, text }; `text` is the only thing that
+      // says *why* (bad key, empty recipient, strict mode…), so pull it out
+      // rather than logging an object that prints as [object Object].
+      const detail =
+        err && typeof err === "object" && "text" in err
+          ? String((err as { text: unknown }).text)
+          : String(err);
+      console.error(`Booking request failed to send — EmailJS: ${detail}`, err);
+      setError(true);
+    } finally {
+      setSending(false);
+    }
+  };
 
   // Close on Escape, lock background scroll, and move focus into the dialog
   // so keyboard users aren't left behind on the page underneath.
@@ -160,10 +237,8 @@ function BookingModal({ onClose }: { onClose: () => void }) {
           </div>
         ) : (
           <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              setSent(true);
-            }}
+            ref={formRef}
+            onSubmit={onSubmit}
             className="px-6 py-6 sm:px-8"
           >
             <p className="text-[0.9375rem] leading-relaxed text-ink-soft">
@@ -219,9 +294,14 @@ function BookingModal({ onClose }: { onClose: () => void }) {
               </div>
             </div>
 
-            <Button type="submit" className="mt-8 w-full">
-              {t("booking.submit")}
+            <Button type="submit" className="mt-8 w-full" disabled={sending}>
+              {sending ? t("booking.sending") : t("booking.submit")}
             </Button>
+            {error && (
+              <p className="mt-4 text-center text-sm text-turbo">
+                {t("booking.error")}
+              </p>
+            )}
             <p className="mt-4 text-center text-xs text-ink-mute">
               {t("booking.privacy")}
             </p>

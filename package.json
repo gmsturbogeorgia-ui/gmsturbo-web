@@ -13,6 +13,7 @@
     "generate:types": "payload generate:types"
   },
   "dependencies": {
+    "@emailjs/browser": "^4.4.1",
     "@payloadcms/db-postgres": "3.85.0",
     "@payloadcms/next": "3.85.0",
     "@payloadcms/richtext-lexical": "3.85.0",

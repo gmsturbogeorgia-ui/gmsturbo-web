@@ -116,6 +116,9 @@ export const dict = {
       message: "Message",
       messagePlaceholder: "Vehicle, target power, anything we should know…",
       submit: "Request callback",
+      sending: "Sending…",
+      error:
+        "Sorry — we couldn't send your request. Please try again or call us directly.",
       privacy:
         "We'll only use your details to contact you about this request.",
       close: "Close",
@@ -407,6 +410,9 @@ export const dict = {
       messagePlaceholder:
         "ავტომობილი, სამიზნე სიმძლავრე, ყველაფერი რაც უნდა ვიცოდეთ…",
       submit: "გამოძახების მოთხოვნა",
+      sending: "იგზავნება…",
+      error:
+        "ბოდიში — მოთხოვნის გაგზავნა ვერ მოხერხდა. სცადეთ ხელახლა ან დაგვირეკეთ პირდაპირ.",
       privacy:
         "თქვენს მონაცემებს გამოვიყენებთ მხოლოდ ამ მოთხოვნაზე დასაკავშირებლად.",
       close: "დახურვა",
