@@ -5,9 +5,17 @@ import { withPayload } from "@payloadcms/next/withPayload";
 // from the same env var Payload builds media URLs with (see .env.example).
 // Empty/unset — local disk storage — leaves the list empty and only the
 // localPatterns entry applies.
-const publicUrl = process.env.NEXT_PUBLIC_S3_PUBLIC_URL;
+const publicUrl = process.env.NEXT_PUBLIC_S3_PUBLIC_URL?.replace(/\/+$/, "");
+// A bare hostname ("cdn.example.com") is not a parseable URL, so assume https
+// rather than crashing config load.
+const publicOrigin = publicUrl
+  ? /^https?:\/\//.test(publicUrl)
+    ? publicUrl
+    : `https://${publicUrl}`
+  : undefined;
+
 const remotePatterns: NonNullable<NextConfig["images"]>["remotePatterns"] =
-  publicUrl ? [new URL(`${publicUrl.replace(/\/+$/, "")}/**`)] : [];
+  publicOrigin ? [new URL(`${publicOrigin}/**`)] : [];
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
