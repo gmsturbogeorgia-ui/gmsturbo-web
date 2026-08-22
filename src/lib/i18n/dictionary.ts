@@ -227,7 +227,10 @@ export const dict = {
       notes: "Notes",
       notesPlaceholder: "Supporting mods, timeline, anything we should know…",
       sendRequest: "Send request",
+      sending: "Sending…",
       requestSent: "Request sent — we'll be in touch",
+      requestError:
+        "Sorry — we couldn't send your request. Please try again or call us directly.",
       relatedKicker: "Same category",
       relatedTitle: "You may also consider",
       notFoundTitle: "Product not found",
@@ -523,7 +526,10 @@ export const dict = {
       notesPlaceholder:
         "დამატებითი მოდიფიკაციები, ვადები და ყველაფერი, რაც უნდა ვიცოდეთ…",
       sendRequest: "მოთხოვნის გაგზავნა",
+      sending: "იგზავნება…",
       requestSent: "მოთხოვნა გაგზავნილია — მალე დაგიკავშირდებით",
+      requestError:
+        "ბოდიში — მოთხოვნის გაგზავნა ვერ მოხერხდა. სცადეთ ხელახლა ან დაგვირეკეთ პირდაპირ.",
       relatedKicker: "იგივე კატეგორია",
       relatedTitle: "შესაძლოა ასევე დაგაინტერესოთ",
       notFoundTitle: "პროდუქტი ვერ მოიძებნა",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { Product } from "@/lib/products";
 import { useLanguage } from "@/lib/i18n/context";
 import { stockLabel } from "@/lib/i18n/dictionary";
@@ -10,6 +10,49 @@ import { cn } from "@/lib/utils";
 export function ProductQuoteForm({ product }: { product: Product }) {
   const { t, lang } = useLanguage();
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (sending || sent || !formRef.current) return;
+
+    const data = new FormData(formRef.current);
+    const field = (key: string) =>
+      ((data.get(key) as string | null) ?? "").trim();
+
+    setSending(true);
+    setError(false);
+    try {
+      const res = await fetch("/api/quote", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          // Only the id: price, stock and lead time are re-read server-side.
+          productId: product.id,
+          name: field("name"),
+          phone: field("phone"),
+          email: field("email"),
+          vehicle: field("vehicle"),
+          hp: field("hp"),
+          fuel: field("fuel"),
+          notes: field("notes"),
+          company: field("company"), // honeypot
+          locale: lang,
+        }),
+      });
+      if (!res.ok) {
+        throw new Error(`/api/quote responded ${res.status}`);
+      }
+      setSent(true);
+    } catch (err) {
+      console.error("Quote request failed to send", err);
+      setError(true);
+    } finally {
+      setSending(false);
+    }
+  };
 
   return (
     <section id="quote" className="shell">
@@ -49,12 +92,22 @@ export function ProductQuoteForm({ product }: { product: Product }) {
         </div>
 
         <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            setSent(true);
-          }}
-          className="grid grid-cols-1 gap-5 sm:grid-cols-2"
+          ref={formRef}
+          onSubmit={onSubmit}
+          className="relative grid grid-cols-1 gap-5 sm:grid-cols-2"
         >
+          {/* Honeypot. Off-screen rather than display:none, which some bots
+              know to skip. Real people never reach it: no tab stop, hidden
+              from screen readers, and autofill is off. */}
+          <input
+            type="text"
+            name="company"
+            tabIndex={-1}
+            autoComplete="off"
+            aria-hidden
+            className="absolute left-[-9999px] h-0 w-0 opacity-0"
+          />
+
           <Field label={t("product.fullName")} name="name" required />
           <Field label={t("product.phone")} name="phone" type="tel" required />
           <Field
@@ -95,9 +148,22 @@ export function ProductQuoteForm({ product }: { product: Product }) {
               placeholder={t("product.notesPlaceholder")}
             />
           </div>
-          <Button type="submit" disabled={sent} className="sm:col-span-2">
-            {sent ? t("product.requestSent") : t("product.sendRequest")}
+          <Button
+            type="submit"
+            disabled={sent || sending}
+            className="sm:col-span-2"
+          >
+            {sent
+              ? t("product.requestSent")
+              : sending
+                ? t("product.sending")
+                : t("product.sendRequest")}
           </Button>
+          {error && (
+            <p className="text-center text-sm text-turbo sm:col-span-2">
+              {t("product.requestError")}
+            </p>
+          )}
         </form>
       </div>
     </section>
