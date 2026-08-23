@@ -21,14 +21,14 @@ export const SHOWROOM_SEED = {
   },
   stats: [
     {
-      value: "Mon–Fri · 10:00–20:00",
-      valueKa: "ორშ–პარ · 10:00–20:00",
+      value: "Mon–Fri · 10:00–18:00",
+      valueKa: "ორშ–პარ · 10:00–18:00",
       label: "Hours",
       labelKa: "სამუშაო საათები",
     },
     {
-      value: "11:00–18:00",
-      valueKa: "11:00–18:00",
+      value: "11:00–17:00",
+      valueKa: "11:00–17:00",
       label: "Saturday",
       labelKa: "შაბათი",
     },
@@ -113,7 +113,7 @@ export const SHOWROOM_SEED = {
     addressKa: "წერეთლის გამზ. 114, თბილისი 0119",
     callLabel: "Call",
     callLabelKa: "ზარი",
-    phone: "+995 32 2 99 00 00",
+    phone: "+995 551 24 42 22",
     emailLabel: "Email",
     emailLabelKa: "ელფოსტა",
     email: "showroom@gmsturbo.ge",

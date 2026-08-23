@@ -136,7 +136,7 @@ const jsonLd = {
   description:
     "Premium turbocharger sales, diagnostics, repair and performance solutions.",
   image: "/og-image.jpg",
-  telephone: "+995 32 2 99 00 00",
+  telephone: "+995 551 24 42 22",
   priceRange: "$$$",
   address: {
     "@type": "PostalAddress",
@@ -144,6 +144,13 @@ const jsonLd = {
     addressCountry: "GE",
   },
   areaServed: "GE",
+  // `sameAs` is how search engines tie these profiles to the business, so
+  // the same three links the footer shows belong here too.
+  sameAs: [
+    "https://www.instagram.com/turbogms/",
+    "https://www.facebook.com/p/GMS-TURBO-61566147999204/",
+    "https://www.tiktok.com/@gmsturbogeorgia",
+  ],
 };
 
 // This is the root layout for the whole public site — it owns <html>/<body>,

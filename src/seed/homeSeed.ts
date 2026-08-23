@@ -28,7 +28,6 @@ export const HOME_SEED = {
       "გაყიდვა, დიაგნოსტიკა, აღდგენა და წარმადობის ტურბოები, შერჩეული, დაბალანსებული და სტენდზე ტესტირებული იმავე ინჟინრების მიერ, ვინც მათ აწყობს.",
     ctaLabel: "Browse the catalog",
     ctaLabelKa: "კატალოგის დათვალიერება",
-    image: "/images/showroom-interior-wide.jpeg",
   },
   stats: [
     { value: "2014", valueKa: "2014", label: "Established", labelKa: "დაარსდა" },
@@ -169,7 +168,6 @@ export function homeSeedAllLocales(media: MediaResolver) {
       line3b: locale(HOME_SEED.hero.line3b, HOME_SEED.hero.line3bKa),
       blurb: locale(HOME_SEED.hero.blurb, HOME_SEED.hero.blurbKa),
       ctaLabel: locale(HOME_SEED.hero.ctaLabel, HOME_SEED.hero.ctaLabelKa),
-      image: media(HOME_SEED.hero.image),
     },
     stats: HOME_SEED.stats.map((s) => ({
       value: locale(s.value, s.valueKa),

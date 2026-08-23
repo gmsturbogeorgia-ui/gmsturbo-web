@@ -283,6 +283,18 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean } = {}) {
   );
 }
 
+// The real profiles, in the order they get the most traffic. Hardcoded
+// rather than CMS-driven because these change roughly never, and a dead
+// social link is worse than one that needs a deploy to move.
+const SOCIALS = [
+  { label: "Instagram", href: "https://www.instagram.com/turbogms/" },
+  {
+    label: "Facebook",
+    href: "https://www.facebook.com/p/GMS-TURBO-61566147999204/",
+  },
+  { label: "TikTok", href: "https://www.tiktok.com/@gmsturbogeorgia" },
+];
+
 /* --------------------------------------------------------------------------
    Footer. Sits one step up the surface ramp (graphite) so it separates from
    the page without a divider line being drawn.
@@ -312,13 +324,15 @@ export function SiteFooter() {
           </FooterCol>
 
           <FooterCol title={t("footer.connect")}>
-            {["Instagram", "Facebook", "YouTube", "TikTok"].map((l) => (
+            {SOCIALS.map((s) => (
               <a
-                key={l}
-                href="#"
+                key={s.label}
+                href={s.href}
+                target="_blank"
+                rel="noreferrer noopener"
                 className="text-[0.9375rem] text-ink-soft transition-colors duration-300 hover:text-turbo"
               >
-                {l}
+                {s.label}
               </a>
             ))}
           </FooterCol>
@@ -327,10 +341,10 @@ export function SiteFooter() {
         <div className="mt-14 flex flex-col gap-4 pt-8 md:flex-row md:items-center md:justify-between">
           <div className="flex flex-col gap-1 text-sm text-ink-mute sm:flex-row sm:gap-6">
             <a
-              href="tel:+995322990000"
+              href="tel:+995551244222"
               className="tnum transition-colors hover:text-ink"
             >
-              +995 32 2 99 00 00
+              +995 551 24 42 22
             </a>
             <span className="hidden sm:inline">·</span>
             <span>Tsereteli Ave 114, Tbilisi 0119</span>

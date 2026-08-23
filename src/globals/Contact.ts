@@ -45,7 +45,7 @@ export const Contact: GlobalConfig = {
           name: "phone",
           type: "text",
           required: true,
-          admin: { description: "E.g. +995 32 2 99 00 00" },
+          admin: { description: "E.g. +995 551 24 42 22" },
         },
         { name: "emailLabel", type: "text", required: true, localized: true },
         { name: "email", type: "text", required: true },

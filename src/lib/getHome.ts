@@ -21,7 +21,6 @@ export type HomeContent = {
     line3b: string;
     blurb: string;
     ctaLabel: string;
-    image: string;
   };
   stats: { value: string; label: string }[];
   inventory: { title: string; lead: string; viewAllLabel: string };
@@ -46,10 +45,9 @@ export type HomeContent = {
   };
 };
 
-// Identical to HomeContent except the two image fields, which arrive as
-// populated `media` docs (depth 1) rather than URLs.
-type HomeDoc = Omit<HomeContent, "hero" | "workshop"> & {
-  hero: Omit<HomeContent["hero"], "image"> & { image: MediaRef };
+// Identical to HomeContent except the workshop image, which arrives as a
+// populated `media` doc (depth 1) rather than a URL.
+type HomeDoc = Omit<HomeContent, "workshop"> & {
   workshop: Omit<HomeContent["workshop"], "image"> & { image: MediaRef };
 };
 
@@ -58,14 +56,13 @@ export async function getHome(locale: Locale): Promise<HomeContent> {
   const doc = (await payload.findGlobal({
     slug: "home",
     locale,
-    // depth 1 populates the `media` docs behind the hero/workshop upload
-    // fields, which is where the image URLs come from.
+    // depth 1 populates the `media` doc behind the workshop upload field,
+    // which is where its image URL comes from.
     depth: 1,
   })) as unknown as HomeDoc;
 
   return {
     ...doc,
-    hero: { ...doc.hero, image: mediaUrl(doc.hero.image) },
     workshop: { ...doc.workshop, image: mediaUrl(doc.workshop.image) },
   };
 }

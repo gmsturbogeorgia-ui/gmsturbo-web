@@ -38,16 +38,6 @@ export const Home: GlobalConfig = {
           localized: true,
           label: "Catalog CTA label",
         },
-        {
-          name: "image",
-          type: "upload",
-          relationTo: "media",
-          required: true,
-          admin: {
-            description:
-              "Hero photo. Upload a new file or pick one already in Media.",
-          },
-        },
       ],
     },
     {

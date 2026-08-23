@@ -48,7 +48,6 @@ export async function runSeed(payload: Payload): Promise<string> {
   // Upload every image the seed references before writing any content, so
   // each `media(...)` lookup below is a plain map read.
   const media = await buildMediaResolver(payload, [
-    HOME_SEED.hero.image,
     HOME_SEED.workshop.image,
     SHOWROOM_SEED.hero.image,
     SHOWROOM_SEED.gallery.bannerImage,

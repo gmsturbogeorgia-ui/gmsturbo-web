@@ -48,7 +48,7 @@ const jsonLd = {
   "@type": "AutomotiveBusiness",
   name: "GMS Turbo Georgia",
   image: "/og-image.jpg",
-  telephone: "+995 32 2 99 00 00",
+  telephone: "+995 551 24 42 22",
   email: "showroom@gmsturbo.ge",
   address: {
     "@type": "PostalAddress",
@@ -62,13 +62,13 @@ const jsonLd = {
       "@type": "OpeningHoursSpecification",
       dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
       opens: "10:00",
-      closes: "20:00",
+      closes: "18:00",
     },
     {
       "@type": "OpeningHoursSpecification",
       dayOfWeek: "Saturday",
       opens: "11:00",
-      closes: "18:00",
+      closes: "17:00",
     },
   ],
 };

@@ -122,7 +122,7 @@ export function ProductShowcase({ product }: { product: Product }) {
           <ButtonAnchor href="#quote">
             {t("product.requestQuote")}
           </ButtonAnchor>
-          <ButtonAnchor href="tel:+995322990000" variant="secondary">
+          <ButtonAnchor href="tel:+995551244222" variant="secondary">
             {t("product.callWorkshop")}
           </ButtonAnchor>
         </div>

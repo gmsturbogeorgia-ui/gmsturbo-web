@@ -13,8 +13,9 @@ import {
 } from "@/components/Primitives";
 import type { Product } from "@/lib/products";
 import type { HomeContent } from "@/lib/getHome";
+import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n/context";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export function HomeClient({
   home,
@@ -57,13 +58,36 @@ export function HomeClient({
    -------------------------------------------------------------------------- */
 function Hero({ hero }: { hero: HomeContent["hero"] }) {
   const video = useRef<HTMLVideoElement>(null);
+  const [ready, setReady] = useState(false);
 
-  // `autoPlay` is on the element so the loop starts without waiting for
-  // hydration; this only takes it back off for people who asked for reduced
-  // motion, which leaves them the poster frame. CSS can't pause a video.
   useEffect(() => {
-    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    video.current?.pause();
+    const el = video.current;
+    if (!el) return;
+
+    // `autoPlay` is on the element so the loop starts without waiting for
+    // hydration; this only takes it back off for people who asked for reduced
+    // motion, which leaves them the first frame. CSS can't pause a video.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      el.pause();
+    }
+
+    // The fade-in is driven from here rather than an `onCanPlay` prop because
+    // the <video> is server-rendered: with `preload="auto"` the event can fire
+    // before React hydrates and attaches that handler, which would leave the
+    // hero permanently blank. Checking readyState first covers that race.
+    if (el.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+      setReady(true);
+      return;
+    }
+    const onReady = () => setReady(true);
+    // `error` too, so a video that never loads doesn't hold the fade at 0 —
+    // it reveals the (empty, dark) element and the copy keeps its backdrop.
+    el.addEventListener("loadeddata", onReady, { once: true });
+    el.addEventListener("error", onReady, { once: true });
+    return () => {
+      el.removeEventListener("loadeddata", onReady);
+      el.removeEventListener("error", onReady);
+    };
   }, []);
 
   return (
@@ -71,23 +95,25 @@ function Hero({ hero }: { hero: HomeContent["hero"] }) {
       // -mt-18 pulls the section up under the sticky 4.5rem header so the
       // video runs behind it; the content adds the height back as
       // padding so nothing sits underneath the nav.
-      className="relative -mt-18 flex h-[70dvh] min-h-[620px] w-full items-center overflow-hidden"
+      className="relative -mt-18 flex h-[70dvh] min-h-[620px] w-full items-center overflow-hidden bg-base"
     >
-      {/* Looping turbo animation instead of a still. `poster` is the CMS hero
-          image, so the first paint is the photograph we already ship and the
-          video takes over once it has buffered — and it's what shows if the
-          browser blocks autoplay or the user asked for reduced motion. */}
+      {/* Looping turbo animation, no poster: a still swapping for the video
+          mid-load reads as a glitch. The section's own dark background holds
+          the frame instead, and the video fades in over it once its first
+          frame is decoded. */}
       <video
         ref={video}
         src="/video/hero-turbo.mp4"
-        poster={hero.image}
         autoPlay
         muted
         loop
         playsInline
         preload="auto"
         aria-label="A full view of an automotive turbocharger, housing and all"
-        className="absolute inset-0 h-full w-full object-cover"
+        className={cn(
+          "absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ease-out",
+          ready ? "opacity-100" : "opacity-0",
+        )}
       />
 
       {/* Scrim, bottom-weighted. `via-base/45` at the midpoint keeps the copy
@@ -301,10 +327,10 @@ function BookingCTA({ booking }: { booking: HomeContent["booking"] }) {
               <dt className="text-sm text-ink-mute">{t("home.callDirect")}</dt>
               <dd className="mt-1.5">
                 <a
-                  href="tel:+995571244222"
+                  href="tel:+995551244222"
                   className="tnum font-display text-2xl font-semibold text-ink transition-colors hover:text-turbo"
                 >
-                  +995 571 244 222
+                  +995 551 24 42 22
                 </a>
               </dd>
             </div>
