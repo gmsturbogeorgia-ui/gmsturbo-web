@@ -28,7 +28,10 @@ export const Contact: GlobalConfig = {
           type: "text",
           required: true,
           localized: true,
-          admin: { description: "Eyebrow, e.g. \"Tsereteli Ave 114, Tbilisi\"." },
+          admin: {
+            description:
+              'Eyebrow, e.g. "71, Sakartvelos Ertianobistvis Mebrdzolta Street, Tbilisi".',
+          },
         },
         { name: "title1", type: "text", required: true, localized: true },
         { name: "title2", type: "text", required: true, localized: true },
@@ -130,7 +133,7 @@ export const Contact: GlobalConfig = {
             if (isShortMapLink(value)) {
               return "Couldn't reach Google to expand that short link. Open it in a browser and paste the full google.com/maps URL instead.";
             }
-            return "No coordinates in that value. Paste a Google Maps link to the shop, or type them directly as \"41.697529,44.886512\". A street address alone can't be placed on the map.";
+            return 'No coordinates in that value. Paste a Google Maps link to the shop, or type them directly as "41.697529,44.886512". A street address alone can\'t be placed on the map.';
           },
         },
         {

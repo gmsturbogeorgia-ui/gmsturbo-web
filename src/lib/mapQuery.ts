@@ -17,7 +17,11 @@
  * field hook on save — never on render.
  */
 
-/** The workshop: Turbo GMS, Tbilisi. Used when the field is left empty. */
+/**
+ * The workshop: 71, Sakartvelos Ertianobistvis Mebrdzolta Street,
+ * Tbilisi 0163
+ * (verified against OSM's reverse geocoder). Used when the field is empty.
+ */
 export const DEFAULT_MAP_CENTER = { lat: 41.697529, lng: 44.886512 } as const;
 export const DEFAULT_MAP_ZOOM = 16;
 
@@ -76,7 +80,10 @@ export function parseLatLng(raw: string | null | undefined): LatLng | null {
   // the link was copied from: `query` for search, `q` for the older form,
   // `destination`/`daddr` for directions, `ll`/`center` for a viewport link.
   for (const key of ["query", "q", "destination", "daddr", "ll", "center"]) {
-    const param = url.searchParams.get(key)?.trim().replace(/^loc:\s*/i, "");
+    const param = url.searchParams
+      .get(key)
+      ?.trim()
+      .replace(/^loc:\s*/i, "");
     const match = param?.match(COORD_PAIR);
     if (match) return toLatLng(match[1], match[2]);
   }

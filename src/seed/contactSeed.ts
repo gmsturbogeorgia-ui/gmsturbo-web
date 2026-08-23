@@ -4,8 +4,8 @@
 // plus the phone/email/address values that were hardcoded in ContactClient.
 export const CONTACT_SEED = {
   hero: {
-    tag: "Tsereteli Ave 114, Tbilisi",
-    tagKa: "წერეთლის გამზ. 114, თბილისი",
+    tag: "71, Sakartvelos Ertianobistvis Mebrdzolta Street, Tbilisi",
+    tagKa: "71 საქართველოს ერთიანობისთვის მებრძოლთა ქუჩა, თბილისი",
     title1: "Contact us",
     title1Ka: "დაგვიკავშირდით",
     title2: "or book a callback",
@@ -24,10 +24,10 @@ export const CONTACT_SEED = {
     email: "showroom@gmsturbo.ge",
     addressLabel: "Address",
     addressLabelKa: "მისამართი",
-    addressLine1: "Tsereteli Ave 114",
-    addressLine1Ka: "წერეთლის გამზ. 114",
-    addressLine2: "Tbilisi 0119",
-    addressLine2Ka: "თბილისი 0119",
+    addressLine1: "71, Sakartvelos Ertianobistvis Mebrdzolta Street",
+    addressLine1Ka: "71 საქართველოს ერთიანობისთვის მებრძოლთა ქუჩა",
+    addressLine2: "Tbilisi 0163",
+    addressLine2Ka: "თბილისი 0163",
     hoursLabel: "Hours",
     hoursLabelKa: "სამუშაო საათები",
     hoursVal: "Mon–Fri · 10:00–18:00",
@@ -56,8 +56,8 @@ export const CONTACT_SEED = {
     titleKa: "სახელოსნო",
     mapQuery: "41.697529,44.886512",
     mapZoom: 16,
-    caption: "Tsereteli Ave 114 · Tbilisi",
-    captionKa: "წერეთლის გამზ. 114 · თბილისი",
+    caption: "71, Sakartvelos Ertianobistvis Mebrdzolta Street · Tbilisi",
+    captionKa: "71 საქართველოს ერთიანობისთვის მებრძოლთა ქუჩა · თბილისი",
   },
 };
 
@@ -119,7 +119,10 @@ export function contactSeedAllLocales() {
       ),
     },
     booking: {
-      kicker: locale(CONTACT_SEED.booking.kicker, CONTACT_SEED.booking.kickerKa),
+      kicker: locale(
+        CONTACT_SEED.booking.kicker,
+        CONTACT_SEED.booking.kickerKa,
+      ),
       title1: locale(
         CONTACT_SEED.booking.title1,
         CONTACT_SEED.booking.title1Ka,

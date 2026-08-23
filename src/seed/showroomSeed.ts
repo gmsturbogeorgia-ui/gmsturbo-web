@@ -11,8 +11,9 @@ import type { MediaResolver } from "./mediaSeed";
 
 export const SHOWROOM_SEED = {
   hero: {
-    tag: "Flagship · Tsereteli Ave 114, Tbilisi",
-    tagKa: "მთავარი დარბაზი · წერეთლის გამზ. 114, თბილისი",
+    tag: "Flagship · 71, Sakartvelos Ertianobistvis Mebrdzolta Street, Tbilisi",
+    tagKa:
+      "მთავარი დარბაზი · 71 საქართველოს ერთიანობისთვის მებრძოლთა ქუჩა, თბილისი",
     title1: "The",
     title1Ka: "სავიტრინო",
     title2: "showroom",
@@ -53,8 +54,8 @@ export const SHOWROOM_SEED = {
     lead: "Photographed on an ordinary Tuesday, no staging, no rendered shelves.",
     leadKa: "გადაღებულია ჩვეულებრივ სამშაბათს, დადგმის გარეშე.",
     bannerImage: "/images/gms-turbo-neon-sign.jpeg",
-    bannerCaption: "Tsereteli Ave 114",
-    bannerCaptionKa: "წერეთლის გამზ. 114",
+    bannerCaption: "71, Sakartvelos Ertianobistvis Mebrdzolta Street",
+    bannerCaptionKa: "71 საქართველოს ერთიანობისთვის მებრძოლთა ქუჩა",
     items: [
       {
         image: "/images/showroom-stock-shelves.jpeg",
@@ -109,8 +110,8 @@ export const SHOWROOM_SEED = {
       "დათვალიერებისთვის წინასწარი ჩაწერა საჭირო არ არის. პირადი ვიზიტების, სატესტო მორგებისა თუ სპორტული კონსულტაციისთვის დაჯავშნეთ საათი ჩვენს მთავარ ინჟინერთან.",
     addressLabel: "Address",
     addressLabelKa: "მისამართი",
-    address: "Tsereteli Ave 114, Tbilisi 0119",
-    addressKa: "წერეთლის გამზ. 114, თბილისი 0119",
+    address: "71, Sakartvelos Ertianobistvis Mebrdzolta Street, Tbilisi 0163",
+    addressKa: "71 საქართველოს ერთიანობისთვის მებრძოლთა ქუჩა, თბილისი 0163",
     callLabel: "Call",
     callLabelKa: "ზარი",
     phone: "+995 551 24 42 22",
@@ -174,14 +175,8 @@ export function showroomSeedAllLocales(media: MediaResolver) {
     },
     visit: {
       kicker: locale(SHOWROOM_SEED.visit.kicker, SHOWROOM_SEED.visit.kickerKa),
-      title1: locale(
-        SHOWROOM_SEED.visit.title1,
-        SHOWROOM_SEED.visit.title1Ka,
-      ),
-      title2: locale(
-        SHOWROOM_SEED.visit.title2,
-        SHOWROOM_SEED.visit.title2Ka,
-      ),
+      title1: locale(SHOWROOM_SEED.visit.title1, SHOWROOM_SEED.visit.title1Ka),
+      title2: locale(SHOWROOM_SEED.visit.title2, SHOWROOM_SEED.visit.title2Ka),
       blurb: locale(SHOWROOM_SEED.visit.blurb, SHOWROOM_SEED.visit.blurbKa),
       addressLabel: locale(
         SHOWROOM_SEED.visit.addressLabel,

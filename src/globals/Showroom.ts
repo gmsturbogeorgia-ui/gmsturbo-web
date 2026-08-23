@@ -24,7 +24,8 @@ export const Showroom: GlobalConfig = {
           required: true,
           localized: true,
           admin: {
-            description: 'Eyebrow, e.g. "Flagship · Tsereteli Ave 114, Tbilisi".',
+            description:
+              'Eyebrow, e.g. "Flagship · 71, Sakartvelos Ertianobistvis Mebrdzolta Street, Tbilisi".',
           },
         },
         { name: "title1", type: "text", required: true, localized: true },

@@ -306,53 +306,63 @@ export function SiteFooter() {
       <FlameEdge />
       <div className="bg-graphite">
         <div className="shell py-16 md:py-20">
-        <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr] md:gap-16">
-          <div className="max-w-sm">
-            <Logo />
-            <p className="mt-6 text-[0.9375rem] leading-relaxed text-ink-soft">
-              {t("footer.blurb")}
-            </p>
-            <div className="mt-8">
-              <TextLink href="/contact">{t("footer.contact")}</TextLink>
+          <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr] md:gap-16">
+            <div className="max-w-sm">
+              <Logo />
+              <p className="mt-6 text-[0.9375rem] leading-relaxed text-ink-soft">
+                {t("footer.blurb")}
+              </p>
+              <div className="mt-8">
+                <TextLink href="/contact">{t("footer.contact")}</TextLink>
+              </div>
             </div>
+
+            <FooterCol title={t("footer.navigation")}>
+              <FooterLink href="/catalog">{t("footer.inventory")}</FooterLink>
+              <FooterLink href="/showroom">{t("footer.showroom")}</FooterLink>
+              <FooterLink href="/contact">{t("footer.contact")}</FooterLink>
+            </FooterCol>
+
+            <FooterCol title={t("footer.connect")}>
+              {SOCIALS.map((s) => (
+                <a
+                  key={s.label}
+                  href={s.href}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="text-[0.9375rem] text-ink-soft transition-colors duration-300 hover:text-turbo"
+                >
+                  {s.label}
+                </a>
+              ))}
+            </FooterCol>
           </div>
 
-          <FooterCol title={t("footer.navigation")}>
-            <FooterLink href="/catalog">{t("footer.inventory")}</FooterLink>
-            <FooterLink href="/showroom">{t("footer.showroom")}</FooterLink>
-            <FooterLink href="/contact">{t("footer.contact")}</FooterLink>
-          </FooterCol>
-
-          <FooterCol title={t("footer.connect")}>
-            {SOCIALS.map((s) => (
+          <div className="mt-14 flex flex-col gap-4 pt-8 md:flex-row md:items-center md:justify-between">
+            <div className="flex flex-col gap-1 text-sm text-ink-mute sm:flex-row sm:gap-6">
               <a
-                key={s.label}
-                href={s.href}
+                href="tel:+995551244222"
+                className="tnum transition-colors hover:text-ink"
+              >
+                +995 551 24 42 22
+              </a>
+              <span className="hidden sm:inline">·</span>
+              <span>{t("footer.address")}</span>
+            </div>
+            <p className="text-sm text-ink-mute">
+              © {new Date().getFullYear()} GMS Turbo Georgia -{" "}
+              {t("footer.builtBy")}{" "}
+              <a
+                href="https://gargari.ge"
                 target="_blank"
                 rel="noreferrer noopener"
-                className="text-[0.9375rem] text-ink-soft transition-colors duration-300 hover:text-turbo"
+                className="text-ink-soft transition-colors duration-300 hover:text-turbo"
               >
-                {s.label}
+                GARGARI
               </a>
-            ))}
-          </FooterCol>
-        </div>
-
-        <div className="mt-14 flex flex-col gap-4 pt-8 md:flex-row md:items-center md:justify-between">
-          <div className="flex flex-col gap-1 text-sm text-ink-mute sm:flex-row sm:gap-6">
-            <a
-              href="tel:+995551244222"
-              className="tnum transition-colors hover:text-ink"
-            >
-              +995 551 24 42 22
-            </a>
-            <span className="hidden sm:inline">·</span>
-            <span>Tsereteli Ave 114, Tbilisi 0119</span>
+              {t("footer.builtBySuffix")}
+            </p>
           </div>
-          <p className="text-sm text-ink-mute">
-            © {new Date().getFullYear()} GMS Turbo Georgia - {t("footer.builtIn")}
-          </p>
-        </div>
         </div>
       </div>
     </footer>

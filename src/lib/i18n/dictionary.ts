@@ -35,7 +35,12 @@ export const dict = {
       contact: "Contact",
       connect: "Connect",
       precisionTag: "Industrial precision",
-      builtIn: "Built in Tbilisi",
+      address: "71, Sakartvelos Ertianobistvis Mebrdzolta Street, Tbilisi 0163",
+      // Split around the GARGARI link because Georgian puts the agency in the
+      // instrumental case ("GARGARI-ის მიერ") — a single string with the name
+      // baked in couldn't carry the suffix on the far side of the anchor.
+      builtBy: "Built in Georgia by",
+      builtBySuffix: "",
     },
     home: {
       heroKicker: "Turbocharger engineering · Tbilisi, est. 2014",
@@ -119,8 +124,7 @@ export const dict = {
       sending: "Sending…",
       error:
         "Sorry, we couldn't send your request. Please try again or call us directly.",
-      privacy:
-        "We'll only use your details to contact you about this request.",
+      privacy: "We'll only use your details to contact you about this request.",
       close: "Close",
       successKicker: "Request received",
       successTitle: "We'll be in touch",
@@ -129,7 +133,7 @@ export const dict = {
       done: "Done",
     },
     contact: {
-      tag: "Tsereteli Ave 114, Tbilisi",
+      tag: "71, Sakartvelos Ertianobistvis Mebrdzolta Street, Tbilisi",
       title1: "Contact us",
       title2: "or book a callback",
       blurb:
@@ -275,7 +279,7 @@ export const dict = {
         "Sealed delivery to anywhere in Georgia, Armenia and Azerbaijan within 48 hours.",
     },
     showroom: {
-      tag: "Flagship · Tsereteli Ave 114, Tbilisi",
+      tag: "Flagship · 71, Sakartvelos Ertianobistvis Mebrdzolta Street, Tbilisi",
       title1: "The",
       title2: "showroom",
       hoursLabel: "Hours",
@@ -326,7 +330,9 @@ export const dict = {
       contact: "კონტაქტი",
       connect: "გამოგვყევით",
       precisionTag: "ინდუსტრიული სიზუსტე",
-      builtIn: "დამზადებულია თბილისში",
+      address: "71 საქართველოს ერთიანობისთვის მებრძოლთა ქუჩა, თბილისი 0163",
+      builtBy: "დამზადებულია საქართველოში",
+      builtBySuffix: "-ის მიერ",
     },
     home: {
       heroKicker: "ტურბოკომპრესორების ინჟინერია · თბილისი, 2014 წლიდან",
@@ -421,7 +427,7 @@ export const dict = {
       done: "მზადაა",
     },
     contact: {
-      tag: "წერეთლის გამზ. 114, თბილისი",
+      tag: "71 საქართველოს ერთიანობისთვის მებრძოლთა ქუჩა, თბილისი",
       title1: "დაგვიკავშირდით",
       title2: "ან დაჯავშნეთ ზარი",
       blurb:
@@ -569,7 +575,7 @@ export const dict = {
         "დალუქული მიწოდება საქართველოს, სომხეთისა და აზერბაიჯანის ნებისმიერ წერტილში 48 საათში.",
     },
     showroom: {
-      tag: "მთავარი დარბაზი · წერეთლის გამზ. 114, თბილისი",
+      tag: "მთავარი დარბაზი · 71 საქართველოს ერთიანობისთვის მებრძოლთა ქუჩა, თბილისი",
       title1: "სავიტრინო",
       title2: "დარბაზი",
       hoursLabel: "სამუშაო საათები",
@@ -582,8 +588,7 @@ export const dict = {
       testFitVal: "ადგილზე",
       galleryKicker: "გალერეა",
       galleryTitle: "მთავარი დარბაზის შიგნით",
-      galleryLead:
-        "გადაღებულია ჩვეულებრივ სამშაბათს, დადგმის გარეშე.",
+      galleryLead: "გადაღებულია ჩვეულებრივ სამშაბათს, დადგმის გარეშე.",
       displayKicker: "გამოფენილი",
       collectionTitle: "კოლექცია",
       fullCatalog: "სრული კატალოგი",
@@ -649,4 +654,3 @@ export function stockLabel(stock: string, lang: Lang): string {
     ? (STOCK_KA[stock] ?? stock)
     : (STOCK_EN[stock] ?? stock);
 }
-

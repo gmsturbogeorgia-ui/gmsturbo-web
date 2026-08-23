@@ -52,9 +52,9 @@ const jsonLd = {
   email: "showroom@gmsturbo.ge",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Tsereteli Ave 114",
+    streetAddress: "71, Sakartvelos Ertianobistvis Mebrdzolta Street",
     addressLocality: "Tbilisi",
-    postalCode: "0119",
+    postalCode: "0163",
     addressCountry: "GE",
   },
   openingHoursSpecification: [
