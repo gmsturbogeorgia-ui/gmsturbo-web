@@ -14,6 +14,7 @@ import {
 import type { Product } from "@/lib/products";
 import type { HomeContent } from "@/lib/getHome";
 import { useLanguage } from "@/lib/i18n/context";
+import { useEffect, useRef } from "react";
 
 export function HomeClient({
   home,
@@ -42,7 +43,7 @@ export function HomeClient({
 }
 
 /* ---------------------------------------------------------------- HERO ----
-   Cinematic full-bleed photograph with the copy sitting on it — that's the
+   Cinematic full-bleed footage with the copy sitting on it — that's the
    part worth borrowing.
 
    The composition is deliberately ours, not the reference's: copy is
@@ -51,25 +52,42 @@ export function HomeClient({
    and walnut actually are, and the hero dissolves into the stats band below
    instead of stopping at a hard edge.
 
-   No slider: one photograph, held. A single strong image with room to
+   No slider: one looping shot, held. A single strong image with room to
    breathe says more than four rotating past.
    -------------------------------------------------------------------------- */
 function Hero({ hero }: { hero: HomeContent["hero"] }) {
+  const video = useRef<HTMLVideoElement>(null);
+
+  // `autoPlay` is on the element so the loop starts without waiting for
+  // hydration; this only takes it back off for people who asked for reduced
+  // motion, which leaves them the poster frame. CSS can't pause a video.
+  useEffect(() => {
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    video.current?.pause();
+  }, []);
+
   return (
     <section
       // -mt-18 pulls the section up under the sticky 4.5rem header so the
-      // photograph runs behind it; the content adds the height back as
+      // video runs behind it; the content adds the height back as
       // padding so nothing sits underneath the nav.
       className="relative -mt-18 flex h-[70dvh] min-h-[620px] w-full items-center overflow-hidden"
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={hero.image}
-        alt="The GMS Turbo Georgia showroom floor in Tbilisi"
-        width={1600}
-        height={1000}
-        fetchPriority="high"
-        className="hero-zoom absolute inset-0 h-full w-full object-cover"
+      {/* Looping turbo animation instead of a still. `poster` is the CMS hero
+          image, so the first paint is the photograph we already ship and the
+          video takes over once it has buffered — and it's what shows if the
+          browser blocks autoplay or the user asked for reduced motion. */}
+      <video
+        ref={video}
+        src="/video/hero-turbo.mp4"
+        poster={hero.image}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        aria-label="A full view of an automotive turbocharger, housing and all"
+        className="absolute inset-0 h-full w-full object-cover"
       />
 
       {/* Scrim, bottom-weighted. `via-base/45` at the midpoint keeps the copy
