@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { Product } from "@/lib/products";
-import { getProductById } from "@/lib/getProducts";
+import { getProductById, getProducts } from "@/lib/getProducts";
 import { localeAlternates } from "@/lib/i18n/metadata";
 import { localeHref, type Locale } from "@/lib/i18n/locales";
 import { ProductDetailClient } from "./ProductDetailClient";
@@ -129,6 +129,14 @@ export default async function ProductDetailPage({
   const product = await getProductById(productId, locale);
   if (!product) notFound();
 
+  /* "You might also like" used to be filtered out of a hardcoded array in
+     src/lib/products.ts, so it happily offered units that no longer existed
+     in the CMS. It reads the real catalog now — same category, current unit
+     excluded, first four. */
+  const related = (await getProducts(locale))
+    .filter((p) => p.id !== product.id && p.category === product.category)
+    .slice(0, 4);
+
   return (
     <>
       {jsonLdFor(product).map((ld, i) => (
@@ -138,7 +146,7 @@ export default async function ProductDetailPage({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }}
         />
       ))}
-      <ProductDetailClient product={product} />
+      <ProductDetailClient product={product} related={related} />
     </>
   );
 }

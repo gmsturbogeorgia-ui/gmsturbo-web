@@ -1,7 +1,7 @@
 "use client";
 
 import { LocaleLink as Link } from "@/components/LocaleLink";
-import { PRODUCTS, type Product } from "@/lib/products";
+import type { Product } from "@/lib/products";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { ProductCard, ProductGrid } from "@/components/ProductCard";
 import {
@@ -16,7 +16,13 @@ import { useTaxonomy } from "@/lib/i18n/taxonomy-context";
 import { ProductShowcase } from "./ProductShowcase";
 import { ProductQuoteForm } from "./ProductQuoteForm";
 
-export function ProductDetailClient({ product }: { product: Product }) {
+export function ProductDetailClient({
+  product,
+  related,
+}: {
+  product: Product;
+  related: Product[];
+}) {
   return (
     <>
       <SiteHeader />
@@ -27,7 +33,7 @@ export function ProductDetailClient({ product }: { product: Product }) {
         <Compatibility product={product} />
         <TireTrack className="mx-6 my-4 h-14 opacity-[0.22] md:my-8 md:h-20" />
         <ProductQuoteForm product={product} />
-        <RelatedProducts current={product} />
+        <RelatedProducts related={related} />
       </main>
       <SiteFooter />
     </>
@@ -127,11 +133,8 @@ function Compatibility({ product }: { product: Product }) {
   );
 }
 
-function RelatedProducts({ current }: { current: Product }) {
+function RelatedProducts({ related }: { related: Product[] }) {
   const { t } = useLanguage();
-  const related = PRODUCTS.filter(
-    (p) => p.id !== current.id && p.category === current.category,
-  ).slice(0, 4);
   if (related.length === 0) return null;
 
   return (

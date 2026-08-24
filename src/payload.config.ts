@@ -11,6 +11,8 @@ import { Media } from "./collections/Media";
 import { Products } from "./collections/Products";
 import { Categories } from "./collections/Categories";
 import { Vehicles } from "./collections/Vehicles";
+import { VehicleModels } from "./collections/VehicleModels";
+import { VehicleGenerations } from "./collections/VehicleGenerations";
 import { Home } from "./globals/Home";
 import { Contact } from "./globals/Contact";
 import { Showroom } from "./globals/Showroom";
@@ -42,7 +44,16 @@ export default buildConfig({
       titleSuffix: "- GMS Turbo Admin",
     },
   },
-  collections: [Users, Media, Products, Categories, Vehicles],
+  collections: [
+    Users,
+    Media,
+    Products,
+    Categories,
+    // The vehicle tree, one collection per level: make -> model -> generation.
+    Vehicles,
+    VehicleModels,
+    VehicleGenerations,
+  ],
   globals: [Home, Contact, Showroom, Catalog],
   editor: lexicalEditor(),
   // Content locales. Every `localized: true` field (product tagline/

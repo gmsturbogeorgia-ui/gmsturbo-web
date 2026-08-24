@@ -27,9 +27,64 @@ function taxonomyValue(ref: TaxonomyRef): string {
     : "";
 }
 
-type FitmentDoc = Omit<Product["fitments"][number], "makeRef"> & {
-  makeRef?: TaxonomyRef;
+/* A fitment row as stored: one relationship, plus the engine it fits in that
+   car. At depth 3 the whole chain comes back populated — generation, then its
+   model, then that model's make — which is what lets this flatten each row
+   into the display strings and the taxonomy keys in one pass. */
+type GenerationDoc = {
+  yearFrom?: number | null;
+  yearTo?: number | null;
+  label?: string | null;
+  model?:
+    | {
+        label?: string | null;
+        value?: string | null;
+        make?: { label?: string | null; value?: string | null } | number | null;
+      }
+    | number
+    | null;
 };
+
+type FitmentDoc = {
+  generation?: GenerationDoc | number | null;
+  engine?: string | null;
+};
+
+/** How an open-ended generation reads in the fitment table. The picker takes
+    this wording from the CMS; a product page has no reason to load that
+    global just for one word, so the two locales are spelled out here. */
+const STILL_BUILT: Record<Locale, string> = { en: "now", ka: "დღემდე" };
+
+/**
+ * Flattens one fitment row. Returns null when the row's generation was
+ * deleted from /admin, or when the query ran too shallow to populate it —
+ * either way there is nothing to print and nothing to match on, so the row is
+ * dropped rather than rendered as a blank line in the table.
+ */
+function mapFitment(row: FitmentDoc, locale: Locale) {
+  const generation = row.generation;
+  if (!generation || typeof generation !== "object") return null;
+  const model = generation.model;
+  if (!model || typeof model !== "object") return null;
+  const make = model.make;
+  if (!make || typeof make !== "object") return null;
+  if (typeof generation.yearFrom !== "number") return null;
+
+  const yearTo = typeof generation.yearTo === "number" ? generation.yearTo : null;
+  // En dash with hair spaces: the years are a range, not a subtraction.
+  const span = `${generation.yearFrom}\u2009\u2013\u2009${yearTo ?? STILL_BUILT[locale]}`;
+
+  return {
+    make: make.label ?? make.value ?? "",
+    model: model.label ?? model.value ?? "",
+    years: generation.label ? `${span} · ${generation.label}` : span,
+    engine: row.engine ?? "",
+    makeValue: make.value ?? "",
+    modelValue: model.value ?? "",
+    yearFrom: generation.yearFrom,
+    yearTo,
+  };
+}
 
 type ProductDoc = Omit<
   Product,
@@ -43,7 +98,7 @@ type ProductDoc = Omit<
   gallery?: { src: MediaRef }[];
 };
 
-function mapDoc(doc: ProductDoc): Product {
+function mapDoc(doc: ProductDoc, locale: Locale): Product {
   const img = mediaUrl(doc.img);
   // A gallery row whose upload was cleared in /admin would put an empty src
   // into ProductShowcase's slider, so drop it here.
@@ -60,14 +115,9 @@ function mapDoc(doc: ProductDoc): Product {
     // should have to upload the same photo twice to have it show up in the
     // slider. `Set` covers the editor who added it to both fields anyway.
     gallery: [...new Set([img, ...extra])].filter(Boolean),
-    // `makeRef` is the optional override that pins a fitment row to a make
-    // when its free text can't be matched to one (see src/lib/fitment.ts).
-    // Like `category` above it arrives as a whole doc at depth 1 and only
-    // the stable value travels on.
-    fitments: (doc.fitments ?? []).map((f) => ({
-      ...f,
-      makeRef: taxonomyValue(f.makeRef ?? null) || null,
-    })),
+    fitments: (doc.fitments ?? [])
+      .map((f) => mapFitment(f, locale))
+      .filter((f): f is NonNullable<typeof f> => f !== null),
     specs: doc.specs ?? [],
   };
 }
@@ -79,11 +129,12 @@ export async function getProducts(locale: Locale): Promise<Product[]> {
     locale,
     limit: 200,
     sort: "createdAt", // preserve insertion order for "FEATURED"
-    // depth 1 populates the `media` docs behind `img`/`gallery` and the
-    // taxonomy docs behind `category`/`vehicles`.
-    depth: 1,
+    // depth 3 is the length of the fitment chain: product -> generation ->
+    // model -> make. It also covers `media` behind `img`/`gallery` and the
+    // taxonomy docs behind `category`/`vehicles`, which need only 1.
+    depth: 3,
   });
-  return (result.docs as unknown as ProductDoc[]).map(mapDoc);
+  return (result.docs as unknown as ProductDoc[]).map((d) => mapDoc(d, locale));
 }
 
 export async function getProductById(
@@ -96,8 +147,8 @@ export async function getProductById(
     locale,
     where: { productId: { equals: id } },
     limit: 1,
-    depth: 1, // populate media + taxonomy relationships — see getProducts
+    depth: 3, // walk the fitment chain — see getProducts
   });
   const doc = result.docs[0] as unknown as ProductDoc | undefined;
-  return doc ? mapDoc(doc) : null;
+  return doc ? mapDoc(doc, locale) : null;
 }

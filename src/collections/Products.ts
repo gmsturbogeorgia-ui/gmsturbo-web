@@ -52,75 +52,27 @@ export const Products: CollectionConfig = {
       labels: { singular: "Fitment", plural: "Fitments" },
       admin: {
         description:
-          'The fitment table printed on the product page. Write it for a customer to read — "BMW", "335i / 135i (N54)", "2007-2013".',
+          "The cars this unit fits. Each row points at one generation of one model, picked from Taxonomy → Vehicle generations — that is what puts the product behind the catalog's make → model → year filter, and what the fitment table on the product page is built from.",
       },
       fields: [
-        { name: "make", type: "text", required: true },
-        { name: "model", type: "text", required: true },
-        { name: "years", type: "text", required: true },
-        { name: "engine", type: "text", required: true },
-        // The catalog's car picker filters on the make/model tree under
-        // Taxonomy -> Vehicles, and works the four fields above out against
-        // it on its own: it reads the years cell, and matches the make and
-        // model text against the makes and models on file. These overrides
-        // are for the rows where that can't work — usually because the
-        // customer-facing wording and the model on file are different names
-        // for the same car ("335i" vs "3 Series"). Leave them empty unless a
-        // product is missing from a filter it belongs in.
         {
-          type: "collapsible",
-          label: "Filter overrides (optional)",
-          admin: { initCollapsed: true },
-          fields: [
-            {
-              name: "makeRef",
-              type: "relationship",
-              relationTo: "vehicles",
-              admin: {
-                description:
-                  "Fill in only if the make text above doesn't match a make under Taxonomy -> Vehicles.",
-              },
-            },
-            {
-              name: "modelKey",
-              type: "text",
-              admin: {
-                description:
-                  "The model's stable key from that make's Models list, e.g. 3 SERIES. Fill in only if the model text above doesn't name it.",
-              },
-              hooks: {
-                beforeValidate: [
-                  ({ value }) =>
-                    typeof value === "string"
-                      ? value.trim().toUpperCase()
-                      : value,
-                ],
-              },
-            },
-            {
-              type: "row",
-              fields: [
-                {
-                  name: "yearFrom",
-                  type: "number",
-                  admin: {
-                    width: "50%",
-                    step: 1,
-                    description: "Overrides the years cell. Set both or neither.",
-                  },
-                },
-                {
-                  name: "yearTo",
-                  type: "number",
-                  admin: {
-                    width: "50%",
-                    step: 1,
-                    description: "Empty with a start year set = still built.",
-                  },
-                },
-              ],
-            },
-          ],
+          name: "generation",
+          type: "relationship",
+          relationTo: "vehicle-generations",
+          required: true,
+          admin: {
+            description:
+              'Listed as "Make Model · years (chassis)", e.g. "BMW 3 Series · 2005–2012 (E90)". Add the generation under Taxonomy first if it is missing.',
+          },
+        },
+        {
+          name: "engine",
+          type: "text",
+          required: true,
+          admin: {
+            description:
+              'The engine this fits in that car, e.g. "3.0L I6 Twin-Turbo". Printed beside the years.',
+          },
         },
       ],
     },

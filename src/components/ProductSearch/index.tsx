@@ -8,6 +8,7 @@ import {
   searchProducts,
   type SearchHit,
 } from "@/lib/product-search";
+import type { Product } from "@/lib/products";
 import { useTaxonomy } from "@/lib/i18n/taxonomy-context";
 import { useLanguage } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
@@ -27,6 +28,11 @@ import { cn } from "@/lib/utils";
    ========================================================================== */
 
 type Props = {
+  /* The catalog to search. It used to default to a hardcoded array inside
+     src/lib/products.ts, which meant this dropdown quietly suggested units
+     that no longer existed in the CMS — and missed every one that had been
+     added since. It is passed in from the page's real product list now. */
+  products: Product[];
   value: string;
   onChange: (next: string) => void;
   onSubmit?: (next: string) => void;
@@ -36,6 +42,7 @@ type Props = {
 };
 
 export function ProductSearch({
+  products,
   value,
   onChange,
   onSubmit,
@@ -50,8 +57,9 @@ export function ProductSearch({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const hits = useMemo(
-    () => (value.trim() ? searchProducts(value).slice(0, maxResults) : []),
-    [value, maxResults],
+    () =>
+      value.trim() ? searchProducts(value, products).slice(0, maxResults) : [],
+    [value, products, maxResults],
   );
 
   useEffect(() => setActive(0), [value]);

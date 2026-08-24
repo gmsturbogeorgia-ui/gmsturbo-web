@@ -105,13 +105,3 @@ export function generationLabel(g: Generation, presentWord: string): string {
   const span = `${g.yearFrom}\u2009\u2013\u2009${g.yearTo ?? presentWord}`;
   return g.label ? `${span} · ${g.label}` : span;
 }
-
-/** Do two year spans overlap? An open end is treated as "still running". */
-export function yearsOverlap(
-  a: { yearFrom: number; yearTo: number | null },
-  b: { yearFrom: number; yearTo: number | null },
-): boolean {
-  return (
-    a.yearFrom <= (b.yearTo ?? Infinity) && (a.yearTo ?? Infinity) >= b.yearFrom
-  );
-}

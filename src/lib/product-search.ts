@@ -1,4 +1,4 @@
-import { PRODUCTS, type Product } from "./products";
+import type { Product } from "./products";
 
 export type SearchHit = {
   product: Product;
@@ -46,7 +46,7 @@ function fieldsOf(
 
 export function searchProducts(
   query: string,
-  pool: Product[] = PRODUCTS,
+  pool: Product[],
 ): SearchHit[] {
   const tokens = tokenize(query);
   if (tokens.length === 0) return [];

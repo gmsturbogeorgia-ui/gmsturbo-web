@@ -151,7 +151,7 @@ export function CatalogClient({
         (cats.length === 0 || cats.includes(p.category)) &&
         (vehs.length === 0 ||
           (carSelection
-            ? matchesCar(p, vehicles, carSelection)
+            ? matchesCar(p, carSelection)
             : p.vehicles.some((v) => vehs.includes(v)))),
     );
     let list = q.trim() ? searchProducts(q, base).map((h) => h.product) : base;
@@ -181,7 +181,6 @@ export function CatalogClient({
     vehs.join(),
     car?.model,
     car?.years,
-    vehicles,
     sort,
   ]);
 
@@ -303,6 +302,7 @@ export function CatalogClient({
             opens them as a sheet. */}
         <div className="rounded-[1.375rem] bg-graphite p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.055)] md:p-5">
           <ProductSearch
+            products={products}
             value={draft}
             surface="well"
             onChange={setDraft}
