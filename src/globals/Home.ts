@@ -55,6 +55,11 @@ export const Home: GlobalConfig = {
     {
       name: "inventory",
       type: "group",
+      label: "Catalog",
+      admin: {
+        description:
+          "The product strip on the home page. Field name stays `inventory` so the stored column doesn't have to be renamed.",
+      },
       fields: [
         { name: "title", type: "text", required: true, localized: true },
         { name: "lead", type: "textarea", required: true, localized: true },

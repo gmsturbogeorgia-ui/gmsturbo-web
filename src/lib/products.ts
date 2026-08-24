@@ -1,29 +1,3 @@
-// Seed defaults for the `categories` and `vehicles` collections — these are
-// no longer the authoritative list. Both are editable from /admin now (see
-// src/collections/Categories.ts), so anything reading a category or make at
-// runtime gets it from the DB via src/lib/getTaxonomies.ts; this array only
-// says what a fresh database starts with. `label`/`labelKa` seed the
-// localized display name, `value` is the stable key products are filed under.
-export const CATEGORY_SEED = [
-  { value: "HYBRID", label: "Hybrid", labelKa: "ჰიბრიდი" },
-  { value: "BILLET", label: "Billet", labelKa: "ბილეტი" },
-  { value: "OEM REPLACEMENT", label: "OEM replacement", labelKa: "OEM ჩანაცვლება" },
-  { value: "COMPETITION", label: "Competition", labelKa: "სპორტული" },
-] as const;
-
-// Marques keep their own house styling in both languages (BMW and VW are
-// genuinely initialisms; Porsche and Subaru are not), so most labels match.
-export const VEHICLE_SEED = [
-  { value: "BMW", label: "BMW", labelKa: "BMW", popular: true },
-  { value: "AUDI", label: "Audi", labelKa: "Audi", popular: true },
-  { value: "VW", label: "VW", labelKa: "VW", popular: false },
-  { value: "MERCEDES", label: "Mercedes", labelKa: "Mercedes", popular: true },
-  { value: "PORSCHE", label: "Porsche", labelKa: "Porsche", popular: true },
-  { value: "SUBARU", label: "Subaru", labelKa: "Subaru", popular: false },
-  { value: "TOYOTA", label: "Toyota", labelKa: "Toyota", popular: false },
-  { value: "NISSAN", label: "Nissan", labelKa: "Nissan", popular: false },
-] as const;
-
 // Categories and makes are user-editable rows now, not a closed set, so these
 // are plain strings holding a taxonomy `value`. They stay named types because
 // every filter/search signature in the app reads better for it.
@@ -78,7 +52,21 @@ export type Product = {
   code: string;
   category: Category;
   vehicles: Vehicle[];
-  fitments: { make: string; model: string; years: string; engine: string }[];
+  /**
+   * The fitment table printed on the product page, plus the optional
+   * overrides that pin a row to the make/model tree when its wording can't
+   * be read automatically — see src/lib/fitment.ts.
+   */
+  fitments: {
+    make: string;
+    model: string;
+    years: string;
+    engine: string;
+    makeRef?: string | null;
+    modelKey?: string | null;
+    yearFrom?: number | null;
+    yearTo?: number | null;
+  }[];
   // Optional in the CMS — a unit with no published figure renders without
   // that line, and a priceless unit reads "Price on request".
   boost?: number | null;
@@ -92,9 +80,8 @@ export type Product = {
   specs: { label: string; value: string }[];
 };
 
-// The seed carries both languages at once, since one seed run writes the en
-// and ka rows together (see the note in src/seed/runSeed.ts about Payload's
-// Postgres adapter recreating array rows per write).
+// Carries both languages at once, unlike `Product`, which is already resolved
+// to the page's locale.
 export type ProductSeed = Omit<Product, "tagline" | "description"> & {
   tagline: string;
   taglineKa: string;

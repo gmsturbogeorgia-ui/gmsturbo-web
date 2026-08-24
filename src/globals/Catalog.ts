@@ -1,6 +1,6 @@
 import type { GlobalConfig } from "payload";
 
-// Singleton content for /catalog (the "Inventory" nav item). Same pattern as
+// Singleton content for /catalog (the "Catalog" nav item). Same pattern as
 // the other page globals: every string the page renders — hero copy, filter
 // toolbar labels, empty-state copy, the custom-builds CTA — lives here
 // instead of the i18n dictionary, editable from /admin. Bilingual via
@@ -57,6 +57,37 @@ export const Catalog: GlobalConfig = {
         { name: "sortBoost", type: "text", required: true, localized: true },
         { name: "showResults", type: "text", required: true, localized: true },
         { name: "unitsSuffix", type: "text", required: true, localized: true },
+      ],
+    },
+    {
+      name: "carPicker",
+      type: "group",
+      admin: {
+        description:
+          "The make -> model -> year car picker on /catalog. Every field here is optional: left empty it falls back to the wording the site ships with, in both languages.",
+      },
+      fields: [
+        { name: "trigger", type: "text", localized: true },
+        { name: "title", type: "text", localized: true },
+        { name: "stepMake", type: "text", localized: true },
+        { name: "stepModel", type: "text", localized: true },
+        { name: "stepYear", type: "text", localized: true },
+        { name: "searchPlaceholder", type: "text", localized: true },
+        { name: "allModels", type: "text", localized: true },
+        { name: "allYears", type: "text", localized: true },
+        {
+          name: "present",
+          type: "text",
+          localized: true,
+          admin: {
+            description:
+              'How an open-ended generation reads, e.g. "2019 - now".',
+          },
+        },
+        { name: "noModels", type: "text", localized: true },
+        { name: "noMakes", type: "text", localized: true },
+        { name: "back", type: "text", localized: true },
+        { name: "change", type: "text", localized: true },
       ],
     },
     {

@@ -2,8 +2,7 @@
  * POST /api/booking — the site-wide "Book a call" modal.
  *
  * Sits under (frontend) so it stays with the site rather than with Payload,
- * whose catch-all lives at /api/[...slug] — a static segment wins over it,
- * the same way /api/seed already does.
+ * whose catch-all lives at /api/[...slug] — a static segment wins over it.
  */
 import { NextResponse } from "next/server";
 import {

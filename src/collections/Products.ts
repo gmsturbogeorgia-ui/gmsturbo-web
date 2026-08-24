@@ -1,10 +1,9 @@
 import type { CollectionConfig } from "payload";
 
 // Backend admin panel for the turbocharger catalog cards shown on /catalog.
-// Field shape mirrors the `Product` type in src/lib/products.ts exactly so
-// the seed script (src/seed/seed.ts) can populate this collection directly
-// from that file's existing PRODUCTS array, and so a future data fetch from
-// the frontend maps 1:1 onto the same fields the site already renders.
+// Field shape mirrors the `Product` type in src/lib/products.ts exactly, so a
+// document read back through src/lib/getProducts.ts maps 1:1 onto the fields
+// the site already renders.
 export const Products: CollectionConfig = {
   slug: "products",
   admin: {
@@ -51,11 +50,78 @@ export const Products: CollectionConfig = {
       name: "fitments",
       type: "array",
       labels: { singular: "Fitment", plural: "Fitments" },
+      admin: {
+        description:
+          'The fitment table printed on the product page. Write it for a customer to read — "BMW", "335i / 135i (N54)", "2007-2013".',
+      },
       fields: [
         { name: "make", type: "text", required: true },
         { name: "model", type: "text", required: true },
         { name: "years", type: "text", required: true },
         { name: "engine", type: "text", required: true },
+        // The catalog's car picker filters on the make/model tree under
+        // Taxonomy -> Vehicles, and works the four fields above out against
+        // it on its own: it reads the years cell, and matches the make and
+        // model text against the makes and models on file. These overrides
+        // are for the rows where that can't work — usually because the
+        // customer-facing wording and the model on file are different names
+        // for the same car ("335i" vs "3 Series"). Leave them empty unless a
+        // product is missing from a filter it belongs in.
+        {
+          type: "collapsible",
+          label: "Filter overrides (optional)",
+          admin: { initCollapsed: true },
+          fields: [
+            {
+              name: "makeRef",
+              type: "relationship",
+              relationTo: "vehicles",
+              admin: {
+                description:
+                  "Fill in only if the make text above doesn't match a make under Taxonomy -> Vehicles.",
+              },
+            },
+            {
+              name: "modelKey",
+              type: "text",
+              admin: {
+                description:
+                  "The model's stable key from that make's Models list, e.g. 3 SERIES. Fill in only if the model text above doesn't name it.",
+              },
+              hooks: {
+                beforeValidate: [
+                  ({ value }) =>
+                    typeof value === "string"
+                      ? value.trim().toUpperCase()
+                      : value,
+                ],
+              },
+            },
+            {
+              type: "row",
+              fields: [
+                {
+                  name: "yearFrom",
+                  type: "number",
+                  admin: {
+                    width: "50%",
+                    step: 1,
+                    description: "Overrides the years cell. Set both or neither.",
+                  },
+                },
+                {
+                  name: "yearTo",
+                  type: "number",
+                  admin: {
+                    width: "50%",
+                    step: 1,
+                    description: "Empty with a start year set = still built.",
+                  },
+                },
+              ],
+            },
+          ],
+        },
       ],
     },
     // boost/hp/price are optional: not every unit has a published figure,

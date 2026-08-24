@@ -9,7 +9,7 @@ import { Button, FlameEdge, TextLink } from "@/components/Primitives";
 import { cn } from "@/lib/utils";
 
 const NAV = [
-  { key: "nav.inventory", href: "/catalog" },
+  { key: "nav.catalog", href: "/catalog" },
   { key: "nav.showroom", href: "/showroom" },
   { key: "nav.contact", href: "/contact" },
 ] as const;
@@ -318,7 +318,7 @@ export function SiteFooter() {
             </div>
 
             <FooterCol title={t("footer.navigation")}>
-              <FooterLink href="/catalog">{t("footer.inventory")}</FooterLink>
+              <FooterLink href="/catalog">{t("footer.catalog")}</FooterLink>
               <FooterLink href="/showroom">{t("footer.showroom")}</FooterLink>
               <FooterLink href="/contact">{t("footer.contact")}</FooterLink>
             </FooterCol>

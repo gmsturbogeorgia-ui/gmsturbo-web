@@ -5,8 +5,7 @@ import type { Locale } from "./i18n/locales";
 import { mediaUrl, type MediaRef } from "./mediaUrl";
 
 // Server-only data access for the `products` Payload collection. Maps each DB
-// document onto the `Product` shape the site renders. Inverse of
-// src/seed/runSeed.ts.
+// document onto the `Product` shape the site renders.
 //
 // `tagline`/`description` are `localized: true` in the collection (see
 // src/collections/Products.ts). The locale is a URL segment now, so they're
@@ -28,13 +27,18 @@ function taxonomyValue(ref: TaxonomyRef): string {
     : "";
 }
 
+type FitmentDoc = Omit<Product["fitments"][number], "makeRef"> & {
+  makeRef?: TaxonomyRef;
+};
+
 type ProductDoc = Omit<
   Product,
-  "id" | "category" | "vehicles" | "img" | "gallery"
+  "id" | "category" | "vehicles" | "img" | "gallery" | "fitments"
 > & {
   productId: string;
   category: TaxonomyRef;
   vehicles?: TaxonomyRef[];
+  fitments?: FitmentDoc[];
   img: MediaRef;
   gallery?: { src: MediaRef }[];
 };
@@ -56,7 +60,14 @@ function mapDoc(doc: ProductDoc): Product {
     // should have to upload the same photo twice to have it show up in the
     // slider. `Set` covers the editor who added it to both fields anyway.
     gallery: [...new Set([img, ...extra])].filter(Boolean),
-    fitments: doc.fitments ?? [],
+    // `makeRef` is the optional override that pins a fitment row to a make
+    // when its free text can't be matched to one (see src/lib/fitment.ts).
+    // Like `category` above it arrives as a whole doc at depth 1 and only
+    // the stable value travels on.
+    fitments: (doc.fitments ?? []).map((f) => ({
+      ...f,
+      makeRef: taxonomyValue(f.makeRef ?? null) || null,
+    })),
     specs: doc.specs ?? [],
   };
 }
@@ -67,7 +78,7 @@ export async function getProducts(locale: Locale): Promise<Product[]> {
     collection: "products",
     locale,
     limit: 200,
-    sort: "createdAt", // preserve seed/insertion order for "FEATURED"
+    sort: "createdAt", // preserve insertion order for "FEATURED"
     // depth 1 populates the `media` docs behind `img`/`gallery` and the
     // taxonomy docs behind `category`/`vehicles`.
     depth: 1,

@@ -18,7 +18,7 @@ export const dict = {
       viewDetail: "View detail",
     },
     nav: {
-      inventory: "Inventory",
+      catalog: "Catalog",
       services: "Services",
       showroom: "Showroom",
       garage: "Garage",
@@ -29,7 +29,7 @@ export const dict = {
       blurb:
         "Turbocharger sales, diagnostics, repair and performance engineering, built in Tbilisi since 2014.",
       navigation: "Navigation",
-      inventory: "Inventory",
+      catalog: "Catalog",
       services: "Services",
       showroom: "Showroom",
       contact: "Contact",
@@ -54,10 +54,6 @@ export const dict = {
         "Sales, diagnostics, rebuilds and performance turbos. Specced, balanced and bench-tested by the engineers who assemble them.",
       heroLiveTag: "Live from the workshop",
       heroPhotoCaption: "Bench-tested before it ships",
-      inventoryTitle: "Built and ready to ship",
-      inventoryLead:
-        "A working selection from the floor. Every unit is balanced, pressure-tested and sealed before it leaves the bench.",
-      inventoryViewAll: "View all products",
       precisionKicker: "The craft",
       precisionTitle1: "Precision",
       precisionTitle2: "rebuilding",
@@ -313,7 +309,7 @@ export const dict = {
       viewDetail: "დეტალურად ნახვა",
     },
     nav: {
-      inventory: "ინვენტარი",
+      catalog: "კატალოგი",
       services: "სერვისები",
       showroom: "სავიტრინო დარბაზი",
       garage: "სახელოსნო",
@@ -324,7 +320,7 @@ export const dict = {
       blurb:
         "ტურბოკომპრესორების გაყიდვა, დიაგნოსტიკა, რემონტი და წარმადობის ინჟინერია, შექმნილია თბილისში 2014 წლიდან.",
       navigation: "ნავიგაცია",
-      inventory: "ინვენტარი",
+      catalog: "კატალოგი",
       services: "სერვისები",
       showroom: "სავიტრინო დარბაზი",
       contact: "კონტაქტი",
@@ -346,10 +342,6 @@ export const dict = {
         "გაყიდვა, დიაგნოსტიკა, აღდგენა და წარმადობის ტურბოები, შერჩეული, დაბალანსებული და სტენდზე ტესტირებული იმავე ინჟინრების მიერ, ვინც მათ აწყობს.",
       heroLiveTag: "პირდაპირ სახელოსნოდან",
       heroPhotoCaption: "სტენდზე ტესტირებული გაგზავნამდე",
-      inventoryTitle: "აწყობილი და გასაგზავნად მზადაა",
-      inventoryLead:
-        "შერჩევა სამუშაო დარბაზიდან. ყოველი ერთეული დაბალანსებულია, წნევაზე შემოწმებული და დალუქული სტენდიდან გასვლამდე.",
-      inventoryViewAll: "ყველა პროდუქტის ნახვა",
       precisionKicker: "ხელოსნობა",
       precisionTitle1: "სიზუსტით",
       precisionTitle2: "აღდგენა",

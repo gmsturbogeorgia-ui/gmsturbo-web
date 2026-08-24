@@ -30,7 +30,7 @@ export function HomeClient({
       <main>
         <Hero hero={home.hero} />
         <TrustStrip stats={home.stats} />
-        <Inventory inventory={home.inventory} featured={featured} />
+        <Catalog catalog={home.inventory} featured={featured} />
         <Process journey={home.journey} />
         <Workshop workshop={home.workshop} />
         {/* Standalone skid as the lead-in to the booking block. Louder than
@@ -132,11 +132,7 @@ function Hero({ hero }: { hero: HomeContent["hero"] }) {
           header's 4.5rem, so the copy lands optically centred in the visible
           area rather than in the raw section box. */}
       <div className="shell relative w-full pt-18">
-        <p className="rise inline-flex items-center gap-2.5 rounded-full bg-ink/10 py-1.5 pl-2.5 pr-4 text-xs font-semibold text-ink backdrop-blur-md">
-          <span className="relative flex h-2 w-2 shrink-0">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-turbo opacity-60" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-turbo" />
-          </span>
+        <p className="rise inline-flex items-center rounded-full bg-ink/10 px-4 py-1.5 text-xs font-semibold text-ink backdrop-blur-md">
           {hero.kicker}
         </p>
 
@@ -196,22 +192,22 @@ function TrustStrip({ stats }: { stats: HomeContent["stats"] }) {
   );
 }
 
-/* ----------------------------------------------------------- INVENTORY ---- */
-function Inventory({
-  inventory,
+/* ------------------------------------------------------------- CATALOG ---- */
+function Catalog({
+  catalog,
   featured,
 }: {
-  inventory: HomeContent["inventory"];
+  catalog: HomeContent["inventory"];
   featured: Product[];
 }) {
   const { t } = useLanguage();
   return (
-    <section id="inventory" className="shell py-20 md:py-28">
+    <section id="catalog" className="shell py-20 md:py-28">
       <SectionHead
-        eyebrow={t("nav.inventory")}
-        title={inventory.title}
-        lead={inventory.lead}
-        action={<TextLink href="/catalog">{inventory.viewAllLabel}</TextLink>}
+        eyebrow={t("nav.catalog")}
+        title={catalog.title}
+        lead={catalog.lead}
+        action={<TextLink href="/catalog">{catalog.viewAllLabel}</TextLink>}
       />
       <ProductGrid className="mt-12">
         {featured.map((p) => (

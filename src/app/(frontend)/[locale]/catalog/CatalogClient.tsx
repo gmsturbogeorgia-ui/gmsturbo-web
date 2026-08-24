@@ -17,6 +17,10 @@ import {
 } from "@/components/Primitives";
 import type { CatalogContent } from "@/lib/getCatalog";
 import { useTaxonomy } from "@/lib/i18n/taxonomy-context";
+import { CarPicker, carPickLabel, type CarPick } from "@/components/CarPicker";
+import { matchesCar, type CarSelection } from "@/lib/fitment";
+import { parseGenerationKey, type VehicleOption } from "@/lib/taxonomy";
+import { cn } from "@/lib/utils";
 
 const SORTS = ["FEATURED", "PRICE_ASC", "PRICE_DESC", "BOOST"] as const;
 type Sort = (typeof SORTS)[number];
@@ -75,7 +79,8 @@ export function CatalogClient({
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { hero, search, toolbar, emptyState, customBuilds } = catalog;
+  const { hero, search, toolbar, emptyState, customBuilds, carPicker } =
+    catalog;
 
   const {
     categories,
@@ -113,18 +118,41 @@ export function CatalogClient({
   const vehs = parseList(searchParams.get("vehicle"), vehOptions);
   const sort = parseSort(searchParams.get("sort"));
 
+  /* ?model= and ?years= are the second and third steps of the car picker, so
+     they only mean anything under exactly one make. A link carrying two makes
+     is either hand-written or predates the picker; the model narrows nothing
+     in that case and is ignored rather than silently emptying the grid. */
+  const car: CarPick | null =
+    vehs.length === 1
+      ? {
+          make: vehs[0],
+          model: searchParams.get("model"),
+          years: searchParams.get("years"),
+        }
+      : null;
+
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
 
   // What's in the search field right now, which is NOT the same as what the
   // URL says — see the debounce below.
   const [draft, setDraft] = useState(q);
+
+  // The picker's selection as the matcher wants it: the generation key read
+  // back into a year span.
+  const carSelection: CarSelection | null = car
+    ? { make: car.make, model: car.model, years: parseGenerationKey(car.years) }
+    : null;
 
   const filtered = useMemo(() => {
     const base = products.filter(
       (p) =>
         // An empty list means "no constraint", not "match nothing".
         (cats.length === 0 || cats.includes(p.category)) &&
-        (vehs.length === 0 || p.vehicles.some((v) => vehs.includes(v))),
+        (vehs.length === 0 ||
+          (carSelection
+            ? matchesCar(p, vehicles, carSelection)
+            : p.vehicles.some((v) => vehs.includes(v)))),
     );
     let list = q.trim() ? searchProducts(q, base).map((h) => h.product) : base;
     // price/boost are optional per product. Sorting on a missing number
@@ -146,16 +174,52 @@ export function CatalogClient({
     if (sort === "BOOST") list = byNumber((p) => p.boost, -1);
     return list;
     // cats/vehs are fresh arrays each render; join() gives a stable dep.
-  }, [products, q, cats.join(), vehs.join(), sort]);
+  }, [
+    products,
+    q,
+    cats.join(),
+    vehs.join(),
+    car?.model,
+    car?.years,
+    vehicles,
+    sort,
+  ]);
 
   const update = (
-    patch: Partial<{ q: string; cats: Cat[]; vehs: Veh[]; sort: Sort }>,
+    patch: Partial<{
+      q: string;
+      cats: Cat[];
+      vehs: Veh[];
+      sort: Sort;
+      model: string | null;
+      years: string | null;
+    }>,
   ) => {
-    const merged = { q, cats, vehs, sort, ...patch };
+    const merged = {
+      q,
+      cats,
+      vehs,
+      sort,
+      model: car?.model ?? null,
+      years: car?.years ?? null,
+      ...patch,
+    };
+    // Changing the make invalidates the model and the year range hanging off
+    // it — an Audi A4 filter left over on a BMW matches nothing. The picker
+    // sets all three in one patch, so only a patch that touches the make
+    // without saying what to do about the rest gets reset.
+    if (patch.vehs && !("model" in patch)) {
+      merged.model = null;
+      merged.years = null;
+    }
     const next = new URLSearchParams();
     if (merged.q) next.set("q", merged.q);
     if (merged.cats.length) next.set("category", merged.cats.join(","));
     if (merged.vehs.length) next.set("vehicle", merged.vehs.join(","));
+    if (merged.vehs.length === 1) {
+      if (merged.model) next.set("model", merged.model);
+      if (merged.years) next.set("years", merged.years);
+    }
     if (merged.sort !== "FEATURED") next.set("sort", merged.sort);
     const qs = next.toString();
     router.push(`/catalog${qs ? `?${qs}` : ""}`, { scroll: false });
@@ -195,6 +259,19 @@ export function CatalogClient({
   const toggleCat = (c: Cat) => update({ cats: toggle(cats, c, catOptions) });
   const toggleVeh = (v: Veh) => update({ vehs: toggle(vehs, v, vehOptions) });
   const clearAll = () => update({ q: "", cats: [], vehs: [] });
+
+  /* The picker hands back all three steps at once — make, model and year —
+     which is exactly the patch `update` must not reset. */
+  const applyCar = (pick: CarPick | null) =>
+    update(
+      pick
+        ? { vehs: [pick.make], model: pick.model, years: pick.years }
+        : { vehs: [], model: null, years: null },
+    );
+
+  const carLabel = car
+    ? carPickLabel(vehicles, car, carPicker.present)
+    : carPicker.trigger;
 
   const filterCount = cats.length + vehs.length;
   const hasAny = filterCount > 0 || q.trim() !== "";
@@ -244,15 +321,15 @@ export function CatalogClient({
               allLabel={toolbar.allOption}
               className="w-52"
             />
-            <MultiSelect
-              label={toolbar.vehicleLabel}
-              options={vehOptions}
-              selected={vehs}
-              renderOption={vehLabel}
-              onToggle={toggleVeh}
-              onClear={() => update({ vehs: [] })}
-              allLabel={toolbar.allOption}
-              className="w-52"
+            {/* Vehicle used to be a second multi-select beside category.
+                Make, model and year are three dependent choices, though, not
+                one flat list, so the control opens the picker instead and
+                reports back what it settled on. */}
+            <CarTrigger
+              label={carLabel}
+              logo={car ? makeLogo(vehicles, car.make) : ""}
+              active={Boolean(car)}
+              onClick={() => setPickerOpen(true)}
             />
 
             {filterCount > 0 && (
@@ -318,13 +395,20 @@ export function CatalogClient({
                 onClear={() => toggleCat(c)}
               />
             ))}
-            {vehs.map((v) => (
+            {car ? (
               <AppliedChip
-                key={v}
-                label={vehLabel(v)}
-                onClear={() => toggleVeh(v)}
+                label={carLabel}
+                onClear={() => applyCar(null)}
               />
-            ))}
+            ) : (
+              vehs.map((v) => (
+                <AppliedChip
+                  key={v}
+                  label={vehLabel(v)}
+                  onClear={() => toggleVeh(v)}
+                />
+              ))
+            )}
             <button
               onClick={clearAll}
               className="ml-1 text-sm font-semibold text-turbo transition-colors hover:text-ember"
@@ -387,18 +471,28 @@ export function CatalogClient({
         <FilterSheet
           toolbar={toolbar}
           cats={cats}
-          vehs={vehs}
           catOptions={catOptions}
-          vehOptions={vehOptions}
           catLabel={catLabel}
-          vehLabel={vehLabel}
+          carLabel={carLabel}
+          carLogo={car ? makeLogo(vehicles, car.make) : ""}
+          carActive={Boolean(car)}
+          vehicleLabel={toolbar.vehicleLabel}
           resultCount={filtered.length}
           onToggleCat={toggleCat}
-          onToggleVeh={toggleVeh}
           onClearCats={() => update({ cats: [] })}
-          onClearVehs={() => update({ vehs: [] })}
+          onOpenCarPicker={() => setPickerOpen(true)}
           onClearAll={clearAll}
           onClose={() => setSheetOpen(false)}
+        />
+      )}
+
+      {pickerOpen && (
+        <CarPicker
+          vehicles={vehicles}
+          copy={carPicker}
+          value={car}
+          onApply={applyCar}
+          onClose={() => setPickerOpen(false)}
         />
       )}
 
@@ -408,6 +502,75 @@ export function CatalogClient({
 }
 
 /* -------------------------------------------------------------------------- */
+
+/** The make's logo, for the trigger's thumbnail. "" when it has none. */
+function makeLogo(vehicles: VehicleOption[], make: string): string {
+  return vehicles.find((v) => v.value === make)?.logo ?? "";
+}
+
+/**
+ * Opens the car picker, and reports what it currently holds. It shows the
+ * chosen make's logo rather than a generic icon: the whole point of picking
+ * by badge is that a customer recognises their car faster than they read its
+ * name, and that has to survive into the collapsed state.
+ */
+function CarTrigger({
+  label,
+  logo,
+  active,
+  onClick,
+  className,
+}: {
+  label: string;
+  logo: string;
+  active: boolean;
+  onClick: () => void;
+  className?: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "inline-flex items-center gap-2.5 rounded-full py-1.5 pl-1.5 pr-4",
+        "text-[0.8125rem] font-semibold transition-colors duration-300 ease-smooth",
+        active
+          ? "bg-turbo-deep text-white hover:bg-turbo"
+          : "bg-carbon text-ink-soft hover:bg-steel hover:text-ink",
+        className,
+      )}
+    >
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white">
+        {logo ? (
+          <img src={logo} alt="" className="max-h-5 max-w-5 object-contain" />
+        ) : (
+          <CarGlyph />
+        )}
+      </span>
+      <span className="truncate">{label}</span>
+    </button>
+  );
+}
+
+function CarGlyph() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="h-4 w-4 text-base"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.9"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="M4 14.5h16M5.5 14.5l1.4-4.3A2 2 0 0 1 8.8 8.8h6.4a2 2 0 0 1 1.9 1.4l1.4 4.3" />
+      <path d="M4 14.5v2.6h2.6v-2.6M17.4 14.5v2.6H20v-2.6" />
+      <circle cx="7.6" cy="14.5" r="0.1" />
+      <circle cx="16.4" cy="14.5" r="0.1" />
+    </svg>
+  );
+}
 
 function AppliedChip({
   label,
@@ -446,31 +609,31 @@ function AppliedChip({
 function FilterSheet({
   toolbar,
   cats,
-  vehs,
   catOptions,
-  vehOptions,
   catLabel,
-  vehLabel,
+  carLabel,
+  carLogo,
+  carActive,
+  vehicleLabel,
   resultCount,
   onToggleCat,
-  onToggleVeh,
   onClearCats,
-  onClearVehs,
+  onOpenCarPicker,
   onClearAll,
   onClose,
 }: {
   toolbar: CatalogContent["toolbar"];
   cats: Cat[];
-  vehs: Veh[];
   catOptions: Cat[];
-  vehOptions: Veh[];
   catLabel: Labeller;
-  vehLabel: Labeller;
+  carLabel: string;
+  carLogo: string;
+  carActive: boolean;
+  vehicleLabel: string;
   resultCount: number;
   onToggleCat: (c: Cat) => void;
-  onToggleVeh: (v: Veh) => void;
   onClearCats: () => void;
-  onClearVehs: () => void;
+  onOpenCarPicker: () => void;
   onClearAll: () => void;
   onClose: () => void;
 }) {
@@ -538,22 +701,19 @@ function FilterSheet({
             ))}
           </SheetGroup>
 
-          <SheetGroup
-            label={toolbar.vehicleLabel}
-            allLabel={toolbar.allOption}
-            allActive={vehs.length === 0}
-            onAll={onClearVehs}
-          >
-            {vehOptions.map((v) => (
-              <ChipButton
-                key={v}
-                active={vehs.includes(v)}
-                onClick={() => onToggleVeh(v)}
-              >
-                {vehLabel(v)}
-              </ChipButton>
-            ))}
-          </SheetGroup>
+          {/* The picker opens over the sheet rather than replacing its
+              contents, so dismissing it returns here with the rest of the
+              filters exactly as they were. */}
+          <div className="pt-6">
+            <p className="eyebrow mb-3">{vehicleLabel}</p>
+            <CarTrigger
+              label={carLabel}
+              logo={carLogo}
+              active={carActive}
+              onClick={onOpenCarPicker}
+              className="w-full justify-start"
+            />
+          </div>
         </div>
 
         <div className="sticky bottom-0 bg-graphite/95 px-5 pb-6 pt-3 backdrop-blur">
