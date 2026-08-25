@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { getProducts } from "@/lib/getProducts";
 import { getCatalog } from "@/lib/getCatalog";
-import { localeAlternates } from "@/lib/i18n/metadata";
+import { localeAlternates, OG_IMAGE } from "@/lib/i18n/metadata";
 import { localeHref, type Locale } from "@/lib/i18n/locales";
 import { CatalogClient } from "./CatalogClient";
 
@@ -13,12 +13,12 @@ const META: Record<Locale, { title: string; description: string }> = {
   ka: {
     title: "ტურბოკომპრესორების კატალოგი",
     description:
-      "დაათვალიერეთ ტურბოკომპრესორები ავტომობილის თავსებადობით, კატეგორიითა და მახასიათებლებით. ჰიბრიდული, ბილეტ, OEM და სპორტული ტურბოები მარაგშია თბილისში.",
+      "ტურბინების და ტურბოს ნაწილების (კარტრიჯი, აქტუატორი, კოლექტორი და ა.შ) ყველაზე დიდი საწყობი საქართველოში.",
   },
   en: {
     title: "Turbocharger Catalog",
     description:
-      "Browse premium turbochargers by vehicle compatibility, category and performance specs. Hybrid, billet, OEM and competition turbos in stock in Tbilisi.",
+      "The largest stock of turbochargers and turbo parts (cartridges, actuators, manifolds and more) in Georgia.",
   },
 };
 
@@ -38,12 +38,12 @@ export async function generateMetadata({
       title: meta.title,
       description: meta.description,
       url: localeHref(locale, "/catalog"),
-      images: ["/og-catalog.jpg"],
+      images: [OG_IMAGE],
     },
     twitter: {
       title: meta.title,
       description: meta.description,
-      images: ["/og-catalog.jpg"],
+      images: [OG_IMAGE],
     },
   };
 }

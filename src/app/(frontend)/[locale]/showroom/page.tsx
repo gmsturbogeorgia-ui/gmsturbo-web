@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getShowroom } from "@/lib/getShowroom";
 import { getProducts } from "@/lib/getProducts";
-import { localeAlternates } from "@/lib/i18n/metadata";
+import { localeAlternates, OG_IMAGE } from "@/lib/i18n/metadata";
 import { localeHref, type Locale } from "@/lib/i18n/locales";
 import { ShowroomClient } from "./ShowroomClient";
 
@@ -14,12 +14,12 @@ const META: Record<Locale, { title: string; description: string }> = {
   ka: {
     title: "სავიტრინო დარბაზი - თბილისი",
     description:
-      "ეწვიეთ GMS Turbo Georgia-ს სავიტრინო დარბაზს თბილისის ცენტრში. ხელით დამუშავებული ჰიბრიდული, ბილეტ და სპორტული ტურბოკომპრესორები მუდმივ ექსპოზიციაზე.",
+      "GMS Turbo-ს სავიტრინო დარბაზი და საწყობი თბილისში — ტურბინები, კარტრიჯები, აქტუატორები და კოლექტორები ადგილზე. მობრძანდით, ნახეთ ნაწილები საკუთარი თვალით და მიიღეთ პროფესიონალური კონსულტაცია.",
   },
   en: {
     title: "Showroom - Tbilisi Flagship",
     description:
-      "Visit the GMS Turbo Georgia flagship showroom in central Tbilisi. Hand-finished hybrid, billet and competition turbochargers on permanent display.",
+      "The GMS Turbo showroom and warehouse in Tbilisi — turbochargers, cartridges, actuators and manifolds in stock. Come see the parts in person and get expert advice.",
   },
 };
 
@@ -39,9 +39,13 @@ export async function generateMetadata({
       title: meta.title,
       description: meta.description,
       url: localeHref(locale, "/showroom"),
-      images: ["/og-image.jpg"],
+      images: [OG_IMAGE],
     },
-    twitter: { title: meta.title, description: meta.description },
+    twitter: {
+      title: meta.title,
+      description: meta.description,
+      images: [OG_IMAGE],
+    },
   };
 }
 

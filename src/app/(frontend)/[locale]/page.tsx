@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getHome } from "@/lib/getHome";
 import { getProducts } from "@/lib/getProducts";
-import { localeAlternates } from "@/lib/i18n/metadata";
+import { localeAlternates, OG_IMAGE } from "@/lib/i18n/metadata";
 import { localeHref, type Locale } from "@/lib/i18n/locales";
 import { HomeClient } from "./HomeClient";
 
@@ -9,16 +9,20 @@ import { HomeClient } from "./HomeClient";
 // DB on each request — same reasoning as /catalog (src/app/catalog/page.tsx).
 export const dynamic = "force-dynamic";
 
+// The Georgian copy here is the client's own wording, used verbatim. It runs
+// past the ~160 characters Google shows in a snippet, but the keyword-bearing
+// first sentence lands well inside that, and the full text is what social
+// cards (og:description) render — so nothing meaningful is lost to the cut.
 const META: Record<Locale, { title: string; description: string }> = {
   ka: {
     title: "GMS Turbo Georgia - ტურბოკომპრესორების ინჟინერია",
     description:
-      "ტურბოკომპრესორების გაყიდვა, დიაგნოსტიკა, აღდგენა და წარმადობის გადაწყვეტები. ჰიბრიდული, ბილეტ და OEM ტურბოები, აწყობილი თბილისში.",
+      "GMS Turbo გთავაზობთ უმაღლესი ხარისხის ტურბინებისა და ტურბოსისტემების ნაწილებს, რომლებიც განკუთვნილია სხვადასხვა ტიპის ავტომობილებისთვის. ჩვენ გვყავს გამოცდილი გუნდი, რომელიც დაგეხმარებათ ყველა საჭირო კომპონენტის შერჩევასა და ინსტალაციაში.",
   },
   en: {
     title: "GMS Turbo Georgia - Premium Turbocharger Engineering",
     description:
-      "Premium turbocharger sales, diagnostics, repair and performance solutions. Hybrid, billet and OEM turbos engineered in Tbilisi, Georgia.",
+      "GMS Turbo supplies premium turbochargers and turbo system parts for every type of vehicle. Our experienced team helps you pick and fit every component you need.",
   },
 };
 
@@ -38,12 +42,12 @@ export async function generateMetadata({
       title: meta.title,
       description: meta.description,
       url: localeHref(locale, "/"),
-      images: ["/og-image.jpg"],
+      images: [OG_IMAGE],
     },
     twitter: {
       title: "GMS Turbo Georgia",
       description: meta.description,
-      images: ["/og-image.jpg"],
+      images: [OG_IMAGE],
     },
   };
 }

@@ -11,6 +11,7 @@ import { LanguageProvider } from "@/lib/i18n/context";
 import { TaxonomyProvider } from "@/lib/i18n/taxonomy-context";
 import { LOCALES, isLocale, type Locale } from "@/lib/i18n/locales";
 import { getTaxonomies } from "@/lib/getTaxonomies";
+import { OG_IMAGE } from "@/lib/i18n/metadata";
 import { BookingProvider } from "@/components/Booking";
 
 // Two faces, not five. The previous build loaded Anton + Oswald + Inter +
@@ -142,11 +143,12 @@ export async function generateMetadata({
       siteName: "GMS Turbo Georgia",
       type: "website",
       locale: meta.ogLocale,
-      images: ["/og-image.jpg"],
+      images: [OG_IMAGE],
     },
     twitter: {
       card: "summary_large_image",
       site: "@gmsturbo",
+      images: [OG_IMAGE],
     },
   };
 }

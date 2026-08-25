@@ -1,3 +1,9 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+Allow: /
+
+# The Payload admin and its API are not content — keep them out of the index.
+Disallow: /admin
+Disallow: /api
+
+Sitemap: https://gmsturbo.ge/sitemap.xml
