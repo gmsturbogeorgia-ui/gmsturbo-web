@@ -68,10 +68,24 @@
   --color-destructive: var(--turbo-deep);
   --color-destructive-foreground: #ffffff;
 
-  /* Georgian (Mkhedruli) glyphs aren't in the Latin faces, so --font-georgian
+  /* Georgian (Mkhedruli) glyphs aren't in the Latin faces, so a Georgian face
      is the fallback in every stack: Latin and digits render in the primary
-     face, Georgian per-character in Noto Sans Georgian, no JS involved. */
-  --font-display: var(--font-bricolage), var(--font-georgian), sans-serif;
+     face, Georgian per-character in the Georgian one, no JS involved.
+
+     --font-archy    Archy (typeface.ge), display only. Headings are 600/700
+                     and CSS weight matching resolves anything above 500
+                     upwards, so they land on Archy EDT Bold. Archy's other
+                     file is a 100-weight hairline — it was tried on body copy
+                     and is unreadable at 16px, so it is reachable only where
+                     it is asked for by name: `font-display font-thin` on a
+                     72px+ line.
+     --font-georgian Noto Sans Georgian. All body text, and the last resort
+                     under Archy — Archy carries the 33 Mkhedruli letters but
+                     no Mtavruli (what text-transform: uppercase produces) and
+                     no ₾, so those characters fall through to Noto instead of
+                     to whatever sans the OS happens to ship. */
+  --font-display: var(--font-bricolage), var(--font-archy),
+    var(--font-georgian), sans-serif;
   --font-sans: var(--font-instrument), var(--font-georgian), system-ui,
     sans-serif;
   --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
@@ -159,6 +173,42 @@
 
   ::placeholder {
     color: var(--ink-mute);
+  }
+
+  /* Tailwind v4's preflight drops the browser's cursor: pointer on buttons,
+     so every clickable control has to ask for it back. Disabled controls get
+     not-allowed instead, so a dead button reads as dead before it is clicked. */
+  button,
+  summary,
+  label[for],
+  select,
+  [role="button"],
+  [role="tab"],
+  [role="option"],
+  [role="menuitem"],
+  input:where(
+      [type="button"],
+      [type="submit"],
+      [type="reset"],
+      [type="checkbox"],
+      [type="radio"],
+      [type="file"],
+      [type="color"]
+    ) {
+    cursor: pointer;
+  }
+
+  /* Kept separate: a browser that doesn't know this pseudo-element would
+     throw away the whole selector list it appeared in. */
+  ::file-selector-button {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  select:disabled,
+  input:disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
   }
 
   img {

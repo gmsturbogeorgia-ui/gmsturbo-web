@@ -22,8 +22,12 @@ import { cn } from "@/lib/utils";
 type Variant = "primary" | "secondary" | "quiet";
 type Size = "sm" | "md" | "lg";
 
+// font-display, not font-sans: a button label is a title, not body copy, and
+// this is what puts Georgian button text on Archy EDT Bold alongside the
+// headings (600 resolves upward to Archy's 700 file) while Latin picks up
+// Bricolage. Weight stays 600 so the two scripts sit at the same colour.
 const BASE =
-  "inline-flex items-center justify-center rounded-full font-sans font-semibold " +
+  "inline-flex items-center justify-center rounded-full font-display font-semibold " +
   "whitespace-nowrap transition-[background-color,color,box-shadow,transform] " +
   "duration-300 ease-smooth active:translate-y-px " +
   "disabled:pointer-events-none disabled:opacity-50";

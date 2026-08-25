@@ -1,6 +1,6 @@
 "use client";
 
-import { LocaleLink as Link } from "@/components/LocaleLink";
+import { LocaleLink as Link, useLocale } from "@/components/LocaleLink";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useLanguage } from "@/lib/i18n/context";
@@ -13,6 +13,25 @@ const NAV = [
   { key: "nav.showroom", href: "/showroom" },
   { key: "nav.contact", href: "/contact" },
 ] as const;
+
+/**
+ * Whether `href` is the section the reader is currently in.
+ *
+ * The two paths aren't directly comparable: usePathname() reports the real
+ * URL, locale segment and all ("/ka/catalog"), while NAV hrefs are written
+ * bare ("/catalog") because LocaleLink adds the prefix at render time. A
+ * plain startsWith between the two is false for every link on every page,
+ * which is why the header had an active style that never once rendered.
+ *
+ * The trailing-slash arm keeps the parent lit on child routes, so a product
+ * page still marks Catalog as current.
+ */
+function isCurrent(pathname: string, locale: string, href: string) {
+  const path = pathname.startsWith(`/${locale}`)
+    ? pathname.slice(locale.length + 1) || "/"
+    : pathname;
+  return path === href || path.startsWith(`${href}/`);
+}
 
 /* --------------------------------------------------------------------------
    The GMS turbine mark — brand asset, traced from src/assets/turbo-mark.svg.
@@ -135,6 +154,7 @@ function LangToggle({
  */
 export function SiteHeader({ overlay = false }: { overlay?: boolean } = {}) {
   const pathname = usePathname();
+  const locale = useLocale();
   const { t } = useLanguage();
   const { open: openBooking } = useBooking();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -177,24 +197,29 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean } = {}) {
 
         <nav className="hidden items-center gap-1 md:flex">
           {NAV.map((item) => {
-            const isActive = pathname.startsWith(item.href);
+            const isActive = isCurrent(pathname, locale, item.href);
             return (
               <Link
                 key={item.key}
                 href={item.href}
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
-                  "rounded-full px-4 py-2 text-sm font-semibold transition-colors duration-300",
-                  // ink-mute (#6f6a67) is tuned for the near-black page and
-                  // is far too dim over photography — hence the brighter
-                  // ramp whenever the bar is on the hero.
+                  "px-4 py-2 font-display text-sm font-semibold transition-colors duration-300",
+                  // Current page is marked in brand red and nothing else —
+                  // no pill, no rule, no dot. That makes it the only coloured
+                  // word in the bar, which reads faster than a filled shape
+                  // and keeps the header to the house rule of no boxes.
+                  //
+                  // Hover is colour-only for the same reason: a hover pill
+                  // would give an idle link more visual weight than the page
+                  // the reader is actually on. ink-mute (#6f6a67) is tuned
+                  // for the near-black page and is far too dim over
+                  // photography — hence the brighter ramp on the hero.
                   isActive
-                    ? onImage
-                      ? "bg-ink/15 text-ink backdrop-blur-md"
-                      : "bg-carbon text-ink"
+                    ? "text-turbo"
                     : onImage
-                      ? "text-ink/80 hover:bg-ink/10 hover:text-ink"
-                      : "text-ink-mute hover:bg-graphite hover:text-ink",
+                      ? "text-ink/80 hover:text-ink"
+                      : "text-ink-mute hover:text-ink",
                 )}
               >
                 {t(item.key)}
@@ -253,15 +278,22 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean } = {}) {
       {menuOpen && (
         <nav className="bg-base md:hidden">
           <div className="shell flex flex-col gap-1 pb-5">
-            {NAV.map((item) => (
-              <Link
-                key={item.key}
-                href={item.href}
-                className="rounded-xl px-3 py-3 font-display text-xl font-semibold text-ink transition-colors hover:bg-graphite"
-              >
-                {t(item.key)}
-              </Link>
-            ))}
+            {NAV.map((item) => {
+              const isActive = isCurrent(pathname, locale, item.href);
+              return (
+                <Link
+                  key={item.key}
+                  href={item.href}
+                  aria-current={isActive ? "page" : undefined}
+                  className={cn(
+                    "px-3 py-3 font-display text-xl font-semibold transition-colors",
+                    isActive ? "text-turbo" : "text-ink hover:text-turbo",
+                  )}
+                >
+                  {t(item.key)}
+                </Link>
+              );
+            })}
             <div className="mt-3 flex flex-col gap-3">
               <Button
                 onClick={() => {

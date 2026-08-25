@@ -5,6 +5,7 @@ import {
   Instrument_Sans,
   Noto_Sans_Georgian,
 } from "next/font/google";
+import localFont from "next/font/local";
 import "../globals.css";
 import { LanguageProvider } from "@/lib/i18n/context";
 import { TaxonomyProvider } from "@/lib/i18n/taxonomy-context";
@@ -35,15 +36,40 @@ const instrument = Instrument_Sans({
 });
 
 // Noto Sans Georgian — the Latin faces above carry no Mkhedruli glyphs, so
-// Georgian text would silently fall back to whatever sans the OS ships.
-// Listed as the fallback in every stack in globals.css, so Georgian
-// characters resolve here automatically (by Unicode range) while
-// Latin/digits keep the primary faces.
+// Georgian text would silently fall back to whatever sans the OS ships. It
+// holds all Georgian body copy, and sits last under Archy for the characters
+// Archy has no glyph for (Mtavruli, ₾, the archaic letters).
 const notoGeorgian = Noto_Sans_Georgian({
   weight: ["400", "500", "600", "700"],
   subsets: ["georgian"],
   variable: "--font-georgian",
   display: "swap",
+});
+
+// Archy (typeface.ge) — the Georgian display face. Two static files at the two
+// ends of the weight axis: AR Archy Thin is a 100-weight hairline monoline,
+// Archy EDT Bold a 700-weight heavy grotesque. Declaring them as one family
+// lets CSS weight matching route headings to Bold with no extra classes, since
+// every heading here is font-semibold or font-bold.
+//
+// Archy is in --font-display only. Both files are display drawings; the
+// hairline was tried on body copy and is unreadable at 16px on a dark ground,
+// so Georgian body text stays on Noto above. The hairline is still loaded —
+// `font-display font-thin` reaches it — but nothing uses it today, and a face
+// no text matches is never downloaded.
+//
+// adjustFontFallback is off on purpose. It would append an Arial-metric
+// fallback face to this family, and that face would swallow the Georgian
+// characters Archy does not draw (Mtavruli and ₾) before the chain in
+// globals.css could hand them to Noto.
+const archy = localFont({
+  src: [
+    { path: "../../../fonts/archy-thin.ttf", weight: "100", style: "normal" },
+    { path: "../../../fonts/archy-bold.otf", weight: "700", style: "normal" },
+  ],
+  variable: "--font-archy",
+  display: "swap",
+  adjustFontFallback: false,
 });
 
 // Site-level copy that differs per language. Page-level titles come from each
@@ -180,7 +206,7 @@ export default async function LocaleLayout({
   return (
     <html
       lang={locale}
-      className={`${bricolage.variable} ${instrument.variable} ${notoGeorgian.variable}`}
+      className={`${bricolage.variable} ${instrument.variable} ${notoGeorgian.variable} ${archy.variable}`}
     >
       <body className="bg-paper text-ink-soft antialiased">
         <LanguageProvider locale={locale}>
