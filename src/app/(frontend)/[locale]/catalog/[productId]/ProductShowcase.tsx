@@ -263,7 +263,14 @@ function HeadlineStat({
       <dt className="text-sm text-ink-mute">{label}</dt>
       <dd className="tnum mt-1.5 font-display text-3xl font-semibold leading-none text-ink">
         {value}
-        <span className="ml-1.5 text-base font-medium text-ink-mute">
+        {/* font-sans on the unit, not inherited font-display. The number is
+            digits and renders in Bricolage either way, but the unit is a word
+            — and in Georgian ("თვე") it falls past Bricolage, which has no
+            Mkhedruli, onto Archy. Archy ships a 700 and a 100, so a
+            font-medium (500) request resolves DOWN to the 100 hairline and
+            the word comes out as unreadable 16px wire. The interface face
+            carries Georgian properly at this size. */}
+        <span className="ml-1.5 font-sans text-base font-medium text-ink-mute">
           {unit}
         </span>
       </dd>
