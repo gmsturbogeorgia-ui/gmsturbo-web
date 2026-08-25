@@ -76,22 +76,9 @@ export const Products: CollectionConfig = {
         },
       ],
     },
-    // boost/hp/price are optional: not every unit has a published figure,
-    // and some are quoted per build. Left empty, the card and product page
-    // simply omit that line (price falls back to "Price on request") rather
-    // than printing a placeholder number.
-    {
-      name: "boost",
-      type: "number",
-      admin: { description: "Max boost, PSI. Optional, leave empty to hide." },
-    },
-    {
-      name: "hp",
-      type: "number",
-      admin: {
-        description: "Crank HP potential. Optional, leave empty to hide.",
-      },
-    },
+    // Price is optional: some units are quoted per build. Left empty, the
+    // card and product page fall back to "Price on request" rather than
+    // printing a placeholder number.
     {
       name: "price",
       type: "number",

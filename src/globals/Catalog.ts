@@ -54,7 +54,6 @@ export const Catalog: GlobalConfig = {
         { name: "sortFeatured", type: "text", required: true, localized: true },
         { name: "sortPriceAsc", type: "text", required: true, localized: true },
         { name: "sortPriceDesc", type: "text", required: true, localized: true },
-        { name: "sortBoost", type: "text", required: true, localized: true },
         { name: "showResults", type: "text", required: true, localized: true },
         { name: "unitsSuffix", type: "text", required: true, localized: true },
       ],

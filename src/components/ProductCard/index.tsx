@@ -20,8 +20,7 @@ import { cn } from "@/lib/utils";
    so the grid never looks like a table of cells.
 
    The rest of the richness comes from things a shopper actually uses: the
-   two specs that decide the purchase, and which platforms it fits, the way
-   a clothing tile shows sizes.
+   price, and which platforms it fits, the way a clothing tile shows sizes.
 
    Radii are nested properly — outer 22px minus 10px of padding gives a 12px
    inner radius, so the image corner stays concentric with the panel corner.
@@ -47,12 +46,6 @@ export function ProductCard({
 
   const shownPlatforms = product.vehicles.slice(0, 2);
   const extraPlatforms = product.vehicles.length - shownPlatforms.length;
-
-  // Boost and HP are optional per product; only render what's there.
-  const specs = [
-    typeof product.boost === "number" ? `${product.boost} PSI` : null,
-    typeof product.hp === "number" ? `${product.hp} HP` : null,
-  ].filter((s): s is string => s !== null);
 
   return (
     <Link
@@ -106,22 +99,6 @@ export function ProductCard({
             product.name
           )}
         </h3>
-
-        {/* The two numbers that actually decide the purchase. Both are
-            optional in the CMS, so the line drops the half that's missing —
-            and disappears entirely when neither was filled in. */}
-        {specs.length > 0 && (
-          <p className="tnum mt-1.5 text-xs text-ink-mute">
-            {specs.map((spec, i) => (
-              <span key={spec}>
-                {i > 0 && (
-                  <span className="mx-1.5 text-ink-mute/50">·</span>
-                )}
-                {spec}
-              </span>
-            ))}
-          </p>
-        )}
 
         <div className="mt-3 flex items-end justify-between gap-3">
           {typeof product.price === "number" ? (

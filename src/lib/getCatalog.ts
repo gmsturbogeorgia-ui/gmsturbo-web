@@ -37,7 +37,6 @@ export type CatalogContent = {
     sortFeatured: string;
     sortPriceAsc: string;
     sortPriceDesc: string;
-    sortBoost: string;
     showResults: string;
     unitsSuffix: string;
   };

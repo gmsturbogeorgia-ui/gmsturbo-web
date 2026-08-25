@@ -370,17 +370,7 @@ export function SiteFooter() {
             </FooterCol>
           </div>
 
-          <div className="mt-14 flex flex-col gap-4 pt-8 md:flex-row md:items-center md:justify-between">
-            <div className="flex flex-col gap-1 text-sm text-ink-mute sm:flex-row sm:gap-6">
-              <a
-                href="tel:+995551244222"
-                className="tnum transition-colors hover:text-ink"
-              >
-                +995 551 24 42 22
-              </a>
-              <span className="hidden sm:inline">·</span>
-              <span>{t("footer.address")}</span>
-            </div>
+          <div className="mt-14 flex  gap-4 pt-8 justify-center">
             <p className="text-sm text-ink-mute">
               © {new Date().getFullYear()} GMS Turbo Georgia -{" "}
               {t("footer.builtBy")}{" "}

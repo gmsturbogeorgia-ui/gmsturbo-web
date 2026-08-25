@@ -75,24 +75,10 @@ export function ProductShowcase({ product }: { product: Product }) {
           {product.description}
         </p>
 
-        {/* Headline figures. Three numbers on the page, spaced — not three
-            cells of a bordered table. Boost and HP are optional per product,
-            so a unit without them shows the warranty figure alone. */}
+        {/* Headline figure, spaced rather than boxed. The published boost
+            and horsepower numbers used to sit alongside it; they were dropped
+            from the CMS, so the warranty stands on its own. */}
         <dl className="mt-9 flex flex-wrap gap-x-12 gap-y-6">
-          {typeof product.boost === "number" && (
-            <HeadlineStat
-              label={t("product.maxBoost")}
-              value={String(product.boost)}
-              unit="PSI"
-            />
-          )}
-          {typeof product.hp === "number" && (
-            <HeadlineStat
-              label={t("product.hpPotential")}
-              value={String(product.hp)}
-              unit="HP"
-            />
-          )}
           <HeadlineStat
             label={t("product.warranty")}
             value={warrantyMonths}

@@ -32,10 +32,7 @@ export type Product = {
     yearFrom: number;
     yearTo: number | null;
   }[];
-  // Optional in the CMS — a unit with no published figure renders without
-  // that line, and a priceless unit reads "Price on request".
-  boost?: number | null;
-  hp?: number | null;
+  // Optional in the CMS — a priceless unit reads "Price on request".
   price?: number | null;
   img: string;
   gallery: string[];

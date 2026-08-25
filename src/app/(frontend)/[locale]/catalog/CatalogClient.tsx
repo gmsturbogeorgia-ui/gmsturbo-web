@@ -22,7 +22,7 @@ import { matchesCar, type CarSelection } from "@/lib/fitment";
 import { parseGenerationKey, type VehicleOption } from "@/lib/taxonomy";
 import { cn } from "@/lib/utils";
 
-const SORTS = ["FEATURED", "PRICE_ASC", "PRICE_DESC", "BOOST"] as const;
+const SORTS = ["FEATURED", "PRICE_ASC", "PRICE_DESC"] as const;
 type Sort = (typeof SORTS)[number];
 
 /** How long typing has to stop before the query is written to the URL. */
@@ -57,9 +57,9 @@ function parseList<T extends string>(
 }
 
 function parseSort(v: string | null): Sort {
-  return v === "PRICE_ASC" || v === "PRICE_DESC" || v === "BOOST"
-    ? v
-    : "FEATURED";
+  // An unknown value falls back rather than throwing, which also covers the
+  // retired ?sort=BOOST links still sitting in bookmarks and search results.
+  return v === "PRICE_ASC" || v === "PRICE_DESC" ? v : "FEATURED";
 }
 
 /** Adds or removes one value, preserving the canonical option order. */
@@ -108,8 +108,6 @@ export function CatalogClient({
         return toolbar.sortPriceAsc;
       case "PRICE_DESC":
         return toolbar.sortPriceDesc;
-      case "BOOST":
-        return toolbar.sortBoost;
     }
   };
 
@@ -155,9 +153,9 @@ export function CatalogClient({
             : p.vehicles.some((v) => vehs.includes(v)))),
     );
     let list = q.trim() ? searchProducts(q, base).map((h) => h.product) : base;
-    // price/boost are optional per product. Sorting on a missing number
-    // would scatter those units through the list, so they sink to the
-    // bottom of every numeric sort instead, in their original order.
+    // Price is optional per product. Sorting on a missing number would
+    // scatter those units through the list, so they sink to the bottom of
+    // every numeric sort instead, in their original order.
     const byNumber = (
       pick: (p: Product) => number | null | undefined,
       dir: 1 | -1,
@@ -171,7 +169,6 @@ export function CatalogClient({
       });
     if (sort === "PRICE_ASC") list = byNumber((p) => p.price, 1);
     if (sort === "PRICE_DESC") list = byNumber((p) => p.price, -1);
-    if (sort === "BOOST") list = byNumber((p) => p.boost, -1);
     return list;
     // cats/vehs are fresh arrays each render; join() gives a stable dep.
   }, [
