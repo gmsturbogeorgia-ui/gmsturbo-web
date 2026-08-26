@@ -130,6 +130,12 @@ export async function generateMetadata({
     ],
     authors: [{ name: "GMS Turbo Georgia" }],
     robots: { index: true, follow: true },
+    // Proves ownership of the property to Search Console. It sits in the root
+    // layout so the tag is on every page in both languages — Google reads it
+    // from whichever URL it verifies, and the site has no single fixed one.
+    verification: {
+      google: "VF6wzPTaTZkZU4cyizZTa_j9_K3IMZXsaFvmQLrgIBI",
+    },
     // Tells search engines the two language versions are the same page, not
     // duplicates competing with each other. `x-default` is what a searcher
     // with no matching language preference gets.
