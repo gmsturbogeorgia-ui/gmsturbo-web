@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import type { Product } from "@/lib/products";
 import { getProductById, getProducts } from "@/lib/getProducts";
 import { localeAlternates } from "@/lib/i18n/metadata";
 import { localeHref, type Locale } from "@/lib/i18n/locales";
 import { ProductDetailClient } from "./ProductDetailClient";
+import { JsonLd } from "@/components/JsonLd";
+import {
+  breadcrumbNode,
+  crumbLabels,
+  graph,
+  productNode,
+} from "@/lib/structured-data";
 
 // Read each product from the Payload/Postgres DB on each request.
 export const dynamic = "force-dynamic";
@@ -40,76 +46,6 @@ export async function generateMetadata({
   };
 }
 
-function jsonLdFor(p: Product) {
-  const availability =
-    p.stock === "IN STOCK"
-      ? "https://schema.org/InStock"
-      : p.stock === "LOW STOCK"
-        ? "https://schema.org/LimitedAvailability"
-        : "https://schema.org/MadeToOrder";
-
-  const product = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    name: p.name,
-    sku: p.code,
-    mpn: p.code,
-    category: p.category,
-    description: p.description,
-    // gallery is optional in the CMS; an empty array here would emit
-    // "image": [] which is invalid for schema.org/Product.
-    image: p.gallery.length > 0 ? p.gallery : [p.img],
-    brand: { "@type": "Brand", name: "GMS Turbo Georgia" },
-    manufacturer: { "@type": "Organization", name: "GMS Turbo Georgia" },
-    // Specs are optional in the CMS — see `additionalProperty` cleanup below.
-    additionalProperty: p.specs.map((s) => ({
-      "@type": "PropertyValue",
-      name: s.label,
-      value: s.value,
-    })),
-    isAccessoryOrSparePartFor: p.fitments.map((f) => ({
-      "@type": "Vehicle",
-      brand: { "@type": "Brand", name: f.make },
-      model: f.model,
-      vehicleModelDate: f.years,
-      vehicleEngine: { "@type": "EngineSpecification", name: f.engine },
-    })),
-    // Price is optional too. Google rejects an Offer without one, so a
-    // quote-only unit gets a PriceSpecification-free listing instead.
-    offers: {
-      "@type": "Offer",
-      ...(typeof p.price === "number"
-        ? { price: p.price, priceCurrency: "GEL" }
-        : {}),
-      availability,
-      itemCondition: "https://schema.org/NewCondition",
-      seller: { "@type": "Organization", name: "GMS Turbo Georgia" },
-    },
-  };
-
-  // A product with no spec rows would emit "additionalProperty": [], and
-  // likewise for an unfitted unit — both are invalid. Drop the empty keys
-  // rather than ship a broken snippet.
-  if (product.additionalProperty.length === 0) {
-    delete (product as Record<string, unknown>).additionalProperty;
-  }
-  if (product.isAccessoryOrSparePartFor.length === 0) {
-    delete (product as Record<string, unknown>).isAccessoryOrSparePartFor;
-  }
-
-  const breadcrumb = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "/" },
-      { "@type": "ListItem", position: 2, name: "Catalog", item: "/catalog" },
-      { "@type": "ListItem", position: 3, name: p.name, item: `/catalog/${p.id}` },
-    ],
-  };
-
-  return [product, breadcrumb];
-}
-
 export default async function ProductDetailPage({
   params,
 }: {
@@ -127,15 +63,24 @@ export default async function ProductDetailPage({
     .filter((p) => p.id !== product.id && p.category === product.category)
     .slice(0, 4);
 
+  const crumbs = crumbLabels(locale);
+  const trail = [
+    { name: crumbs.home, path: "/" },
+    { name: crumbs.catalog, path: "/catalog" },
+    { name: product.name, path: `/catalog/${product.id}` },
+  ];
+
   return (
     <>
-      {jsonLdFor(product).map((ld, i) => (
-        <script
-          key={i}
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }}
-        />
-      ))}
+      {/* One graph, not two loose blobs: inside it the product's `seller` and
+          `manufacturer` resolve to the business node the layout declares,
+          instead of naming the same shop a third time. */}
+      <JsonLd
+        data={graph(
+          breadcrumbNode(locale, trail),
+          productNode(locale, product),
+        )}
+      />
       <ProductDetailClient product={product} related={related} />
     </>
   );

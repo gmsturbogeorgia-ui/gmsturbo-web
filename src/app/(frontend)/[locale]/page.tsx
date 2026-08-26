@@ -4,6 +4,8 @@ import { getProducts } from "@/lib/getProducts";
 import { localeAlternates, OG_IMAGE } from "@/lib/i18n/metadata";
 import { localeHref, type Locale } from "@/lib/i18n/locales";
 import { HomeClient } from "./HomeClient";
+import { JsonLd } from "@/components/JsonLd";
+import { collectionNode, graph } from "@/lib/structured-data";
 
 // Read the home page content and featured products from the Payload/Postgres
 // DB on each request — same reasoning as /catalog (src/app/catalog/page.tsx).
@@ -52,14 +54,6 @@ export async function generateMetadata({
   };
 }
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  name: "GMS Turbo Georgia",
-  url: "/",
-  inLanguage: ["ka-GE", "en-US"],
-};
-
 export default async function Index({
   params,
 }: {
@@ -74,9 +68,18 @@ export default async function Index({
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      {/* The WebSite node this page used to declare for itself now lives in
+          the layout, next to the business that publishes it. What is left
+          here is the homepage's own claim: the four units it puts on screen,
+          which is what an ItemList has to describe to be eligible at all. */}
+      <JsonLd
+        data={graph(
+          collectionNode(locale, {
+            path: "/",
+            name: "GMS Turbo Georgia",
+            products: featured,
+          }),
+        )}
       />
       <HomeClient home={home} featured={featured} />
     </>

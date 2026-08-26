@@ -13,6 +13,8 @@ import { LOCALES, isLocale, type Locale } from "@/lib/i18n/locales";
 import { getTaxonomies } from "@/lib/getTaxonomies";
 import { OG_IMAGE } from "@/lib/i18n/metadata";
 import { BookingProvider } from "@/components/Booking";
+import { JsonLd } from "@/components/JsonLd";
+import { businessNode, graph, websiteNode } from "@/lib/structured-data";
 
 // Two faces, not five. The previous build loaded Anton + Oswald + Inter +
 // JetBrains Mono and used all four on a single screen, which is what made
@@ -157,30 +159,6 @@ export const viewport: Viewport = {
   themeColor: "#fbf9f5",
 };
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "AutomotiveBusiness",
-  name: "GMS Turbo Georgia",
-  description:
-    "Premium turbocharger sales, diagnostics, repair and performance solutions.",
-  image: "/og-image.jpg",
-  telephone: "+995 551 24 42 22",
-  priceRange: "$$$",
-  address: {
-    "@type": "PostalAddress",
-    addressLocality: "Tbilisi",
-    addressCountry: "GE",
-  },
-  areaServed: "GE",
-  // `sameAs` is how search engines tie these profiles to the business, so
-  // the same three links the footer shows belong here too.
-  sameAs: [
-    "https://www.instagram.com/turbogms/",
-    "https://www.facebook.com/p/GMS-TURBO-61566147999204/",
-    "https://www.tiktok.com/@gmsturbogeorgia",
-  ],
-};
-
 // This is the root layout for the whole public site — it owns <html>/<body>,
 // which is why the locale segment sits above every page rather than inside
 // one. `lang` is then correct in the very first byte of HTML, where crawlers
@@ -216,11 +194,12 @@ export default async function LocaleLayout({
             <BookingProvider>{children}</BookingProvider>
           </TaxonomyProvider>
         </LanguageProvider>
-        <script
-          type="application/ld+json"
-          // eslint-disable-next-line react/no-danger
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
+        {/* The business and the site itself, emitted on every page: the local
+            rich result is built from the address, hours and coordinates on
+            this node, and a crawler that only ever reaches a product page has
+            to find them there too. Every other page adds its own nodes and
+            refers back to this one by `@id` rather than restating it. */}
+        <JsonLd data={graph(businessNode(locale), websiteNode(locale))} />
       </body>
     </html>
   );

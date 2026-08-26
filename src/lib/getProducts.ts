@@ -152,3 +152,34 @@ export async function getProductById(
   const doc = result.docs[0] as unknown as ProductDoc | undefined;
   return doc ? mapDoc(doc, locale) : null;
 }
+
+/**
+ * Just what the sitemap needs: the slug and when the document last changed.
+ *
+ * Deliberately not getProducts() — that walks the fitment chain at depth 3 for
+ * 200 documents to build pages, and the sitemap renders none of it. Two
+ * columns, no relationships, no locale: the text fields are the localized
+ * ones, and none of them are selected here.
+ */
+export async function getProductSitemapEntries(): Promise<
+  { id: string; updatedAt: Date }[]
+> {
+  const payload = await getPayload({ config });
+  const result = await payload.find({
+    collection: "products",
+    limit: 200,
+    sort: "createdAt",
+    depth: 0,
+    select: { productId: true, updatedAt: true },
+  });
+  // `select` narrows the returned shape past what the generated types
+  // describe, so the two columns asked for are named here.
+  const docs = result.docs as unknown as {
+    productId: string;
+    updatedAt: string;
+  }[];
+  return docs.map((doc) => ({
+    id: doc.productId,
+    updatedAt: new Date(doc.updatedAt),
+  }));
+}

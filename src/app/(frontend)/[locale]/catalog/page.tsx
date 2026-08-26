@@ -5,6 +5,13 @@ import { getCatalog } from "@/lib/getCatalog";
 import { localeAlternates, OG_IMAGE } from "@/lib/i18n/metadata";
 import { localeHref, type Locale } from "@/lib/i18n/locales";
 import { CatalogClient } from "./CatalogClient";
+import { JsonLd } from "@/components/JsonLd";
+import {
+  breadcrumbNode,
+  collectionNode,
+  crumbLabels,
+  graph,
+} from "@/lib/structured-data";
 
 // Read the catalog from the Payload/Postgres DB on each request.
 export const dynamic = "force-dynamic";
@@ -59,36 +66,25 @@ export default async function CatalogPage({
     getCatalog(locale),
   ]);
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    name: "Turbocharger Catalog",
-    url: "/catalog",
-    about: "Premium turbochargers: hybrid, billet, OEM, competition.",
-    numberOfItems: products.length,
-    breadcrumb: {
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        { "@type": "ListItem", position: 1, name: "Home", item: "/" },
-        { "@type": "ListItem", position: 2, name: "Catalog", item: "/catalog" },
-      ],
-    },
-    hasPart: {
-      "@type": "ItemList",
-      itemListElement: products.map((p, i) => ({
-        "@type": "ListItem",
-        position: i + 1,
-        url: `/catalog/${p.id}`,
-        name: p.name,
-      })),
-    },
-  };
+  const crumbs = crumbLabels(locale);
+  const trail = [
+    { name: crumbs.home, path: "/" },
+    { name: crumbs.catalog, path: "/catalog" },
+  ];
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      <JsonLd
+        data={graph(
+          breadcrumbNode(locale, trail),
+          collectionNode(locale, {
+            path: "/catalog",
+            name: META[locale].title,
+            description: META[locale].description,
+            products,
+            trail,
+          }),
+        )}
       />
       <Suspense fallback={null}>
         <CatalogClient products={products} catalog={catalog} />

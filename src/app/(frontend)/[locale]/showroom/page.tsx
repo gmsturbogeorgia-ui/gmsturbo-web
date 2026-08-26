@@ -4,6 +4,13 @@ import { getProducts } from "@/lib/getProducts";
 import { localeAlternates, OG_IMAGE } from "@/lib/i18n/metadata";
 import { localeHref, type Locale } from "@/lib/i18n/locales";
 import { ShowroomClient } from "./ShowroomClient";
+import { JsonLd } from "@/components/JsonLd";
+import {
+  breadcrumbNode,
+  collectionNode,
+  crumbLabels,
+  graph,
+} from "@/lib/structured-data";
 
 // Read the showroom page content and highlighted products from the
 // Payload/Postgres DB on each request — same reasoning as /
@@ -49,35 +56,6 @@ export async function generateMetadata({
   };
 }
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "AutomotiveBusiness",
-  name: "GMS Turbo Georgia - Flagship Showroom",
-  image: "/og-image.jpg",
-  telephone: "+995 551 24 42 22",
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: "71, Sakartvelos Ertianobistvis Mebrdzolta Street",
-    addressLocality: "Tbilisi",
-    postalCode: "0163",
-    addressCountry: "GE",
-  },
-  openingHoursSpecification: [
-    {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-      opens: "10:00",
-      closes: "18:00",
-    },
-    {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: "Saturday",
-      opens: "11:00",
-      closes: "17:00",
-    },
-  ],
-};
-
 export default async function ShowroomPage({
   params,
 }: {
@@ -90,11 +68,28 @@ export default async function ShowroomPage({
   ]);
   const highlights = products.slice(0, 4);
 
+  const crumbs = crumbLabels(locale);
+  const trail = [
+    { name: crumbs.home, path: "/" },
+    { name: META[locale].title, path: "/showroom" },
+  ];
+
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      {/* Same as /contact: the third copy of the business is gone, replaced
+          by a page node that refers to it — plus the units this page puts on
+          the floor. */}
+      <JsonLd
+        data={graph(
+          breadcrumbNode(locale, trail),
+          collectionNode(locale, {
+            path: "/showroom",
+            name: META[locale].title,
+            description: META[locale].description,
+            products: highlights,
+            trail,
+          }),
+        )}
       />
       <ShowroomClient showroom={showroom} highlights={highlights} />
     </>

@@ -1,5 +1,7 @@
 import type { MetadataRoute } from "next";
-import { getProducts } from "@/lib/getProducts";
+import { getPayload } from "payload";
+import config from "@payload-config";
+import { getProductSitemapEntries } from "@/lib/getProducts";
 import { DEFAULT_LOCALE, LOCALES, localeHref } from "@/lib/i18n/locales";
 
 const BASE_URL = "https://gmsturbo.ge";
@@ -35,25 +37,77 @@ function alternatesFor(path: string) {
   };
 }
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  // Product slugs are the same in both languages; one fetch is enough.
-  const products = await getProducts(DEFAULT_LOCALE);
+/**
+ * Whether a product slug can survive being pasted into a URL. A `/` in one
+ * splits the route into two segments and a space is not a legal URL character
+ * either way, so `/catalog/[productId]` never matches and the page 404s — see
+ * the same rule enforced on save in src/collections/Products.ts. A sitemap
+ * that advertises a 404 costs crawl budget and trains Google to distrust the
+ * rest of the file, so anything left over from before that rule is dropped.
+ */
+const URL_SAFE_SLUG = /^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/;
 
-  const routes: { path: string; changeFrequency: "weekly" | "monthly"; priority: number }[] = [
-    { path: "/", changeFrequency: "weekly", priority: 1.0 },
-    { path: "/catalog", changeFrequency: "weekly", priority: 0.9 },
-    { path: "/showroom", changeFrequency: "monthly", priority: 0.7 },
-    { path: "/contact", changeFrequency: "monthly", priority: 0.6 },
-    ...products.map((p) => ({
+/** The four editable pages, each backed by one Payload global. */
+const PAGES = [
+  { path: "/", global: "home", listsProducts: true, changeFrequency: "weekly", priority: 1.0 },
+  { path: "/catalog", global: "catalog", listsProducts: true, changeFrequency: "weekly", priority: 0.9 },
+  { path: "/showroom", global: "showroom", listsProducts: false, changeFrequency: "monthly", priority: 0.7 },
+  { path: "/contact", global: "contact", listsProducts: false, changeFrequency: "monthly", priority: 0.6 },
+] as const;
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const payload = await getPayload({ config });
+
+  // Product slugs are the same in both languages; one fetch is enough.
+  const [products, globals] = await Promise.all([
+    getProductSitemapEntries(),
+    Promise.all(
+      PAGES.map((page) =>
+        payload.findGlobal({ slug: page.global, depth: 0, select: { updatedAt: true } }),
+      ),
+    ),
+  ]);
+
+  const published = products.filter((p) => URL_SAFE_SLUG.test(p.id));
+
+  /**
+   * `lastmod` is a claim about the page, not about the request, so it has to
+   * come out of the data: the global behind the page, and — for the two that
+   * render product cards — the newest product, since adding one changes what
+   * those pages show without touching their own document. Stamping
+   * `new Date()` here instead would tell Google every page changed on every
+   * crawl, which is exactly the signal it learns to ignore.
+   */
+  const newestProduct = published.reduce<Date | null>(
+    (latest, p) => (!latest || p.updatedAt > latest ? p.updatedAt : latest),
+    null,
+  );
+
+  const routes = [
+    ...PAGES.map((page, i) => {
+      const editedAt = new Date(globals[i].updatedAt);
+      return {
+        path: page.path,
+        changeFrequency: page.changeFrequency,
+        priority: page.priority,
+        lastModified:
+          page.listsProducts && newestProduct && newestProduct > editedAt
+            ? newestProduct
+            : editedAt,
+      };
+    }),
+    ...published.map((p) => ({
       path: `/catalog/${p.id}`,
       changeFrequency: "monthly" as const,
       priority: 0.8,
+      lastModified: p.updatedAt,
     })),
   ];
 
-  return routes.flatMap(({ path, changeFrequency, priority }) =>
+  return routes.flatMap(({ path, changeFrequency, priority, lastModified }) =>
     LOCALES.map((locale) => ({
       url: `${BASE_URL}${localeHref(locale, path)}`,
+      lastModified,
       changeFrequency,
       priority,
       alternates: alternatesFor(path),

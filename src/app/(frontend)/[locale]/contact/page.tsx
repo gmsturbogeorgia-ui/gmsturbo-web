@@ -3,6 +3,13 @@ import { getContact } from "@/lib/getContact";
 import { localeAlternates } from "@/lib/i18n/metadata";
 import { localeHref, type Locale } from "@/lib/i18n/locales";
 import { ContactClient } from "./ContactClient";
+import { JsonLd } from "@/components/JsonLd";
+import {
+  breadcrumbNode,
+  pageNode,
+  crumbLabels,
+  graph,
+} from "@/lib/structured-data";
 
 // Read the contact page content from the Payload/Postgres DB on each
 // request — same reasoning as / (src/app/(frontend)/page.tsx).
@@ -43,36 +50,6 @@ export async function generateMetadata({
   };
 }
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "AutomotiveBusiness",
-  name: "GMS Turbo Georgia",
-  image: "/og-image.jpg",
-  telephone: "+995 551 24 42 22",
-  email: "showroom@gmsturbo.ge",
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: "71, Sakartvelos Ertianobistvis Mebrdzolta Street",
-    addressLocality: "Tbilisi",
-    postalCode: "0163",
-    addressCountry: "GE",
-  },
-  openingHoursSpecification: [
-    {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-      opens: "10:00",
-      closes: "18:00",
-    },
-    {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: "Saturday",
-      opens: "11:00",
-      closes: "17:00",
-    },
-  ],
-};
-
 export default async function ContactPage({
   params,
 }: {
@@ -81,11 +58,29 @@ export default async function ContactPage({
   const { locale } = await params;
   const contact = await getContact(locale);
 
+  const crumbs = crumbLabels(locale);
+  const trail = [
+    { name: crumbs.home, path: "/" },
+    { name: META[locale].title, path: "/contact" },
+  ];
+
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      {/* The AutomotiveBusiness this page used to declare was a second,
+          anonymous copy of the one the layout already emits — same shop,
+          different node, no `@id` tying them together. What is left is the
+          page, pointing at the single business by id. */}
+      <JsonLd
+        data={graph(
+          breadcrumbNode(locale, trail),
+          pageNode(locale, {
+            type: "ContactPage",
+            path: "/contact",
+            name: META[locale].title,
+            description: META[locale].description,
+            trail,
+          }),
+        )}
       />
       <ContactClient contact={contact} />
     </>

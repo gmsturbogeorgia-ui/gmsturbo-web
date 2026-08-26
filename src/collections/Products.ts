@@ -22,7 +22,22 @@ export const Products: CollectionConfig = {
       required: true,
       unique: true,
       admin: {
-        description: 'Slug used in the URL, e.g. "t450" -> /catalog/t450',
+        description:
+          'Slug used in the URL, e.g. "t450" -> /catalog/t450. Latin letters, digits and hyphens only.',
+      },
+      /**
+       * This value is pasted straight into a path segment by every link in the
+       * app, so it has to survive that. A "/" splits the route in two and a
+       * space is not a legal URL character, and either way
+       * /catalog/[productId] stops matching and the product 404s from the
+       * catalog card, the search box, the quote email and the sitemap at once
+       * — which is what "Hyundai/ Kia 2.5LD 2007-" did before this rule.
+       */
+      validate: (value: string | null | undefined) => {
+        if (typeof value !== "string" || value.length === 0) return true; // `required` reports this
+        return /^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/.test(value)
+          ? true
+          : 'Use Latin letters, digits and single hyphens only — no spaces, slashes or dots. "Hyundai/ Kia 2.5LD 2007-" would become "hyundai-kia-2-5ld-2007".';
       },
     },
     { name: "name", type: "text", required: true },
