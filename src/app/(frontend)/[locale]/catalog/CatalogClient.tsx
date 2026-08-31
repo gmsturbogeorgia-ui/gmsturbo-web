@@ -8,6 +8,15 @@ import { ProductSearch } from "@/components/ProductSearch";
 import { ProductCard, ProductGrid } from "@/components/ProductCard";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+  HomeIcon,
+} from "@/components/Breadcrumb";
+import {
   Button,
   ButtonLink,
   ChipButton,
@@ -17,6 +26,7 @@ import {
 } from "@/components/Primitives";
 import type { CatalogContent } from "@/lib/getCatalog";
 import { useTaxonomy } from "@/lib/i18n/taxonomy-context";
+import { useLanguage } from "@/lib/i18n/context";
 import { CarPicker, carPickLabel, type CarPick } from "@/components/CarPicker";
 import { matchesCar, type CarSelection } from "@/lib/fitment";
 import { parseGenerationKey, type VehicleOption } from "@/lib/taxonomy";
@@ -79,6 +89,7 @@ export function CatalogClient({
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { t } = useLanguage();
   const { hero, search, toolbar, emptyState, customBuilds, carPicker } =
     catalog;
 
@@ -278,7 +289,21 @@ export function CatalogClient({
 
       <main className="shell">
         <header className="pb-10 pt-8 md:pb-12 md:pt-12">
-          <h1 className="max-w-3xl text-[clamp(2.25rem,5.5vw,4rem)] font-bold">
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink href="/">
+                  <HomeIcon className="size-4" />
+                  <span className="sr-only">{t("product.home")}</span>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>{t("product.catalog")}</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+          <h1 className="mt-6 max-w-3xl text-[clamp(2.25rem,5.5vw,4rem)] font-bold">
             {hero.titleLine1}{" "}
             <span className="text-turbo">
               {hero.titleLine2}

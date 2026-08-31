@@ -1,6 +1,15 @@
 "use client";
 
 import { LocaleLink as Link } from "@/components/LocaleLink";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+  HomeIcon,
+} from "@/components/Breadcrumb";
 import type { Product } from "@/lib/products";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { ProductCard, ProductGrid } from "@/components/ProductCard";
@@ -27,7 +36,7 @@ export function ProductDetailClient({
     <>
       <SiteHeader />
       <main>
-        <Breadcrumb product={product} />
+        <ProductCrumbs product={product} />
         <ProductShowcase product={product} />
         <Specs product={product} />
         <Compatibility product={product} />
@@ -40,26 +49,32 @@ export function ProductDetailClient({
   );
 }
 
-function Breadcrumb({ product }: { product: Product }) {
+/* The trail matches the BreadcrumbList the page ships in its JSON-LD — a
+   visible trail is what Google asks for beside the markup, and the two
+   disagreeing is worse than neither. */
+function ProductCrumbs({ product }: { product: Product }) {
   const { t } = useLanguage();
   return (
-    <nav aria-label="Breadcrumb" className="shell pt-5">
-      <ol className="flex items-center gap-2 text-sm text-ink-mute">
-        <li>
-          <Link href="/" className="transition-colors hover:text-ink">
-            {t("product.home")}
-          </Link>
-        </li>
-        <li aria-hidden>/</li>
-        <li>
-          <Link href="/catalog" className="transition-colors hover:text-ink">
+    <Breadcrumb className="shell pt-5">
+      <BreadcrumbList>
+        <BreadcrumbItem>
+          <BreadcrumbLink href="/">
+            <HomeIcon className="size-4" />
+            <span className="sr-only">{t("product.home")}</span>
+          </BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+        <BreadcrumbItem>
+          <BreadcrumbLink href="/catalog">
             {t("product.catalog")}
-          </Link>
-        </li>
-        <li aria-hidden>/</li>
-        <li className="text-ink-soft">{product.code}</li>
-      </ol>
-    </nav>
+          </BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+        <BreadcrumbItem>
+          <BreadcrumbPage>{product.code}</BreadcrumbPage>
+        </BreadcrumbItem>
+      </BreadcrumbList>
+    </Breadcrumb>
   );
 }
 

@@ -2,7 +2,11 @@
 
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { BookCallButton, BookCallPill } from "@/components/Booking";
-import { ProductCard, ProductGrid } from "@/components/ProductCard";
+import {
+  BrowseAllCard,
+  ProductCard,
+  ProductGrid,
+} from "@/components/ProductCard";
 import {
   ButtonLink,
   FlameEdge,
@@ -209,8 +213,12 @@ function Catalog({
         lead={catalog.lead}
         action={<TextLink href="/catalog">{catalog.viewAllLabel}</TextLink>}
       />
-      <ProductGrid className="mt-12">
-        {featured.map((p) => (
+      {/* The promo tile takes the first cell, so only three products run
+          beside it — a full row of four at every width, never a lone tile
+          stranded on a second line. */}
+      <ProductGrid rail className="mt-12">
+        <BrowseAllCard className="md:col-span-3 lg:col-span-1" />
+        {featured.slice(0, 3).map((p) => (
           <ProductCard key={p.id} product={p} />
         ))}
       </ProductGrid>

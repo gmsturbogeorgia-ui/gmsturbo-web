@@ -1,6 +1,15 @@
 "use client";
 
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+  HomeIcon,
+} from "@/components/Breadcrumb";
 import { BookCallButton } from "@/components/Booking";
 import { TireTrack } from "@/components/Primitives";
 import { ShopMap } from "@/components/ShopMap";
@@ -22,7 +31,21 @@ export function ContactClient({ contact }: { contact: ContactContent }) {
       <SiteHeader />
       <main>
         <section className="shell pb-14 pt-10 md:pt-16">
-          <p className="eyebrow">{hero.tag}</p>
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink href="/">
+                  <HomeIcon className="size-4" />
+                  <span className="sr-only">{t("product.home")}</span>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>{t("nav.contact")}</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+          <p className="eyebrow mt-6">{hero.tag}</p>
           <h1 className="mt-4 max-w-3xl text-[clamp(2.5rem,6.5vw,4.75rem)] font-bold">
             {hero.title1}{" "}
             <span className="text-turbo">

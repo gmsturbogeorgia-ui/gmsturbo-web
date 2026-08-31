@@ -2,9 +2,19 @@
 
 import type { Product } from "@/lib/products";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+  HomeIcon,
+} from "@/components/Breadcrumb";
 import { ProductCard, ProductGrid } from "@/components/ProductCard";
 import { SectionHead, Stat, TextLink, TireTrack } from "@/components/Primitives";
 import type { ShowroomContent } from "@/lib/getShowroom";
+import { useLanguage } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
 
 export function ShowroomClient({
@@ -15,6 +25,7 @@ export function ShowroomClient({
   highlights: Product[];
 }) {
   const { hero, stats, gallery, display, visit } = showroom;
+  const { t } = useLanguage();
 
   return (
     <>
@@ -23,7 +34,21 @@ export function ShowroomClient({
         {/* Hero. Rounded, inset panorama rather than a full-bleed image with
             a gradient scrim faked over the bottom third. */}
         <section className="shell pt-6">
-          <p className="eyebrow">{hero.tag}</p>
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink href="/">
+                  <HomeIcon className="size-4" />
+                  <span className="sr-only">{t("product.home")}</span>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>{t("nav.showroom")}</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+          <p className="eyebrow mt-6">{hero.tag}</p>
           <h1 className="mt-4 max-w-3xl text-[clamp(2.5rem,6.5vw,4.75rem)] font-bold">
             {hero.title1}{" "}
             <span className="text-turbo">
