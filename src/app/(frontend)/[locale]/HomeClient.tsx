@@ -1,7 +1,7 @@
 "use client";
 
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
-import { BookCallButton } from "@/components/Booking";
+import { BookCallButton, BookCallPill } from "@/components/Booking";
 import { ProductCard, ProductGrid } from "@/components/ProductCard";
 import {
   ButtonLink,
@@ -160,7 +160,7 @@ function Hero({ hero }: { hero: HomeContent["hero"] }) {
           style={{ animationDelay: "180ms" }}
         >
           <ButtonLink href="/catalog">{hero.ctaLabel}</ButtonLink>
-          <BookCallButton variant="secondary" />
+          <BookCallPill />
         </div>
       </div>
     </section>

@@ -70,6 +70,62 @@ export function BookCallButton({
   );
 }
 
+/**
+ * Louder variant of the same action, for the hero.
+ *
+ * The label and the icon badge trade places on hover: the badge slides from
+ * the right end to the left and rotates 45deg, and the pill's logical padding
+ * swaps sides so the label slides with it instead of being pushed. Both sides
+ * of the swap are on the same 500ms curve, so it reads as one motion.
+ *
+ * Sizing is fixed (h-12, a 40px badge) because the two padding states have to
+ * be mirror images for the label to hold still — that's why this doesn't go
+ * through the shared size scale.
+ */
+export function BookCallPill({ className }: { className?: string }) {
+  const { open } = useBooking();
+  const { t } = useLanguage();
+
+  return (
+    <button
+      type="button"
+      onClick={open}
+      className={cn(
+        "group relative inline-flex h-12 w-fit items-center overflow-hidden whitespace-nowrap rounded-full",
+        "bg-carbon p-1 ps-6 pe-14 font-display text-[0.9375rem] font-semibold text-ink",
+        "transition-[background-color,padding] duration-500 ease-smooth",
+        "hover:bg-steel hover:ps-14 hover:pe-6",
+        "motion-reduce:transition-none motion-reduce:hover:ps-6 motion-reduce:hover:pe-14",
+        className,
+      )}
+    >
+      <span className="relative z-10">{t("booking.cta")}</span>
+      <span
+        aria-hidden
+        className={cn(
+          "absolute end-1 flex h-10 w-10 items-center justify-center rounded-full",
+          "bg-turbo-deep text-white transition-all duration-500 ease-smooth",
+          "group-hover:end-[calc(100%-2.75rem)] group-hover:rotate-45",
+          "motion-reduce:transition-none motion-reduce:group-hover:end-1 motion-reduce:group-hover:rotate-0",
+        )}
+      >
+        <svg
+          viewBox="0 0 24 24"
+          className="h-4 w-4"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M7 17L17 7" />
+          <path d="M7 7h10v10" />
+        </svg>
+      </span>
+    </button>
+  );
+}
+
 function BookingModal({ onClose }: { onClose: () => void }) {
   const { t, lang } = useLanguage();
   const [sent, setSent] = useState(false);
