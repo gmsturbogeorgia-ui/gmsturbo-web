@@ -129,6 +129,14 @@ export async function generateMetadata({
       "VSR balancing",
     ],
     authors: [{ name: "GMS Turbo Georgia" }],
+    // The shop publishes the site itself — there is no separate author and
+    // publisher here. It is stated as a tag because the JSON-LD `publisher`
+    // on the WebSite node (src/lib/structured-data.ts) is only read by parsers
+    // that walk the graph, and the plain meta tag is what everything else
+    // looks for.
+    publisher: "GMS Turbo Georgia",
+    creator: "GMS Turbo Georgia",
+    applicationName: "GMS Turbo Georgia",
     robots: { index: true, follow: true },
     // Proves ownership of the property to Search Console. It sits in the root
     // layout so the tag is on every page in both languages — Google reads it
